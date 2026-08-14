@@ -1,0 +1,9 @@
+export { default as ServiceTemplate } from './ServiceTemplate';
+export { default as LocationTemplate } from './LocationTemplate';
+export { default as BrandTemplate } from './BrandTemplate';
+export { default as ProjectTemplate } from './ProjectTemplate';
+export { default as IndustryTemplate } from './IndustryTemplate';
+export { default as BlogTemplate } from './BlogTemplate';
+export { default as ServiceLocationTemplate } from './ServiceLocationTemplate';
+export { default as RelatedLinks } from './RelatedLinks';
+export { default as PageShell } from './PageShell';

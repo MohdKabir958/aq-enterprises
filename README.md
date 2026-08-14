@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AQ Enterprises website (`aq-nextjs`)
+
+Next.js App Router site for AQ Enterprises — CCTV & security, Hyderabad.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
+cp .env.example .env.local
+# Fill SMTP_* and optional NEXT_PUBLIC_GA_MEASUREMENT_ID
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See `.env.example`:
 
-## Learn More
+| Variable | Purpose |
+|----------|---------|
+| `SMTP_*` / `LEAD_DESTINATION_EMAIL` | Lead form email delivery |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Optional GA4 (site works without it) |
 
-To learn more about Next.js, take a look at the following resources:
+Never commit `.env.local`. Production NAP lives in `src/lib/business.ts` (confirmation pending for phone/email/hours).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Preferred host: `https://www.aqenterprises.in`
+- Owner checklist: `docs/PHASE8_PRODUCTION_MEASUREMENT.md`
+- Client assets: `CLIENT_ASSETS_REQUIRED.md`
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx tsc --noEmit
+npm run lint
+npm run build
+```

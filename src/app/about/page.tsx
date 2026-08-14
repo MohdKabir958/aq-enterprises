@@ -1,102 +1,422 @@
+/**
+ * @file page.tsx (About)
+ * @description About Us page for AQ Enterprises — trust-focused, no fabricated team/stats.
+ */
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AboutVideo from '@/components/AboutVideo';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import { PHONE, PHONE_DISPLAY, BRANDS, CERTIFICATIONS, TRUST_HIGHLIGHTS } from '@/lib/constants';
+import { CTA_COPY, ADDRESS } from '@/lib/business';
+import { ASSET_DIRS } from '@/lib/assets';
 
 export const metadata: Metadata = {
-  title: 'About Us — AQ Enterprises | 8 Years of CCTV Installations',
-  description: 'Eight years of protecting homes, businesses and factories. 500+ installations, 18 certified technicians. AQ Enterprises, Hyderabad.',
+  title: 'About Us',
+  description:
+    'AQ Enterprises — CCTV and security installation based in Mallapur, Hyderabad. Site survey before quote. Call +91 78159 15792.',
+  alternates: {
+    canonical: '/about',
+  },
 };
+
+function AssetSlot({
+  label,
+  ariaLabel,
+  hint,
+}: {
+  label: string;
+  ariaLabel: string;
+  hint: string;
+}) {
+  return (
+    <div
+      role="img"
+      aria-label={ariaLabel}
+      style={{
+        width: '100%',
+        minHeight: 220,
+        background: '#12151B',
+        border: '1px dashed #2A3140',
+        borderRadius: 12,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        textAlign: 'center',
+      }}
+    >
+      <div>
+        <p
+          style={{
+            color: '#6B7484',
+            fontSize: 12,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            margin: '0 0 8px',
+          }}
+        >
+          {label}
+        </p>
+        <p style={{ color: '#4A5565', fontSize: 13, margin: 0, maxWidth: 280 }}>{hint}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function AboutPage() {
   return (
-    <div style={{ background: '#0A0C10', fontFamily: "'IBM Plex Sans', sans-serif", overflowX: 'hidden' }}>
+    <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <Header active="about" />
-      <div style={{ height: 74 }} />
+      <div style={{ height: 74 }} aria-hidden="true" />
 
-      {/* Hero */}
-      <section style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '64px 32px 56px', display: 'grid', gridTemplateColumns: '1.05fr 0.95fr', gap: 40, alignItems: 'center' }}>
-        <div>
-          <span style={{ display: 'inline-block', color: '#FF5A1F', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 18 }}>About Us</span>
-          <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(30px,3.6vw,46px)', lineHeight: 1.1, color: '#F2F4F7', margin: '0 0 20px' }}>Eight years of protecting homes, businesses and factories across the region.</h1>
-          <p style={{ color: '#9BA5B4', fontSize: 16, lineHeight: 1.65, margin: 0 }}>AQ Enterprises started with a simple frustration: too many CCTV installs looked finished on day one and broke down by month three. We built our business around the parts installers usually skip — proper cable runs, tested angles, and support that answers the phone.</p>
+      <main>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 32px 0' }}>
+          <Breadcrumbs items={[{ name: 'About', url: '/about' }]} />
         </div>
-        <AboutVideo />
-      </section>
 
-      {/* Stats */}
-      <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
-        {[
-          { n: '2018', l: 'Founded' },
-          { n: '500+', l: 'Installations Completed' },
-          { n: '12,000+', l: 'Cameras Installed' },
-          { n: '18', l: 'Certified Technicians' },
-        ].map(s => (
-          <div key={s.l} style={{ padding: '24px 0', borderTop: '2px solid #FF5A1F' }}>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 32, fontWeight: 600, color: '#F2F4F7' }}>{s.n}</div>
-            <div style={{ color: '#6B7484', fontSize: 14, marginTop: 6 }}>{s.l}</div>
+        <section
+          className="grid-split"
+          style={{
+            position: 'relative',
+            maxWidth: 1280,
+            margin: '0 auto',
+            padding: '64px 32px 56px',
+            gap: 40,
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <span
+              style={{
+                display: 'inline-block',
+                color: '#FF5A1F',
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                marginBottom: 18,
+              }}
+            >
+              About Us
+            </span>
+            <h1
+              style={{
+                fontFamily: 'var(--font-space), sans-serif',
+                fontSize: 'clamp(30px,3.6vw,46px)',
+                lineHeight: 1.1,
+                color: '#F2F4F7',
+                margin: '0 0 20px',
+              }}
+            >
+              CCTV and security installs built to keep working after day one.
+            </h1>
+            <p style={{ color: '#9BA5B4', fontSize: 16, lineHeight: 1.65, margin: 0 }}>
+              AQ Enterprises is based in Mallapur, Hyderabad. We plan camera and security systems with
+              a site walkthrough first — proper cable runs, tested angles, and handover that people
+              can actually use. We publish verified project case studies rather than invented branch
+              networks or unverified customer counts.
+            </p>
           </div>
-        ))}
-      </section>
+          <AboutVideo />
+        </section>
 
-      {/* Mission */}
-      <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
-        <div style={{ width: '100%', height: 380, background: 'linear-gradient(135deg,#1B1F27,#12151B)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ color: '#4B5261', fontSize: 13 }}>Drop a team or workshop photo</span>
-        </div>
-        <div>
-          <span style={{ color: '#3fa9f5', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Our Mission</span>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(24px,2.6vw,32px)', color: '#F2F4F7', margin: '10px 0 20px' }}>Security systems people actually trust after installation day.</h2>
-          <p style={{ color: '#9BA5B4', fontSize: 15, lineHeight: 1.7, margin: '0 0 16px' }}>Every job starts with a real site walkthrough, not a phone estimate. We spec hardware for the property, not the cheapest catalog option, and we stand behind the install with an AMC plan that includes real technicians — not a call center.</p>
-          <p style={{ color: '#9BA5B4', fontSize: 15, lineHeight: 1.7, margin: 0 }}>That approach has kept us working with the same clients for years, and it&apos;s why most of our new business comes from referrals.</p>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <span style={{ color: '#3fa9f5', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Our Team</span>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(26px,3vw,38px)', color: '#F2F4F7', margin: '10px 0 0' }}>The people behind the install</h2>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
-          {[
-            { name: 'Mohammed Talha', role: 'Founder & Lead Engineer' },
-            { name: 'Suresh Rao', role: 'Site Operations Head' },
-            { name: 'Meena Iyer', role: 'Client Relations' },
-            { name: 'Vikram Das', role: 'Senior Technician' },
-          ].map(m => (
-            <div key={m.name}>
-              <div style={{ width: '100%', height: 260, background: 'linear-gradient(135deg,#1B1F27,#12151B)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                <span style={{ color: '#4B5261', fontSize: 13 }}>Team photo</span>
+        <section
+          aria-label="Company trust highlights"
+          className="grid-responsive grid-cols-4"
+          style={{
+            maxWidth: 1280,
+            margin: '0 auto',
+            padding: '0 32px 88px',
+          }}
+        >
+          {TRUST_HIGHLIGHTS.map((s) => (
+            <div key={s.label} style={{ padding: '24px 0', borderTop: '2px solid #FF5A1F' }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font-space), sans-serif',
+                  fontSize: 18,
+                  fontWeight: 600,
+                  color: '#F2F4F7',
+                  lineHeight: 1.35,
+                }}
+              >
+                {s.label}
               </div>
-              <div style={{ color: '#F2F4F7', fontSize: 15, fontWeight: 600 }}>{m.name}</div>
-              <div style={{ color: '#6B7484', fontSize: 13 }}>{m.role}</div>
+              <div style={{ color: '#6B7484', fontSize: 14, marginTop: 6 }}>{s.detail}</div>
             </div>
           ))}
-        </div>
-      </section>
+        </section>
 
-      {/* Certifications */}
-      <section style={{ background: '#0d0f13', borderTop: '1px solid #1B1F27', borderBottom: '1px solid #1B1F27', padding: '64px 32px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', color: '#6B7484', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 28 }}>Certifications &amp; Authorized Dealerships</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14 }}>
-            {['Hikvision Authorized', 'CP Plus Certified', 'ISO 9001:2015', 'Dahua Partner'].map(c => (
-              <div key={c} style={{ background: '#12151B', border: '1px solid #232833', borderRadius: 8, padding: '16px 26px', color: '#9BA5B4', fontFamily: "'Space Grotesk', sans-serif", fontSize: 15, fontWeight: 600 }}>{c}</div>
+        <section
+          aria-labelledby="mission-heading"
+          className="grid-split grid-split-equal"
+          style={{
+            maxWidth: 1280,
+            margin: '0 auto',
+            padding: '0 32px 88px',
+            gap: 64,
+            alignItems: 'center',
+          }}
+        >
+          <AssetSlot
+            label="Company photograph pending"
+            ariaLabel="Placeholder for AQ Enterprises office or workshop photograph"
+            hint={`Add a verified office or workshop photo to ${ASSET_DIRS.company}/`}
+          />
+
+          <div>
+            <span
+              style={{
+                color: '#3fa9f5',
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Our approach
+            </span>
+            <h2
+              id="mission-heading"
+              style={{
+                fontFamily: 'var(--font-space), sans-serif',
+                fontSize: 'clamp(24px,2.6vw,32px)',
+                color: '#F2F4F7',
+                margin: '10px 0 20px',
+              }}
+            >
+              Security systems people can operate after installation day.
+            </h2>
+            <p style={{ color: '#9BA5B4', fontSize: 15, lineHeight: 1.7, margin: '0 0 16px' }}>
+              Every job starts with a real site walkthrough, not a phone-only estimate. We recommend
+              hardware for the property and document what was installed. Optional AMC scope is written
+              into the quotation — we do not invent response-time SLAs or star ratings.
+            </p>
+            <p style={{ color: '#9BA5B4', fontSize: 15, lineHeight: 1.7, margin: 0 }}>
+              Headquarters: {ADDRESS.full}
+            </p>
+          </div>
+        </section>
+
+        {/* Team slots — no fabricated names or roles */}
+        <section
+          aria-labelledby="team-heading"
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <span
+              style={{
+                color: '#3fa9f5',
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Team &amp; company photos
+            </span>
+            <h2
+              id="team-heading"
+              style={{
+                fontFamily: 'var(--font-space), sans-serif',
+                fontSize: 'clamp(26px,3vw,38px)',
+                color: '#F2F4F7',
+                margin: '10px 0 12px',
+              }}
+            >
+              Ready for verified photographs
+            </h2>
+            <p style={{ color: '#6B7484', fontSize: 15, maxWidth: 560, margin: '0 auto' }}>
+              We do not invent team members, qualifications, or headshots. When you supply approved
+              photos, they will appear here.
+            </p>
+          </div>
+
+          <div className="grid-responsive grid-cols-4" style={{ gap: 24 }}>
+            {[
+              {
+                label: 'Founder / lead',
+                hint: `Place file in ${ASSET_DIRS.team}/ with approved name & role`,
+              },
+              {
+                label: 'Installation technicians',
+                hint: 'Group or on-site install photos — no stock imagery',
+              },
+              {
+                label: 'Office photograph',
+                hint: `Mallapur office / workshop → ${ASSET_DIRS.company}/`,
+              },
+              {
+                label: 'Equipment / install detail',
+                hint: `Wiring, NVR, mount close-ups → ${ASSET_DIRS.projects}/`,
+              },
+            ].map((slot) => (
+              <article key={slot.label}>
+                <AssetSlot
+                  label={slot.label}
+                  ariaLabel={`Placeholder: ${slot.label}`}
+                  hint={slot.hint}
+                />
+              </article>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section style={{ maxWidth: 1280, margin: '0 auto', padding: '88px 32px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(24px,2.8vw,34px)', color: '#F2F4F7', margin: '0 0 24px' }}>Want a security system that&apos;s still working in year five?</h2>
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="tel:+917815915792" style={{ background: '#FF5A1F', color: '#0A0C10', fontWeight: 600, fontSize: 15, padding: '15px 26px', borderRadius: 6, textDecoration: 'none' }}>Call Now →</a>
-          <Link href="/#quote" style={{ background: '#12151B', border: '1px solid #232833', color: '#F2F4F7', fontWeight: 600, fontSize: 15, padding: '15px 26px', borderRadius: 6, textDecoration: 'none' }}>Get a Free Quote</Link>
-        </div>
-      </section>
+        <section
+          aria-label="Brands and certifications"
+          style={{
+            background: '#0d0f13',
+            borderTop: '1px solid #1B1F27',
+            borderBottom: '1px solid #1B1F27',
+            padding: '64px 32px',
+          }}
+        >
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <div
+              style={{
+                textAlign: 'center',
+                color: '#6B7484',
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                marginBottom: 12,
+              }}
+            >
+              Brands we commonly install
+            </div>
+            <p
+              style={{
+                textAlign: 'center',
+                color: '#4A5565',
+                fontSize: 13,
+                margin: '0 0 28px',
+              }}
+            >
+              Supported / supplied brands — not authorized-dealer claims unless separately verified.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14 }}>
+              {BRANDS.map((b) => (
+                <div
+                  key={b}
+                  style={{
+                    background: '#12151B',
+                    border: '1px solid #232833',
+                    borderRadius: 8,
+                    padding: '16px 26px',
+                    color: '#9BA5B4',
+                    fontFamily: 'var(--font-space), sans-serif',
+                    fontSize: 15,
+                    fontWeight: 600,
+                  }}
+                >
+                  {b}
+                </div>
+              ))}
+            </div>
+
+            {CERTIFICATIONS.length > 0 ? (
+              <>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    color: '#6B7484',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    margin: '48px 0 28px',
+                  }}
+                >
+                  Verified certifications
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 14 }}>
+                  {CERTIFICATIONS.map((c) => (
+                    <div
+                      key={c}
+                      style={{
+                        background: '#12151B',
+                        border: '1px solid #232833',
+                        borderRadius: 8,
+                        padding: '16px 26px',
+                        color: '#9BA5B4',
+                        fontFamily: 'var(--font-space), sans-serif',
+                        fontSize: 15,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {c}
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <p
+                style={{
+                  textAlign: 'center',
+                  color: '#4A5565',
+                  fontSize: 13,
+                  margin: '40px 0 0',
+                }}
+              >
+                Dealership certificates and ISO documents will be listed here once the client
+                supplies verified proof.
+              </p>
+            )}
+          </div>
+        </section>
+
+        <section
+          aria-label="Call to action"
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '88px 32px', textAlign: 'center' }}
+        >
+          <h2
+            style={{
+              fontFamily: 'var(--font-space), sans-serif',
+              fontSize: 'clamp(24px,2.8vw,34px)',
+              color: '#F2F4F7',
+              margin: '0 0 12px',
+            }}
+          >
+            {CTA_COPY.survey.heading}
+          </h2>
+          <p style={{ color: '#6B7484', fontSize: 15, margin: '0 0 24px' }}>{CTA_COPY.survey.body}</p>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a
+              href={`tel:${PHONE}`}
+              style={{
+                background: '#FF5A1F',
+                color: '#0A0C10',
+                fontWeight: 600,
+                fontSize: 15,
+                padding: '15px 26px',
+                borderRadius: 6,
+                textDecoration: 'none',
+              }}
+            >
+              Call {PHONE_DISPLAY}
+            </a>
+            <Link
+              href="/#contact"
+              style={{
+                background: '#12151B',
+                border: '1px solid #232833',
+                color: '#F2F4F7',
+                fontWeight: 600,
+                fontSize: 15,
+                padding: '15px 26px',
+                borderRadius: 6,
+                textDecoration: 'none',
+              }}
+            >
+              {CTA_COPY.quote.heading}
+            </Link>
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>
