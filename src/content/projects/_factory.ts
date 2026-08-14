@@ -4,6 +4,7 @@
  */
 
 import type { Project, ProjectTestimonial } from '@/types';
+import { buildProjectGallery, plannedProjectHeroSrc } from '@/lib/project-photos';
 
 type VerifiedProjectInput = {
   sourceId: string;
@@ -52,13 +53,14 @@ export function createVerifiedProject(input: VerifiedProjectInput): Project {
     cameras: input.cameras,
     brandLabel: input.brandLabel,
     duration: input.duration,
+    image: plannedProjectHeroSrc(input.sourceId),
     imageAlt: input.imageAlt,
     overview: input.overview,
     clientRequirement: input.clientRequirement,
     solution: input.solution,
     equipment:
       input.equipment ??
-      `${input.brandLabel} CCTV system · ${input.cameras} cameras (verified project record). Camera model numbers and NVR/DVR SKUs are not listed in the published project data.`,
+      `${input.brandLabel} CCTV system · ${input.cameras} cameras (published project record). Camera model numbers and NVR/DVR SKUs are not listed in the published project data.`,
     installationApproach:
       input.installationApproach ??
       `Recorded installation duration: ${input.duration}. Detailed site drawings and cabling notes are not published in the project record.`,
@@ -70,13 +72,7 @@ export function createVerifiedProject(input: VerifiedProjectInput): Project {
       { label: 'Brand', value: input.brandLabel },
       { label: 'Duration', value: input.duration },
     ],
-    gallery: [
-      {
-        id: `${input.slug}-gallery-1`,
-        alt: input.imageAlt,
-        label: 'Project photography pending — placeholder only, not a completed-job photo',
-      },
-    ],
+    gallery: buildProjectGallery(input.sourceId, input.imageAlt),
     testimonial: input.testimonial,
     cta: {
       heading: 'Planning a similar installation?',

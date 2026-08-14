@@ -12,10 +12,10 @@ export const officeHitechProject = createVerifiedProject({
   duration: '10 Days',
   imageAlt: 'Corporate office CCTV installation at a tech park in Hitech City, Hyderabad',
   summary:
-    'Verified tech-park office CCTV in Hitech City — 60 Bosch cameras, completed in 10 days.',
+    'Published tech-park office CCTV in Hitech City — 60 Bosch cameras, completed in 10 days.',
   overview: `This published project record covers CCTV at a tech park office tower in Hitech City, Hyderabad.
 
-Verified facts: category Office, 60 cameras, Bosch brand, installation duration 10 days. Floor counts, landlord constraints, and exact camera models are not in the published record.`,
+Recorded fields: category Office, 60 cameras, Bosch brand, installation duration 10 days. Floor counts, landlord constraints, and exact camera models are not in the published record.`,
   relatedServices: [
     'office-cctv-installation',
     'ip-camera-installation',
@@ -26,6 +26,6 @@ Verified facts: category Office, 60 cameras, Bosch brand, installation duration 
   relatedProjects: ['retail-ameerpet', 'hospital-jubilee', 'apartment-gachibowli'],
   seoTitle: 'Office CCTV Project — Hitech City | AQ Enterprises',
   seoDescription:
-    'Case study: tech park office tower CCTV in Hitech City — 60 Bosch cameras, 10-day install. Verified corporate project from AQ Enterprises.',
+    'Case study: tech park office tower CCTV in Hitech City — 60 Bosch cameras, 10-day install. Published corporate project from AQ Enterprises.',
   keywords: ['office CCTV Hitech City', 'tech park CCTV Hyderabad', 'Bosch office cameras'],
 });

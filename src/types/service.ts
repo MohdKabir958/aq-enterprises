@@ -9,6 +9,14 @@ export interface ImagePlaceholder {
   alt: string;
   /** Visible label shown in the UI placeholder. */
   label: string;
+  /** Planned public path, e.g. `/images/projects/villa-banjara/exterior.webp`. */
+  src?: string;
+  /** Filename only, e.g. `exterior.webp`. */
+  filename?: string;
+  /** Caption shown under a real photo, or as guidance on the placeholder. */
+  caption?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface ContentSection {

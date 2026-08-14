@@ -12,10 +12,10 @@ export const apartmentGachibowliProject = createVerifiedProject({
   duration: '4 Days',
   imageAlt: 'Apartment complex surveillance system installed at Lakeview Apartments, Gachibowli',
   summary:
-    'Verified apartment-complex CCTV in Gachibowli — 22 Uniview cameras, completed in 4 days.',
+    'Published apartment-complex CCTV in Gachibowli — 22 Uniview cameras, completed in 4 days.',
   overview: `This published project record covers CCTV at Lakeview Apartments in Gachibowli, Hyderabad.
 
-Verified facts: category Home (residential society), 22 cameras, Uniview brand, installation duration 4 days. Common-area zone lists and association brief details are not in the published record.`,
+Recorded fields: category Home (residential society), 22 cameras, Uniview brand, installation duration 4 days. Common-area zone lists and association brief details are not in the published record.`,
   relatedServices: [
     'apartment-cctv-installation',
     'home-cctv-installation',
@@ -25,6 +25,6 @@ Verified facts: category Home (residential society), 22 cameras, Uniview brand, 
   relatedProjects: ['villa-banjara', 'office-hitech'],
   seoTitle: 'Apartment CCTV Project — Gachibowli | AQ Enterprises',
   seoDescription:
-    'Case study: Lakeview Apartments CCTV in Gachibowli — 22 Uniview cameras, 4-day install. Verified residential society project from AQ Enterprises.',
+    'Case study: Lakeview Apartments CCTV in Gachibowli — 22 Uniview cameras, 4-day install. Published residential society project from AQ Enterprises.',
   keywords: ['apartment CCTV Gachibowli', 'society CCTV Hyderabad', 'Uniview apartment cameras'],
 });

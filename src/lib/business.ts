@@ -49,6 +49,12 @@ export const WHATSAPP_URL: BusinessField<string> = {
   notes: 'Derived from PHONE.value. Former siteConfig wa.me/919999999999 was a placeholder.',
 };
 
+/** Canonical tel: href. Always derive from PHONE — do not hardcode elsewhere. */
+export const telHref = () => `tel:${PHONE.value}`;
+
+/** Canonical mailto: href. Always derive from EMAIL — do not hardcode elsewhere. */
+export const mailtoHref = () => `mailto:${EMAIL.value}`;
+
 /**
  * Current email on the website.
  * CLIENT CONFIRMATION: Replace with official business domain email when available.
@@ -70,8 +76,29 @@ export const ADDRESS = {
   city: 'Hyderabad',
   region: 'Telangana',
   status: 'pending' as VerificationStatus,
-  notes: 'Single physical HQ — do not publish neighborhood branch addresses.',
+  notes:
+    'Single physical HQ — do not publish neighborhood branch addresses. Phase 9 brief listed only “Mallapur, Hyderabad”; this longer string is the existing site value and is kept pending confirmation. Do not silently shorten or invent a replacement.',
 } as const;
+
+/**
+ * Google Maps *search* URL for the published address string.
+ * This is not a claimed map pin and does not invent latitude/longitude.
+ */
+export function mapsSearchUrl(): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS.full)}`;
+}
+
+/** schema.org PostalAddress from SSOT. No geo coordinates. */
+export function postalAddressSchema() {
+  return {
+    '@type': 'PostalAddress' as const,
+    streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`.replace(/,\s*$/, ''),
+    addressLocality: ADDRESS.city,
+    addressRegion: ADDRESS.region,
+    postalCode: ADDRESS.pincode,
+    addressCountry: 'IN',
+  };
+}
 
 /** Display string for hours. Schema uses structured HOURS_SCHEMA. */
 export const HOURS_DISPLAY: BusinessField<string> = {
@@ -108,8 +135,8 @@ export const SERVICE_AREA = {
  */
 export const SOCIAL_PROFILES = {
   whatsapp: {
-    url: 'https://wa.me/917815915792',
-    status: 'pending' as VerificationStatus,
+    url: WHATSAPP_URL.value,
+    status: WHATSAPP_URL.status,
   },
   facebook: {
     url: '',
@@ -139,6 +166,17 @@ export const SUPPORTED_BRANDS = [
 ] as const;
 
 /**
+ * Brand claim ladder. Public copy may only use “commonly install and support”
+ * until the client provides dealer/partner/installer certificates.
+ */
+export const BRAND_CLAIM_LEVELS = {
+  commonlySupported: SUPPORTED_BRANDS,
+  verifiedDealer: [] as const,
+  authorizedPartner: [] as const,
+  certifiedInstaller: [] as const,
+};
+
+/**
  * Unverified marketing stats — DO NOT render publicly until client confirms.
  * Kept here so pages stop inventing numbers inline.
  */
@@ -155,32 +193,41 @@ export const UNVERIFIED_STATS = {
 export const VERIFIED_CERTIFICATIONS: string[] = [];
 
 /** Convenience getters used by UI */
-export const phoneHref = () => `tel:${PHONE.value}`;
+export const phoneHref = () => telHref();
 export const phoneDisplay = () => PHONE_DISPLAY.value;
 export const whatsappUrl = () => WHATSAPP_URL.value;
 export const emailAddress = () => EMAIL.value;
 export const hoursDisplay = () => HOURS_DISPLAY.value;
 
-/** sameAs list for schema — only non-empty pending/verified contact channels we intentionally publish */
+/**
+ * schema.org sameAs — identity URLs only, and only when verified.
+ * WhatsApp is a contact deep-link (use telephone / the WhatsApp CTA), not sameAs.
+ * Do not invent a Google Business Profile URL.
+ */
 export function schemaSameAs(): string[] {
   const urls: string[] = [];
-  // WhatsApp deep link is operational contact; include while phone is the live CTA.
-  if (SOCIAL_PROFILES.whatsapp.url) urls.push(SOCIAL_PROFILES.whatsapp.url);
-  if (
-    SOCIAL_PROFILES.googleBusinessProfile.status === 'verified' &&
-    SOCIAL_PROFILES.googleBusinessProfile.url
-  ) {
-    urls.push(SOCIAL_PROFILES.googleBusinessProfile.url);
-  }
-  if (SOCIAL_PROFILES.facebook.status === 'verified' && SOCIAL_PROFILES.facebook.url) {
-    urls.push(SOCIAL_PROFILES.facebook.url);
+  const candidates = [
+    SOCIAL_PROFILES.googleBusinessProfile,
+    SOCIAL_PROFILES.facebook,
+    SOCIAL_PROFILES.instagram,
+    SOCIAL_PROFILES.linkedin,
+    SOCIAL_PROFILES.youtube,
+  ];
+  for (const profile of candidates) {
+    if (profile.status === 'verified' && profile.url) {
+      urls.push(profile.url);
+    }
   }
   return urls;
 }
 
-/** Neutral warranty copy safe for public pages */
+/** Neutral warranty copy safe for public pages — no invented durations. */
 export const WARRANTY_PUBLIC_COPY =
   'Warranty terms depend on the selected equipment and installation package. Hardware typically carries the applicable manufacturer warranty shown on your invoice. Workmanship cover for the installation is confirmed in your quotation and handover notes.';
+
+/** Extra warranty handling note used on service pages (still no durations). */
+export const WARRANTY_HANDLING_COPY =
+  'Warranty handling depends on the product line and fault type. We help you identify whether an issue is configuration, cabling, power, or a hardware claim so support is directed correctly. We do not publish a single fixed workmanship duration in marketing copy because it varies by package.';
 
 /** CTA copy — no unverified response-time promises */
 export const CTA_COPY = {

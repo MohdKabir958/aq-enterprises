@@ -80,7 +80,7 @@ Access control on society side gates or clinic staff doors adds accountability w
       survey:
         'We visit the LB Nagar property to note gates, stilt parking, clinic reception layouts, and shop rear exits, then recommend a camera plan that respects privacy zones before cabling starts.',
       installation:
-        'Mounts and runs suit east Hyderabad building stock — neat apartment risers where allowed, weather-safe outdoor housings on compound walls, and tidy shop or clinic installs that leave counters usable the same day.',
+        'Mounts and runs suit east Hyderabad building stock — neat apartment risers where allowed, weather-safe outdoor housings on compound walls, and tidy shop or clinic installs planned around trading hours.',
       handover:
         'Families, society staff, or clinic managers get a walkthrough of live view, playback, and basic checks suited to who will actually use the system day to day.',
     }),

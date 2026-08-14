@@ -6,8 +6,10 @@
  */
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import type { Project } from '@/types';
+import { IMAGE_SIZES } from '@/lib/assets';
 
 type Filter = 'All' | 'Home' | 'Office' | 'Industrial';
 
@@ -91,6 +93,16 @@ function ProjectCard({ project }: { project: Project }) {
         flexDirection: 'column',
       }}
     >
+      {project.image ? (
+        <Image
+          src={project.image}
+          alt={project.imageAlt || project.name}
+          width={800}
+          height={500}
+          sizes={IMAGE_SIZES.card}
+          style={{ width: '100%', height: 200, objectFit: 'cover' }}
+        />
+      ) : (
       <div
         style={{
           width: '100%',
@@ -117,13 +129,14 @@ function ProjectCard({ project }: { project: Project }) {
               margin: '0 0 6px',
             }}
           >
-            Image placeholder
+            Photo not yet available
           </p>
           <p style={{ color: '#9AA3B2', fontSize: 13, margin: 0, lineHeight: 1.4 }}>
             {project.imageAlt || 'Project photography pending'}
           </p>
         </div>
       </div>
+      )}
 
       <div style={{ padding: 22, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         <span

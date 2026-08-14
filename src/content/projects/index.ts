@@ -1,6 +1,6 @@
 /**
  * Project case-study collection — Phase 4D.
- * Sourced only from verified PROJECTS_DATA (+ matching testimonials where applicable).
+ * Sourced from PROJECTS_DATA. Testimonials publish only when verified in src/content/testimonials.
  */
 
 import type { Project } from '@/types';

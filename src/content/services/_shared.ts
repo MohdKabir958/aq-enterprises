@@ -4,6 +4,7 @@
  */
 
 import type { ProcessStep } from '@/types';
+import { SUPPORTED_BRANDS, WARRANTY_HANDLING_COPY, WARRANTY_PUBLIC_COPY } from '@/lib/business';
 
 /** Standard installation workflow — descriptions should still be customized per service. */
 export function standardProcessSteps(overrides?: Partial<Record<string, string>>): ProcessStep[] {
@@ -41,10 +42,10 @@ export function standardProcessSteps(overrides?: Partial<Record<string, string>>
   ];
 }
 
-export const warrantyBody = `Warranty terms depend on the selected equipment and installation package. Hardware carries the applicable manufacturer warranty for the products supplied on your invoice. Workmanship cover for the installation is confirmed in your quotation and handover notes.
+export const warrantyBody = `${WARRANTY_PUBLIC_COPY}
 
-Warranty handling depends on the product line and fault type. We help you identify whether an issue is configuration, cabling, power, or a hardware claim so support is directed correctly. We do not publish a single fixed workmanship duration in marketing copy because it varies by package.`;
+${WARRANTY_HANDLING_COPY}`;
 
-export const brandsBody = `Depending on the site and budget, we commonly install and support established CCTV and security brands used across Hyderabad projects, including Hikvision, CP Plus, Dahua, Uniview, Honeywell, Bosch, Godrej, and Panasonic.
+export const brandsBody = `Depending on the site and budget, we commonly install and support established CCTV and security brands used across Hyderabad projects, including ${SUPPORTED_BRANDS.join(', ')}.
 
 These are brands we supply and install when they fit the brief — not claims of authorized dealership, partnership, or certification unless separately verified. The right brand is a fit decision: resolution needs, low-light performance, storage plan, and supportability matter more than a logo. We recommend options during the site survey rather than pushing a single default.`;

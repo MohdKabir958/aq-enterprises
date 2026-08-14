@@ -33,14 +33,20 @@ import {
   WHATSAPP_URL,
   BRANDS,
   TRUST_HIGHLIGHTS,
-  PROJECTS_DATA,
   EMAIL,
   ADDRESS,
   HOURS,
 } from '@/lib/constants';
-import { CTA_COPY } from '@/lib/business';
-import { getPublishedVerifiedTestimonials } from '@/content/testimonials';
+import { CTA_COPY, mapsSearchUrl } from '@/lib/business';
+import {
+  getAllProjects,
+  getPublishedVerifiedTestimonials,
+} from '@/lib/content/getters';
+import { IMAGE_SIZES } from '@/lib/assets';
+import { resolvePublicSrc } from '@/lib/assets-server';
+import { PROJECT_PHOTO_HEIGHT, PROJECT_PHOTO_WIDTH } from '@/lib/project-photos';
 import TestimonialCard from '@/components/TestimonialCard';
+import VerifiedImage from '@/components/VerifiedImage';
 import {
   JsonLd,
   generateOrganizationSchema,
@@ -50,15 +56,14 @@ import {
 export const metadata: Metadata = {
   title: 'AQ Enterprises — CCTV & Security Systems, Hyderabad',
   description:
-    'CCTV and security installation for homes and businesses across Hyderabad. Site survey before quote. Call +91 78159 15792. Based in Mallapur.',
+    `CCTV and security installation for homes and businesses across Hyderabad. Site survey before quote. Call ${PHONE_DISPLAY}. Based in Mallapur.`,
   alternates: {
     canonical: '/',
   },
 };
 
 export default function HomePage() {
-  // Grab the 3 most recent projects to show on the homepage
-  const recentProjects = PROJECTS_DATA.slice(0, 3);
+  const recentProjects = getAllProjects().slice(0, 3);
   const verifiedReviews = getPublishedVerifiedTestimonials();
 
   return (
@@ -108,7 +113,7 @@ export default function HomePage() {
                 marginBottom: 18,
               }}
             >
-              Licensed CCTV Installers
+              CCTV Installation · Hyderabad
             </span>
             <h1
               style={{
@@ -617,35 +622,50 @@ export default function HomePage() {
                   textDecoration: 'none',
                 }}
               >
-                {/* 
-                  Future Phase: Replace this div with a Next.js Image component 
-                  once real project images are available.
-                */}
                 <div
-                  role="img"
-                  aria-label={p.imageAlt}
                   style={{
                     width: '100%',
                     height: 200,
                     background: 'linear-gradient(135deg,#1B1F27,#12151B)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    overflow: 'hidden',
                   }}
                 >
-                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <circle cx="20" cy="20" r="9" stroke="#2A3040" strokeWidth="1.6" />
-                    <circle cx="20" cy="20" r="3" stroke="#2A3040" strokeWidth="1.6" />
-                    <path d="M20 29v5M14 34h12" stroke="#2A3040" strokeWidth="1.6" strokeLinecap="round" />
-                    <rect x="6" y="6" width="28" height="28" rx="4" stroke="#1E2330" strokeWidth="1" />
-                  </svg>
+                  {resolvePublicSrc(p.image) ? (
+                    <VerifiedImage
+                      src={p.image}
+                      alt={p.imageAlt || p.name}
+                      width={PROJECT_PHOTO_WIDTH}
+                      height={PROJECT_PHOTO_HEIGHT}
+                      sizes={IMAGE_SIZES.card}
+                      style={{ height: 200, objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      role="img"
+                      aria-label={p.imageAlt || p.name}
+                      style={{
+                        width: '100%',
+                        height: 200,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                        <circle cx="20" cy="20" r="9" stroke="#2A3040" strokeWidth="1.6" />
+                        <circle cx="20" cy="20" r="3" stroke="#2A3040" strokeWidth="1.6" />
+                        <path d="M20 29v5M14 34h12" stroke="#2A3040" strokeWidth="1.6" strokeLinecap="round" />
+                        <rect x="6" y="6" width="28" height="28" rx="4" stroke="#1E2330" strokeWidth="1" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
                 <div style={{ padding: 20 }}>
                   <h3 style={{ color: '#F2F4F7', fontSize: 16, fontWeight: 600, margin: '0 0 10px 0' }}>
                     {p.name}
                   </h3>
                   <p style={{ color: '#6B7484', fontSize: 13, lineHeight: 1.7, margin: 0 }}>
-                    {p.cameras} Cameras · {p.brand} · {p.duration}
+                    {p.cameras != null ? `${p.cameras} Cameras` : '—'} · {p.brandLabel || '—'} · {p.duration || '—'}
                   </p>
                 </div>
               </Link>
@@ -802,25 +822,30 @@ export default function HomePage() {
                 <span style={{ color: '#6B7484', fontSize: 14 }}>{HOURS}</span>
               </address>
               
-              {/* 
-                Future Phase: Consider replacing this box with an embedded Google Map 
-                or a photo of the storefront for local SEO trust signals.
-              */}
-              <div
-                role="img"
-                aria-label="Map showing office location in Hyderabad"
+              <a
+                href={mapsSearchUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
+                  display: 'block',
                   width: '100%',
-                  height: 160,
+                  minHeight: 160,
                   background: 'linear-gradient(135deg,#1B1F27,#12151B)',
                   borderRadius: 10,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  padding: 20,
+                  textDecoration: 'none',
                 }}
               >
-                <span style={{ color: '#4B5261', fontSize: 13 }}>Map Placeholder</span>
-              </div>
+                <span style={{ display: 'block', color: '#F2F4F7', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+                  Mallapur, Hyderabad
+                </span>
+                <span style={{ display: 'block', color: '#6B7484', fontSize: 13, lineHeight: 1.5 }}>
+                  {ADDRESS.full}
+                </span>
+                <span style={{ display: 'block', color: '#3fa9f5', fontSize: 13, marginTop: 12 }}>
+                  Open address search in Google Maps →
+                </span>
+              </a>
             </div>
           </div>
         </section>

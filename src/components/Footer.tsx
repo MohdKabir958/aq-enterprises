@@ -25,6 +25,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ADDRESS, EMAIL, HOURS, PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
+import { BUSINESS_NAME, mapsSearchUrl } from '@/lib/business';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -63,14 +64,14 @@ export default function Footer() {
             >
               <Image
                 src="/assets/aq-logo.png"
-                alt="AQ Enterprises logo"
+                alt={`${BUSINESS_NAME} logo`}
                 width={38}
                 height={38}
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             </div>
             <span style={{ fontFamily: "var(--font-space), sans-serif", fontWeight: 600, fontSize: 17, color: '#F2F4F7' }}>
-              AQ Enterprises
+              {BUSINESS_NAME}
             </span>
           </div>
           <p style={{ color: '#6B7484', fontSize: 14, lineHeight: 1.7, maxWidth: 320, margin: 0 }}>
@@ -173,6 +174,14 @@ export default function Footer() {
               {ADDRESS.line2}, {ADDRESS.pincode}
             </span>
             <span style={{ color: '#6B7484', fontSize: 13 }}>{HOURS}</span>
+            <a
+              href={mapsSearchUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}
+            >
+              Maps (address search)
+            </a>
           </address>
         </div>
       </div>
@@ -191,7 +200,7 @@ export default function Footer() {
         }}
       >
         <span style={{ color: '#4B5261', fontSize: 13 }}>
-          © {currentYear} AQ Enterprises. All rights reserved.
+          © {currentYear} {BUSINESS_NAME}. All rights reserved.
         </span>
         <div style={{ display: 'flex', gap: 20 }}>
           {/*

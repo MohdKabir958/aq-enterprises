@@ -25,6 +25,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { NAV_ITEMS, PHONE, PHONE_DISPLAY, type NavKey } from '@/lib/constants';
+import { BUSINESS_NAME } from '@/lib/business';
 
 interface HeaderProps {
   /** The nav key of the currently active page. Defaults to 'home'. */
@@ -77,7 +78,7 @@ export default function Header({ active = 'home' }: HeaderProps) {
         }}
       >
         {/* ── Logo + Brand Name ─────────────────────────────────────── */}
-        <Link href="/" aria-label="AQ Enterprises — Home" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
+        <Link href="/" aria-label={`${BUSINESS_NAME} — Home`} style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
           <div
             style={{
               width: 42,
@@ -93,7 +94,7 @@ export default function Header({ active = 'home' }: HeaderProps) {
           >
             <Image
               src="/assets/aq-logo.png"
-              alt="AQ Enterprises logo"
+                alt={`${BUSINESS_NAME} logo`}
               width={42}
               height={42}
               style={{ width: '100%', height: '100%', objectFit: 'contain' }}
@@ -102,7 +103,7 @@ export default function Header({ active = 'home' }: HeaderProps) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
             <span style={{ fontFamily: "var(--font-space), sans-serif", fontWeight: 600, fontSize: 18, color: '#F2F4F7' }}>
-              AQ Enterprises
+              {BUSINESS_NAME}
             </span>
             <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6B7484' }}>
               Security Systems &amp; Networking

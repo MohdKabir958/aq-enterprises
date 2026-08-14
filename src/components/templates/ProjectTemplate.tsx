@@ -4,11 +4,16 @@ import { JsonLd } from '@/lib/json-ld';
 import { generateSchema } from '@/lib/seo';
 import { projectBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForProject } from '@/lib/links/related';
+import { getVerifiedTestimonialForProject } from '@/lib/content/getters';
 import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
-import { CTA_COPY } from '@/lib/business';
+import { CTA_COPY, postalAddressSchema } from '@/lib/business';
 import { siteConfig } from '@/lib/config';
+import { IMAGE_SIZES } from '@/lib/assets';
+import { resolvePublicSrc } from '@/lib/assets-server';
+import { PROJECT_PHOTO_HEIGHT, PROJECT_PHOTO_WIDTH } from '@/lib/project-photos';
 import type { ImagePlaceholder, Project } from '@/types';
 import TestimonialCard from '@/components/TestimonialCard';
+import VerifiedImage from '@/components/VerifiedImage';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
 
@@ -55,6 +60,20 @@ function Paragraphs({ text }: { text: string }) {
 }
 
 function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
+  const resolved = resolvePublicSrc(image.src);
+  if (resolved) {
+    return (
+      <VerifiedImage
+        src={resolved}
+        alt={image.alt}
+        width={image.width ?? PROJECT_PHOTO_WIDTH}
+        height={image.height ?? PROJECT_PHOTO_HEIGHT}
+        sizes={IMAGE_SIZES.content}
+        caption={image.caption}
+      />
+    );
+  }
+
   return (
     <figure
       style={{
@@ -83,12 +102,14 @@ function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
           Photo not yet available
         </p>
         <p style={{ color: '#9AA3B2', fontSize: 14, margin: 0, maxWidth: 420 }}>
-          {image.label} — this is a placeholder for a future verified installation photo, not a
-          completed-project photograph.
+          {image.label} — planned installation photograph, not a stock or generated image.
         </p>
-        <p style={{ color: '#4A5565', fontSize: 12, margin: '8px 0 0' }}>
-          Planned ALT: {image.alt}
-        </p>
+        {image.caption ? (
+          <p style={{ color: '#6B7484', fontSize: 13, margin: '8px 0 0', maxWidth: 420 }}>
+            {image.caption}
+          </p>
+        ) : null}
+        <p style={{ color: '#4A5565', fontSize: 12, margin: '8px 0 0' }}>Planned ALT: {image.alt}</p>
       </figcaption>
     </figure>
   );
@@ -101,13 +122,15 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
   const cta = project.cta;
   const primaryHref = cta?.primaryHref ?? '/#contact';
   const primaryLabel = cta?.primaryLabel ?? CTA_COPY.survey.heading;
+  const verifiedReview = getVerifiedTestimonialForProject(project.slug);
+  const heroSrc = resolvePublicSrc(project.image);
 
   const schema = generateSchema({
     type: 'project',
     name: title,
     description: project.seo.description || project.summary,
     url: project.seo.canonical,
-    image: project.image,
+    image: heroSrc,
     breadcrumbs,
     extra: {
       about: {
@@ -119,12 +142,7 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
         name: siteConfig.name,
         url: siteConfig.url,
         telephone: PHONE,
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: 'Hyderabad',
-          addressRegion: 'Telangana',
-          addressCountry: 'IN',
-        },
+        address: postalAddressSchema(),
       },
       ...(project.locationLabel
         ? {
@@ -188,6 +206,18 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
           <p style={{ color: '#9AA3B2', fontSize: 17, lineHeight: 1.6, maxWidth: 720, margin: '0 0 8px' }}>
             {project.summary}
           </p>
+          {heroSrc ? (
+            <div style={{ margin: '20px 0 8px', maxWidth: 900 }}>
+              <VerifiedImage
+                src={heroSrc}
+                alt={project.imageAlt || project.name}
+                width={PROJECT_PHOTO_WIDTH}
+                height={PROJECT_PHOTO_HEIGHT}
+                sizes={IMAGE_SIZES.hero}
+                priority
+              />
+            </div>
+          ) : null}
           <p
             style={{
               color: '#6B7484',
@@ -198,9 +228,10 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
               maxWidth: 720,
             }}
           >
-            <strong style={{ color: '#9AA3B2', fontWeight: 600 }}>Verified project record.</strong>{' '}
-            Camera counts, brand, duration, and location below come from our published project data.
-            Photography placeholders are labeled clearly and are not real installation photos.
+            <strong style={{ color: '#9AA3B2', fontWeight: 600 }}>Published project record.</strong>{' '}
+            Camera counts, brand, duration, and location below come from our project list.
+            Gallery blocks are labeled until real installation photographs are supplied — they are
+            not stock or generated images.
           </p>
         </header>
 
@@ -260,7 +291,7 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
           <h2 id="tech-heading" style={h2}>
             Technical details
           </h2>
-          <p style={muted}>Only fields present in the verified project record are listed.</p>
+          <p style={muted}>Only fields present in the published project record are listed.</p>
           <dl
             style={{
               margin: 0,
@@ -287,7 +318,8 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
             </h2>
             <p style={muted}>
               Real installation photography has not been supplied for this case study yet. Each block
-              below is an explicit placeholder — not a photograph of the completed install.
+              below is an explicit placeholder with a planned filename and ALT — not a photograph of
+              the completed install.
             </p>
             {project.gallery.map((img) => (
               <ImagePlaceholderBlock key={img.id} image={img} />
@@ -295,23 +327,16 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
           </section>
         ) : null}
 
-        {project.testimonial ? (
+        {verifiedReview ? (
           <section aria-labelledby="testimonial-heading">
             <h2 id="testimonial-heading" style={h2}>
               Customer feedback
             </h2>
             <p style={muted}>
-              Associated with this project record. Not presented as a Google rating or star score.
+              Published only after independent verification and permission. Not presented as a Google
+              rating unless the source is a verified review platform.
             </p>
-            <TestimonialCard
-              testimonial={{
-                quote: project.testimonial.quote,
-                name: project.testimonial.name,
-                role: project.testimonial.role,
-                verificationStatus: 'pending',
-                source: 'Project handover feedback',
-              }}
-            />
+            <TestimonialCard testimonial={verifiedReview} />
           </section>
         ) : null}
 

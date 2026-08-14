@@ -14,23 +14,27 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProjectsGrid from '@/components/ProjectsGrid';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { PHONE, PHONE_DISPLAY, TESTIMONIALS } from '@/lib/constants';
+import { PHONE, PHONE_DISPLAY } from '@/lib/constants';
 import { CTA_COPY } from '@/lib/business';
-import { getAllProjects } from '@/lib/content/getters';
+import { getAllProjects, getPublishedVerifiedTestimonials } from '@/lib/content/getters';
+import { resolvePublicSrc } from '@/lib/assets-server';
 import TestimonialCard from '@/components/TestimonialCard';
 
 export const metadata: Metadata = {
   title: 'Projects',
   description:
-    'Verified CCTV and security installation case studies across homes, offices and industrial sites in Hyderabad. Hikvision, Dahua, CP Plus, Bosch and more.',
+    'CCTV and security installation case studies across homes, offices and industrial sites in Hyderabad.',
   alternates: {
     canonical: '/projects',
   },
 };
 
 export default function ProjectsPage() {
-  const projects = getAllProjects();
-  const testimonial = TESTIMONIALS[0];
+  const projects = getAllProjects().map((project) => ({
+    ...project,
+    image: resolvePublicSrc(project.image),
+  }));
+  const verifiedReviews = getPublishedVerifiedTestimonials();
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
@@ -67,40 +71,36 @@ export default function ProjectsPage() {
               maxWidth: 760,
             }}
           >
-            Verified installation case studies
+            Published installation case studies
           </h1>
           <p style={{ color: '#9BA5B4', fontSize: 17, lineHeight: 1.65, maxWidth: 620, margin: 0 }}>
-            Published project records across homes, offices, and industrial sites in Hyderabad —
-            camera counts, brands, and timelines from our verified portfolio. Open a case study for
-            full details and related services.
+            Published project records across homes, offices, and industrial sites in Hyderabad.
+            Open a case study for recorded details, related services, and photography slots.
           </p>
         </section>
 
         {/* ── Filterable Grid (Client Component) ────────────────────────── */}
         <ProjectsGrid projects={projects} />
 
-        {testimonial ? (
+        {verifiedReviews.length > 0 ? (
           <section
-            aria-label="Project-linked customer feedback"
+            aria-label="Verified customer feedback"
             style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 96px' }}
           >
-            <div
-              style={{
-                background: '#12151B',
-                border: '1px solid #1B1F27',
-                borderRadius: 12,
-                padding: '8px 28px 28px',
-              }}
-            >
-              <TestimonialCard
-                testimonial={{
-                  quote: testimonial.quote,
-                  name: testimonial.name,
-                  role: testimonial.role,
-                  verificationStatus: testimonial.verificationStatus ?? 'pending',
-                  source: testimonial.source ?? 'Project handover feedback',
-                }}
-              />
+            <div className="grid-responsive grid-cols-3" style={{ gap: 24 }}>
+              {verifiedReviews.map((review) => (
+                <div
+                  key={review.id}
+                  style={{
+                    background: '#12151B',
+                    border: '1px solid #1B1F27',
+                    borderRadius: 12,
+                    padding: '8px 28px 28px',
+                  }}
+                >
+                  <TestimonialCard testimonial={review} />
+                </div>
+              ))}
             </div>
           </section>
         ) : null}

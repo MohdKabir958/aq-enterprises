@@ -7,7 +7,7 @@ export interface Brand extends ContentBase {
   body?: string;
   logo?: string;
   website?: string;
-  /** Whether AQ is an authorized dealer/partner. */
+  /** Set true ONLY when the client supplies a dealer/partner certificate. Omit or false otherwise. */
   authorized?: boolean;
   relatedServices?: string[];
   relatedProjects?: string[];

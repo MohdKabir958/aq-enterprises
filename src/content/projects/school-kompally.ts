@@ -12,10 +12,10 @@ export const schoolKompallyProject = createVerifiedProject({
   duration: '7 Days',
   imageAlt: 'Campus-wide CCTV system at Greenfield Public School, Kompally, Hyderabad',
   summary:
-    'Verified school campus CCTV in Kompally — 40 Hikvision cameras, completed in 7 days.',
+    'Published school campus CCTV in Kompally — 40 Hikvision cameras, completed in 7 days.',
   overview: `This published project record covers a campus-wide CCTV system at Greenfield Public School in Kompally, Hyderabad.
 
-Verified facts: listed under Industrial category in the source portfolio (campus/institutional scale), 40 cameras, Hikvision brand, installation duration 7 days. Privacy zoning notes and building-by-building maps are not published.`,
+Recorded fields: listed under Industrial category in the source portfolio (campus/institutional scale), 40 cameras, Hikvision brand, installation duration 7 days. Privacy zoning notes and building-by-building maps are not published.`,
   relatedServices: [
     'school-college-cctv-installation',
     'access-control-systems',
@@ -25,6 +25,6 @@ Verified facts: listed under Industrial category in the source portfolio (campus
   relatedProjects: ['factory-nacharam', 'hospital-jubilee'],
   seoTitle: 'School CCTV Project — Kompally | AQ Enterprises',
   seoDescription:
-    'Case study: Greenfield Public School CCTV in Kompally — 40 Hikvision cameras, 7-day campus install. Verified project from AQ Enterprises.',
+    'Case study: Greenfield Public School CCTV in Kompally — 40 Hikvision cameras, 7-day campus install. Published project from AQ Enterprises.',
   keywords: ['school CCTV Kompally', 'campus CCTV Hyderabad', 'Hikvision school cameras'],
 });

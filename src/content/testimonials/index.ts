@@ -56,3 +56,7 @@ export function getPublishedVerifiedTestimonials(): Testimonial[] {
     (t) => t.status === 'published' && t.verificationStatus === 'verified',
   );
 }
+
+export function getVerifiedTestimonialForProject(projectSlug: string): Testimonial | undefined {
+  return getPublishedVerifiedTestimonials().find((t) => t.projectSlug === projectSlug);
+}

@@ -4,7 +4,14 @@
  */
 
 import { siteConfig } from './config';
-import { ADDRESS, HOURS_SCHEMA, PHONE, SERVICE_AREA, schemaSameAs } from './business';
+import {
+  EMAIL,
+  HOURS_SCHEMA,
+  PHONE,
+  SERVICE_AREA,
+  postalAddressSchema,
+  schemaSameAs,
+} from './business';
 
 /**
  * Injects a JSON-LD script tag safely into the React component tree.
@@ -20,7 +27,11 @@ export function JsonLd({ schema }: { schema: Record<string, unknown> }) {
 
 /**
  * Base LocalBusiness / ProfessionalService schema.
- * One physical address (Mallapur HQ). No fake branch locations. No invented geo.
+ * One physical address (Mallapur HQ). Neighborhoods are areaServed, not branches.
+ * No invented geo coordinates. sameAs only when independently verified.
+ *
+ * telephone / email / address / openingHours are the live published NAP from
+ * business.ts (status pending client confirmation — not invented placeholders).
  */
 export function generateLocalBusinessSchema() {
   const sameAs = schemaSameAs();
@@ -32,15 +43,8 @@ export function generateLocalBusinessSchema() {
     '@id': `${siteConfig.url}/#business`,
     url: siteConfig.url,
     telephone: PHONE.value,
-    email: siteConfig.contact.email,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`.replace(/,\s*$/, ''),
-      addressLocality: ADDRESS.city,
-      addressRegion: ADDRESS.region,
-      postalCode: ADDRESS.pincode,
-      addressCountry: 'IN',
-    },
+    email: EMAIL.value,
+    address: postalAddressSchema(),
     areaServed: {
       '@type': 'City',
       name: SERVICE_AREA.primary,
@@ -71,19 +75,12 @@ export function generateOrganizationSchema() {
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: PHONE.value,
-      email: siteConfig.contact.email,
+      email: EMAIL.value,
       contactType: 'customer service',
       areaServed: SERVICE_AREA.primary,
       availableLanguage: ['en', 'hi', 'te'],
     },
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`.replace(/,\s*$/, ''),
-      addressLocality: ADDRESS.city,
-      addressRegion: ADDRESS.region,
-      postalCode: ADDRESS.pincode,
-      addressCountry: 'IN',
-    },
+    address: postalAddressSchema(),
     ...(sameAs.length ? { sameAs } : {}),
   };
 }

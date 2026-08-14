@@ -9,14 +9,17 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AboutVideo from '@/components/AboutVideo';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { PHONE, PHONE_DISPLAY, BRANDS, CERTIFICATIONS, TRUST_HIGHLIGHTS } from '@/lib/constants';
-import { CTA_COPY, ADDRESS } from '@/lib/business';
-import { ASSET_DIRS } from '@/lib/assets';
+import { PHONE, PHONE_DISPLAY, EMAIL, HOURS, WHATSAPP_URL, BRANDS, CERTIFICATIONS, TRUST_HIGHLIGHTS } from '@/lib/constants';
+import { CTA_COPY, ADDRESS, mapsSearchUrl } from '@/lib/business';
+import {
+  JsonLd,
+  generateLocalBusinessSchema,
+} from '@/lib/json-ld';
 
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'AQ Enterprises — CCTV and security installation based in Mallapur, Hyderabad. Site survey before quote. Call +91 78159 15792.',
+    `AQ Enterprises — CCTV and security installation based in Mallapur, Hyderabad. Site survey before quote. Call ${PHONE_DISPLAY}.`,
   alternates: {
     canonical: '/about',
   },
@@ -69,6 +72,7 @@ function AssetSlot({
 export default function AboutPage() {
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
+      <JsonLd schema={generateLocalBusinessSchema()} />
       <Header active="about" />
       <div style={{ height: 74 }} aria-hidden="true" />
 
@@ -116,7 +120,7 @@ export default function AboutPage() {
             <p style={{ color: '#9BA5B4', fontSize: 16, lineHeight: 1.65, margin: 0 }}>
               AQ Enterprises is based in Mallapur, Hyderabad. We plan camera and security systems with
               a site walkthrough first — proper cable runs, tested angles, and handover that people
-              can actually use. We publish verified project case studies rather than invented branch
+              can actually use. We publish Hyderabad project case studies rather than invented branch
               networks or unverified customer counts.
             </p>
           </div>
@@ -151,6 +155,70 @@ export default function AboutPage() {
         </section>
 
         <section
+          aria-labelledby="nap-heading"
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}
+        >
+          <h2
+            id="nap-heading"
+            style={{
+              fontFamily: 'var(--font-space), sans-serif',
+              fontSize: 'clamp(24px,2.6vw,32px)',
+              color: '#F2F4F7',
+              margin: '0 0 12px',
+            }}
+          >
+            How to reach us
+          </h2>
+          <p style={{ color: '#9BA5B4', fontSize: 15, lineHeight: 1.7, margin: '0 0 24px', maxWidth: 640 }}>
+            One physical base in Mallapur. Neighborhood pages on this site are service areas we
+            survey from here — not additional branch offices.{' '}
+            <Link href="/locations" style={{ color: '#3fa9f5' }}>
+              Browse Hyderabad service areas
+            </Link>
+            {' · '}
+            <Link href="/projects" style={{ color: '#3fa9f5' }}>
+              View published projects
+            </Link>
+            .
+          </p>
+          <address
+            style={{
+              display: 'grid',
+              gap: 12,
+              fontStyle: 'normal',
+              color: '#C7CDD6',
+              fontSize: 15,
+              lineHeight: 1.6,
+            }}
+          >
+            <a href={`tel:${PHONE}`} style={{ color: '#C7CDD6', textDecoration: 'none' }}>
+              {PHONE_DISPLAY}
+            </a>
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#C7CDD6', textDecoration: 'none' }}
+            >
+              WhatsApp
+            </a>
+            <a href={`mailto:${EMAIL}`} style={{ color: '#C7CDD6', textDecoration: 'none' }}>
+              {EMAIL}
+            </a>
+            <span>{ADDRESS.full}</span>
+            <span>{HOURS}</span>
+            <a
+              href={mapsSearchUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#3fa9f5', textDecoration: 'none' }}
+            >
+              Open address search in Google Maps
+            </a>
+          </address>
+        </section>
+
+        <section
           aria-labelledby="mission-heading"
           className="grid-split grid-split-equal"
           style={{
@@ -164,7 +232,7 @@ export default function AboutPage() {
           <AssetSlot
             label="Company photograph pending"
             ariaLabel="Placeholder for AQ Enterprises office or workshop photograph"
-            hint={`Add a verified office or workshop photo to ${ASSET_DIRS.company}/`}
+            hint="Office or workshop photograph of the Mallapur base — not stock imagery."
           />
 
           <div>
@@ -230,8 +298,8 @@ export default function AboutPage() {
               Ready for verified photographs
             </h2>
             <p style={{ color: '#6B7484', fontSize: 15, maxWidth: 560, margin: '0 auto' }}>
-              We do not invent team members, qualifications, or headshots. When you supply approved
-              photos, they will appear here.
+              Photographs of our Mallapur team and workshop will appear here when available. We do
+              not invent team members, qualifications, or headshots.
             </p>
           </div>
 
@@ -239,19 +307,19 @@ export default function AboutPage() {
             {[
               {
                 label: 'Founder / lead',
-                hint: `Place file in ${ASSET_DIRS.team}/ with approved name & role`,
+                hint: 'Approved name, role, and headshot with consent.',
               },
               {
                 label: 'Installation technicians',
-                hint: 'Group or on-site install photos — no stock imagery',
+                hint: 'Group or on-site install photos — no stock imagery.',
               },
               {
                 label: 'Office photograph',
-                hint: `Mallapur office / workshop → ${ASSET_DIRS.company}/`,
+                hint: 'Mallapur office or workshop exterior or interior.',
               },
               {
                 label: 'Equipment / install detail',
-                hint: `Wiring, NVR, mount close-ups → ${ASSET_DIRS.projects}/`,
+                hint: 'Wiring, NVR, or mount close-ups from a real job.',
               },
             ].map((slot) => (
               <article key={slot.label}>
@@ -353,19 +421,7 @@ export default function AboutPage() {
                   ))}
                 </div>
               </>
-            ) : (
-              <p
-                style={{
-                  textAlign: 'center',
-                  color: '#4A5565',
-                  fontSize: 13,
-                  margin: '40px 0 0',
-                }}
-              >
-                Dealership certificates and ISO documents will be listed here once the client
-                supplies verified proof.
-              </p>
-            )}
+            ) : null}
           </div>
         </section>
 

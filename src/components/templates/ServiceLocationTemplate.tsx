@@ -258,7 +258,7 @@ export default function ServiceLocationTemplate({ page }: Props) {
         {project ? (
           <section aria-labelledby="project-heading">
             <h2 id="project-heading" style={h2}>
-              Verified project in this area
+              Published project in this area
             </h2>
             <p style={muted}>
               From our published project record — we do not invent additional case-study details here.

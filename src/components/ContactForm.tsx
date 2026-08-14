@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useId } from 'react';
 import { PROPERTY_TYPES } from '@/lib/constants';
+import { CTA_COPY } from '@/lib/business';
 import { submitLead } from '@/actions/submit-lead';
 import { getAttribution } from '@/lib/analytics/attribution';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
@@ -123,8 +124,7 @@ export default function ContactForm() {
         </div>
         <h3 style={{ color: '#F2F4F7', fontSize: 18, margin: '0 0 8px' }}>Request Received</h3>
         <p style={{ color: '#9BA5B4', fontSize: 14, margin: 0 }}>
-          Thank you. Your request has been received. Our team will contact you to discuss a site
-          survey or quotation.
+          {CTA_COPY.formSuccess}
         </p>
       </div>
     );

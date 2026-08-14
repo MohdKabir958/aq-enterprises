@@ -12,10 +12,10 @@ export const warehouseUppalProject = createVerifiedProject({
   duration: '5 Days',
   imageAlt: 'Warehouse CCTV system installation at a cold storage facility in Uppal, Hyderabad',
   summary:
-    'Verified cold-storage warehouse CCTV in Uppal — 28 Dahua cameras, completed in 5 days.',
+    'Published cold-storage warehouse CCTV in Uppal — 28 Dahua cameras, completed in 5 days.',
   overview: `This published project record covers CCTV at a cold storage warehouse in Uppal, Hyderabad.
 
-Verified facts: category Industrial, 28 cameras, Dahua brand, installation duration 5 days, facility type cold storage warehouse. Dock/aisle maps and environmental camera specs are not published.`,
+Recorded fields: category Industrial, 28 cameras, Dahua brand, installation duration 5 days, facility type cold storage warehouse. Dock/aisle maps and environmental camera specs are not published.`,
   relatedServices: [
     'warehouse-cctv-installation',
     'factory-cctv-surveillance',
@@ -25,6 +25,6 @@ Verified facts: category Industrial, 28 cameras, Dahua brand, installation durat
   relatedProjects: ['factory-nacharam', 'school-kompally'],
   seoTitle: 'Warehouse CCTV Project — Uppal | AQ Enterprises',
   seoDescription:
-    'Case study: cold storage warehouse CCTV in Uppal — 28 Dahua cameras, 5-day install. Verified industrial project from AQ Enterprises.',
+    'Case study: cold storage warehouse CCTV in Uppal — 28 Dahua cameras, 5-day install. Published industrial project from AQ Enterprises.',
   keywords: ['warehouse CCTV Uppal', 'cold storage CCTV Hyderabad', 'Dahua warehouse cameras'],
 });

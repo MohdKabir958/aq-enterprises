@@ -15,6 +15,7 @@ import {
   SUPPORTED_BRANDS,
   UNVERIFIED_STATS,
   VERIFIED_CERTIFICATIONS,
+  WARRANTY_PUBLIC_COPY,
   WHATSAPP_URL as BUSINESS_WHATSAPP,
 } from './business';
 
@@ -68,9 +69,9 @@ export const STATS = {
 
 /** Safe public trust labels — no fabricated metrics. */
 export const TRUST_HIGHLIGHTS = [
-  { label: 'Based in Mallapur, Hyderabad', detail: 'Single verified service base' },
+  { label: 'Based in Mallapur, Hyderabad', detail: 'Single physical service base' },
   { label: 'Site survey before quote', detail: 'No fixed package guesses' },
-  { label: 'Published project case studies', detail: 'Verified local installs only' },
+  { label: 'Hyderabad case studies', detail: 'Published project records' },
   { label: 'Hyderabad service area', detail: 'Homes, businesses & institutions' },
 ] as const;
 
@@ -194,8 +195,9 @@ export interface Testimonial {
 }
 
 /**
- * Project-linked feedback retained for case studies.
- * Not published as Google ratings. No star scores.
+ * Project-linked feedback retained as drafts for case studies.
+ * Not published on the website until the client confirms permission and accuracy.
+ * Do not treat these as Google reviews or star ratings.
  */
 export const TESTIMONIALS: Testimonial[] = [
   {
@@ -257,8 +259,7 @@ export const FAQ_DATA: FaqItem[] = [
   },
   {
     question: 'Is warranty included?',
-    answer:
-      'Warranty terms depend on the selected equipment and installation package. Hardware carries the applicable manufacturer warranty on your invoice; workmanship cover is confirmed in your quotation and handover notes.',
+    answer: WARRANTY_PUBLIC_COPY,
   },
   {
     question: 'How many cameras do I actually need?',

@@ -1,6 +1,6 @@
 import { createVerifiedProject } from './_factory';
 
-/** Verified from PROJECTS_DATA + matching TESTIMONIALS entry (Villa Owner, Banjara Hills). */
+/** Published project record from PROJECTS_DATA. Handover quote stays draft until the client confirms permission. */
 export const villaBanjaraProject = createVerifiedProject({
   sourceId: 'villa-banjara',
   slug: 'villa-banjara',
@@ -13,20 +13,14 @@ export const villaBanjaraProject = createVerifiedProject({
   duration: '2 Days',
   imageAlt: 'CCTV installation at a residential villa in Banjara Hills, Hyderabad',
   summary:
-    'Verified villa CCTV installation in Banjara Hills — 8 Hikvision cameras, completed in 2 days.',
+    'Published villa CCTV installation in Banjara Hills — 8 Hikvision cameras, completed in 2 days.',
   overview: `This published project record covers a residential villa CCTV installation in Banjara Hills, Hyderabad.
 
-Verified facts from our project list: category Home, 8 cameras, Hikvision brand, installation duration 2 days. Specific camera models, exact mounting points, and client brief details are not published in the source record, so they are omitted here rather than invented.`,
+Recorded fields from our project list: category Home, 8 cameras, Hikvision brand, installation duration 2 days. Specific camera models, exact mounting points, and client brief details are not published in the source record, so they are omitted here rather than invented.`,
   relatedServices: ['villa-cctv-installation', 'home-cctv-installation', 'ip-camera-installation', 'cctv-amc-maintenance'],
   relatedProjects: ['apartment-gachibowli', 'hospital-jubilee'],
-  testimonial: {
-    quote:
-      "Quick response every time we've needed support. Worth every rupee of the AMC.",
-    name: 'Priya Nair',
-    role: 'Villa Owner, Banjara Hills',
-  },
   seoTitle: 'Villa CCTV Project — Banjara Hills | AQ Enterprises',
   seoDescription:
-    'Case study: residential villa CCTV in Banjara Hills, Hyderabad — 8 Hikvision cameras, 2-day install. Verified project record from AQ Enterprises.',
+    'Case study: residential villa CCTV in Banjara Hills, Hyderabad — 8 Hikvision cameras, 2-day install. Published project record from AQ Enterprises.',
   keywords: ['villa CCTV Banjara Hills', 'Hikvision villa installation Hyderabad', 'residential CCTV project'],
 });

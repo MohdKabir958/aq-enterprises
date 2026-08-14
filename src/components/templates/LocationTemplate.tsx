@@ -370,7 +370,7 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
         {verifiedProjects.length > 0 ? (
           <section aria-labelledby="projects-heading">
             <h2 id="projects-heading" style={h2}>
-              Verified projects in this area
+              Published projects in this area
             </h2>
             <p style={muted}>
               These entries come from our published project list. We do not invent case studies for

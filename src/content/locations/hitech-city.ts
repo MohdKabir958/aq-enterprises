@@ -86,7 +86,7 @@ AMC is especially useful in Hitech City: dusty outdoor approaches, busy lobbies,
     heading: 'Why plan Hitech City security with AQ Enterprises',
     items: [
       'Office-first framing — IP CCTV, access, biometrics, and LAN — not a residential kit relabelled for a tower.',
-      'Verified project reference available for a tech-park office tower install in Hitech City.',
+      'Published project reference available for a tech-park office tower install in Hitech City.',
       'Coordination mindset for multi-floor and landlord-constrained sites.',
       'Adjacent locality links for Madhapur, Gachibowli, Kondapur, Financial District, and DLF Cyber City.',
       'Mallapur-based AMC and repair support after go-live.',

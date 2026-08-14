@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { PHONE } from '@/lib/constants';
+import { PHONE, PHONE_DISPLAY } from '@/lib/constants';
 import { getAllLocations } from '@/lib/content/getters';
 
 export const metadata: Metadata = {
@@ -59,9 +59,9 @@ export default function LocationsPage() {
             CCTV installation across Hyderabad
           </h1>
           <p style={{ color: '#9BA5B4', fontSize: 17, lineHeight: 1.65, maxWidth: 640, margin: 0 }}>
-            These pages cover neighborhoods and commercial corridors we serve from our Hyderabad base.
-            Each area page explains local security needs and links to relevant services — not separate
-            branch offices.
+            These pages cover neighborhoods and commercial corridors we serve from our Mallapur base
+            in Hyderabad. Each area page explains local security needs and links to relevant services
+            — not separate branch offices.
           </p>
         </section>
 
@@ -143,7 +143,7 @@ export default function LocationsPage() {
                 textDecoration: 'none',
               }}
             >
-              Call Now →
+              Call {PHONE_DISPLAY}
             </a>
             <Link
               href="/#contact"

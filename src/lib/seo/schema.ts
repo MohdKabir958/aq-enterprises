@@ -5,7 +5,7 @@
 
 import type { FAQ, SchemaInput, SchemaObject } from '@/types';
 import { siteConfig } from '@/lib/config';
-import { ADDRESS, PHONE } from '@/lib/constants';
+import { PHONE, postalAddressSchema } from '@/lib/business';
 import { generateCanonical } from './canonical';
 import {
   generateBreadcrumbSchema,
@@ -81,15 +81,8 @@ export function generateSchema(input: SchemaInput): SchemaObject | SchemaObject[
           '@type': 'LocalBusiness',
           name: siteConfig.name,
           url: siteConfig.url,
-          telephone: PHONE,
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`,
-            addressLocality: ADDRESS.city,
-            addressRegion: ADDRESS.region,
-            postalCode: ADDRESS.pincode,
-            addressCountry: 'IN',
-          },
+          telephone: PHONE.value,
+          address: postalAddressSchema(),
         },
         ...extra,
       });

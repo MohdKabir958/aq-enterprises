@@ -4,6 +4,8 @@
  *
  * Do not invent photographs. Place real files only after client approval.
  * Prefer next/image with explicit width/height or fill + sizes to avoid CLS.
+ *
+ * Filesystem checks live in `assets-server.ts` so this module stays client-safe.
  */
 
 export const IMAGE_ROOT = '/images' as const;
@@ -47,3 +49,39 @@ export const IMAGE_SIZES = {
   card: '(max-width: 768px) 100vw, 400px',
   thumb: '(max-width: 768px) 50vw, 200px',
 } as const;
+
+/** P0 company photographs the client must supply. */
+export const COMPANY_PHOTO_SLOTS = [
+  {
+    slug: 'office-exterior',
+    filename: 'office-exterior.webp',
+    alt: 'AQ Enterprises office or workshop exterior in Mallapur, Hyderabad',
+    caption: 'Mallapur base — storefront or workshop approach.',
+  },
+  {
+    slug: 'office-interior',
+    filename: 'office-interior.webp',
+    alt: 'Interior of the AQ Enterprises Mallapur office or workshop',
+    caption: 'Reception, counter, or workshop interior.',
+  },
+  {
+    slug: 'installation-team',
+    filename: 'installation-team.webp',
+    alt: 'AQ Enterprises installation team at a Hyderabad CCTV job (consent required)',
+    caption: 'On-site installation team. Written consent required.',
+  },
+] as const;
+
+/** P0/P1 team photographs — names and roles only with consent. */
+export const TEAM_PHOTO_SLOTS = [
+  {
+    slug: 'lead',
+    filename: 'lead.webp',
+    alt: 'AQ Enterprises founder or installation lead (name confirmed by client)',
+  },
+  {
+    slug: 'technicians',
+    filename: 'technicians.webp',
+    alt: 'AQ Enterprises CCTV installation technicians (consent required)',
+  },
+] as const;

@@ -158,6 +158,17 @@ export function getAllTestimonials(options?: { includeDrafts?: boolean }): Testi
   return options?.includeDrafts ? [...testimonials] : publishedList(testimonials);
 }
 
+/** Homepage / social proof — independently verified and explicitly published only. */
+export function getPublishedVerifiedTestimonials(): Testimonial[] {
+  return getAllTestimonials().filter(
+    (t) => t.status === 'published' && t.verificationStatus === 'verified',
+  );
+}
+
+export function getVerifiedTestimonialForProject(projectSlug: string): Testimonial | undefined {
+  return getPublishedVerifiedTestimonials().find((t) => t.projectSlug === projectSlug);
+}
+
 // ─── Service × Location (P1 allowlist) ───────────────────────────────────────
 
 export function getAllServiceLocations(options?: {

@@ -44,7 +44,7 @@ export default function BrandTemplate({ brand }: BrandTemplateProps) {
         </h1>
         {brand.authorized ? (
           <p style={{ color: '#3fa9f5', fontSize: 14, fontWeight: 500, margin: '0 0 16px' }}>
-            Verified authorized partner
+            Verified authorized dealer or partner
           </p>
         ) : (
           <p style={{ color: '#6B7484', fontSize: 13, margin: '0 0 16px' }}>

@@ -22,6 +22,7 @@
 
 import { useState, useEffect, useId, useTransition } from 'react';
 import { PHONE, PHONE_DISPLAY, WHATSAPP_URL, SERVICE_OPTIONS } from '@/lib/constants';
+import { CTA_COPY } from '@/lib/business';
 import { submitLead } from '@/actions/submit-lead';
 import { getAttribution } from '@/lib/analytics/attribution';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
@@ -548,8 +549,7 @@ export default function FloatingCTA() {
                   Request received
                 </h2>
                 <p style={{ color: '#9BA5B4', fontSize: 14, margin: 0 }}>
-                  Thank you. Your request has been received. Our team will contact you to discuss a
-                  site survey or quotation.
+                  {CTA_COPY.formSuccess}
                 </p>
               </div>
             )}
