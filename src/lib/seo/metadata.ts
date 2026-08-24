@@ -21,7 +21,9 @@ export function generateMetadata(input: MetadataInput): Metadata {
   const type = input.type ?? 'website';
 
   const metadata: Metadata = {
-    title: seo.title,
+    // Content SEO titles already include the brand where needed.
+    // Use `absolute` so the root layout template does not append "| AQ Enterprises" twice.
+    title: { absolute: seo.title },
     description: seo.description,
     keywords: seo.keywords,
     alternates: {

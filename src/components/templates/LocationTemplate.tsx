@@ -161,7 +161,7 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
   const secondaryLabel = location.cta.secondaryLabel ?? `Call ${PHONE_DISPLAY}`;
 
   return (
-    <PageShell active="home" breadcrumbs={breadcrumbs}>
+    <PageShell breadcrumbs={breadcrumbs}>
       {Array.isArray(schema) ? (
         schema.map((s, i) => <JsonLd key={i} schema={s} />)
       ) : (

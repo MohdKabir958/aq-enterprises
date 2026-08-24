@@ -24,7 +24,7 @@ export default function LocationsPage() {
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
-      <Header active="home" />
+      <Header />
       <div style={{ height: 74 }} aria-hidden="true" />
 
       <main>

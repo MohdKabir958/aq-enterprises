@@ -15,7 +15,7 @@ interface PageShellProps {
   children: ReactNode;
 }
 
-export default function PageShell({ active = 'home', breadcrumbs, children }: PageShellProps) {
+export default function PageShell({ active, breadcrumbs, children }: PageShellProps) {
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh', color: '#F2F4F7' }}>
       <Header active={active} />

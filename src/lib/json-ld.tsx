@@ -78,7 +78,7 @@ export function generateOrganizationSchema() {
       email: EMAIL.value,
       contactType: 'customer service',
       areaServed: SERVICE_AREA.primary,
-      availableLanguage: ['en', 'hi', 'te'],
+      availableLanguage: ['en'],
     },
     address: postalAddressSchema(),
     ...(sameAs.length ? { sameAs } : {}),

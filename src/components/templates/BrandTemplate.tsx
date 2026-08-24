@@ -24,7 +24,7 @@ export default function BrandTemplate({ brand }: BrandTemplateProps) {
   });
 
   return (
-    <PageShell active="home" breadcrumbs={breadcrumbs}>
+    <PageShell breadcrumbs={breadcrumbs}>
       {Array.isArray(schema) ? (
         schema.map((s, i) => <JsonLd key={i} schema={s} />)
       ) : (

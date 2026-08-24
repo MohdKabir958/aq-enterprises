@@ -54,7 +54,9 @@ import {
 } from '@/lib/json-ld';
 
 export const metadata: Metadata = {
-  title: 'AQ Enterprises — CCTV & Security Systems, Hyderabad',
+  title: {
+    absolute: 'AQ Enterprises — CCTV & Security Systems, Hyderabad',
+  },
   description:
     `CCTV and security installation for homes and businesses across Hyderabad. Site survey before quote. Call ${PHONE_DISPLAY}. Based in Mallapur.`,
   alternates: {

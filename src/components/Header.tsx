@@ -28,11 +28,11 @@ import { NAV_ITEMS, PHONE, PHONE_DISPLAY, type NavKey } from '@/lib/constants';
 import { BUSINESS_NAME } from '@/lib/business';
 
 interface HeaderProps {
-  /** The nav key of the currently active page. Defaults to 'home'. */
+  /** The nav key of the currently active page. Omit on pages without a matching nav item. */
   active?: NavKey;
 }
 
-export default function Header({ active = 'home' }: HeaderProps) {
+export default function Header({ active }: HeaderProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
