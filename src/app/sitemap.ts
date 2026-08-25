@@ -5,11 +5,11 @@ import { getAllContentPaths } from '@/lib/content/getters';
 export default function sitemap(): MetadataRoute.Sitemap {
   const today = new Date().toISOString().split('T')[0];
 
-  const staticRoutes = ['', '/about', '/services', '/projects', '/locations', '/blog', '/contact'].map((route) => ({
+  const staticRoutes = ['', '/about', '/services', '/commercial-internet-hyderabad', '/projects', '/locations', '/blog', '/contact'].map((route) => ({
     url: `${siteConfig.url}${route}`,
     lastModified: today,
     changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1 : route === '/contact' ? 0.9 : 0.8,
+    priority: route === '' ? 1 : route === '/contact' || route === '/commercial-internet-hyderabad' ? 0.9 : 0.8,
   }));
 
   const dynamicRoutes = getAllContentPaths().map((entry) => ({

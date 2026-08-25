@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/commercial-internet',
+        destination: '/commercial-internet-hyderabad',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [{ type: 'host', value: 'aqenterprises.in' }],
         destination: 'https://www.aqenterprises.in/:path*',

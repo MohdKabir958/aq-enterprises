@@ -424,11 +424,20 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
               Visual reference
             </h2>
             <p style={muted}>
-              Placeholders only — not labeled as completed AQ Enterprises project photography.
+              Site coverage considerations for {location.name}.
             </p>
-            {location.imagePlaceholders.map((img) => (
-              <ImagePlaceholderBlock key={img.id} image={img} />
-            ))}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gap: 20,
+                marginTop: 20,
+              }}
+            >
+              {location.imagePlaceholders.map((img) => (
+                <ImagePlaceholderBlock key={img.id} image={img} />
+              ))}
+            </div>
           </section>
         ) : null}
 

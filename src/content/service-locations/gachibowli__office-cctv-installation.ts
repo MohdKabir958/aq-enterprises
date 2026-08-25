@@ -5,11 +5,11 @@ export const gachibowliOfficeCctv = createServiceLocation({
   locationSlug: 'gachibowli',
   locationName: 'Gachibowli',
   serviceName: 'Office CCTV Installation',
-  h1: 'Office CCTV Installation in Gachibowli',
+  h1: 'Office & Commercial CCTV Installation in Gachibowli, Hyderabad',
   summary:
-    'Office CCTV for Gachibowli’s IT-adjacent workplaces — reception, floors, and after-hours doors planned as commercial surveillance, not apartment society common-area coverage.',
-  heroEyebrow: 'Gachibowli × Office CCTV',
-  heroHeadline: 'IT-adjacent office CCTV in Gachibowli',
+    'Commercial and office CCTV installation in Gachibowli — IP dome cameras, reception coverage, server room security, and structured cabling for IT workplaces and commercial floors.',
+  heroEyebrow: 'Gachibowli · Commercial Security',
+  heroHeadline: 'Office & Commercial CCTV Installation in Gachibowli',
   heroSubheadline:
     'AQ Enterprises designs workplace cameras for commercial floors near the ORR mix — distinct from gated-society apartment CCTV in the same neighbourhood.',
   introduction: `Office CCTV in Gachibowli is an IT-adjacent workplace problem before it is a society-gate problem. The area mixes high-rise apartments, gated communities, and commercial floors near the ORR — so it is easy to confuse a leased office brief with the apartment common-area work many residents ask for. This page is only about offices: reception, corridors, meeting approaches, restricted rooms, and after-hours doors on commercial plates. It is not Lakeview-style society CCTV, not flat-interior cameras, and not a campus boom-gate stack like Hitech City or DLF Cyber City.
@@ -101,16 +101,21 @@ Monsoon and outdoor mounts appear only when the office controls a genuine extern
     'cctv-amc-maintenance',
   ],
   relatedLocations: ['hitech-city', 'financial-district', 'madhapur'],
-  seoTitle: 'Office CCTV Installation in Gachibowli | AQ Enterprises',
+  seoTitle: 'CCTV Installation in Gachibowli Hyderabad — Office & Commercial Security | AQ Enterprises',
   seoDescription:
-    'Office CCTV for Gachibowli IT-adjacent workplaces — reception, floors, and after-hours doors. Distinct from apartment society coverage. Survey-led from AQ Enterprises.',
+    'Professional office & commercial CCTV installation in Gachibowli, Hyderabad. IP dome cameras, server room security, access control, structured cabling & 24/7 AMC. Free site survey.',
   keywords: [
+    'CCTV installation Gachibowli',
+    'CCTV installation in Gachibowli Hyderabad',
     'office CCTV Gachibowli',
-    'IT office cameras Gachibowli',
-    'workplace CCTV Hyderabad',
-    'Gachibowli commercial surveillance',
+    'commercial CCTV installation Gachibowli',
+    'CCTV camera dealers Gachibowli',
+    'security camera installation Gachibowli',
+    'IP camera installation Gachibowli',
+    'office surveillance systems Hyderabad',
+    'CCTV installation near Financial District Gachibowli',
   ],
-  ctaHeading: 'Plan office CCTV for your Gachibowli workplace',
+  ctaHeading: 'Plan commercial CCTV for your Gachibowli workplace',
   ctaBody:
-    'Request a free site survey. We map reception, corridors, and restricted rooms as a commercial brief — not a residential society plan — and leave you with accounts your managers can use.',
+    'Request a free on-site survey. We map reception, corridors, server rooms, and exits for commercial offices across Gachibowli and the ORR IT corridor.',
 });

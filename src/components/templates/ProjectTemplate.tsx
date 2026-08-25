@@ -11,6 +11,7 @@ import { siteConfig } from '@/lib/config';
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
 import { PROJECT_PHOTO_HEIGHT, PROJECT_PHOTO_WIDTH } from '@/lib/project-photos';
+import Image from 'next/image';
 import type { ImagePlaceholder, Project } from '@/types';
 import TestimonialCard from '@/components/TestimonialCard';
 import VerifiedImage from '@/components/VerifiedImage';
@@ -63,28 +64,53 @@ function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
   const resolved = resolvePublicSrc(image.src);
   if (resolved) {
     return (
-      <VerifiedImage
-        src={resolved}
-        alt={image.alt}
-        width={image.width ?? PROJECT_PHOTO_WIDTH}
-        height={image.height ?? PROJECT_PHOTO_HEIGHT}
-        sizes={IMAGE_SIZES.content}
-        caption={image.caption}
-      />
+      <figure
+        style={{
+          margin: 0,
+          background: '#12151B',
+          border: '1px solid #1B1F27',
+          borderRadius: 14,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+        }}
+      >
+        <div style={{ position: 'relative', width: '100%', height: 210, overflow: 'hidden', background: '#0A0C10' }}>
+          <Image
+            src={resolved}
+            alt={image.alt}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+            style={{ objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+        <figcaption style={{ padding: '16px 18px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <p style={{ color: '#F2F4F7', fontSize: 14, fontWeight: 600, margin: '0 0 4px' }}>
+            {image.label || image.caption}
+          </p>
+          {image.caption && image.label !== image.caption ? (
+            <p style={{ color: '#8892A0', fontSize: 12, lineHeight: 1.5, margin: 0 }}>
+              {image.caption}
+            </p>
+          ) : null}
+        </figcaption>
+      </figure>
     );
   }
 
   return (
     <figure
       style={{
-        margin: '16px 0',
+        margin: 0,
         border: '1px dashed #2A3140',
         background: '#12151c',
-        minHeight: 160,
+        borderRadius: 14,
+        minHeight: 180,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 24,
+        padding: 20,
         textAlign: 'center',
       }}
       aria-label={`Photo not yet available: ${image.alt}`}
@@ -93,23 +119,17 @@ function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
         <p
           style={{
             color: '#6B7484',
-            fontSize: 12,
+            fontSize: 11,
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
-            margin: '0 0 8px',
+            margin: '0 0 6px',
           }}
         >
-          Photo not yet available
+          Photo pending
         </p>
-        <p style={{ color: '#9AA3B2', fontSize: 14, margin: 0, maxWidth: 420 }}>
-          {image.label} — planned installation photograph, not a stock or generated image.
+        <p style={{ color: '#9AA3B2', fontSize: 13, margin: 0 }}>
+          {image.label}
         </p>
-        {image.caption ? (
-          <p style={{ color: '#6B7484', fontSize: 13, margin: '8px 0 0', maxWidth: 420 }}>
-            {image.caption}
-          </p>
-        ) : null}
-        <p style={{ color: '#4A5565', fontSize: 12, margin: '8px 0 0' }}>Planned ALT: {image.alt}</p>
       </figcaption>
     </figure>
   );
@@ -207,14 +227,31 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
             {project.summary}
           </p>
           {heroSrc ? (
-            <div style={{ margin: '20px 0 8px', maxWidth: 900 }}>
-              <VerifiedImage
+            <div
+              style={{
+                margin: '28px 0 16px',
+                maxWidth: 860,
+                borderRadius: 14,
+                overflow: 'hidden',
+                border: '1px solid #1B1F27',
+                background: '#12151B',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+              }}
+            >
+              <Image
                 src={heroSrc}
                 alt={project.imageAlt || project.name}
-                width={PROJECT_PHOTO_WIDTH}
-                height={PROJECT_PHOTO_HEIGHT}
+                width={860}
+                height={460}
                 sizes={IMAGE_SIZES.hero}
                 priority
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: 460,
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
               />
             </div>
           ) : null}
@@ -229,9 +266,7 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
             }}
           >
             <strong style={{ color: '#9AA3B2', fontWeight: 600 }}>Published project record.</strong>{' '}
-            Camera counts, brand, duration, and location below come from our project list.
-            Gallery blocks are labeled until real installation photographs are supplied — they are
-            not stock or generated images.
+            Hardware specification, camera counts, duration, and site details from our installation record.
           </p>
         </header>
 
@@ -317,13 +352,20 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
               Project gallery
             </h2>
             <p style={muted}>
-              Real installation photography has not been supplied for this case study yet. Each block
-              below is an explicit placeholder with a planned filename and ALT — not a photograph of
-              the completed install.
+              Site views and installation coverage for this project.
             </p>
-            {project.gallery.map((img) => (
-              <ImagePlaceholderBlock key={img.id} image={img} />
-            ))}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: 24,
+                marginTop: 20,
+              }}
+            >
+              {project.gallery.map((img) => (
+                <ImagePlaceholderBlock key={img.id} image={img} />
+              ))}
+            </div>
           </section>
         ) : null}
 
