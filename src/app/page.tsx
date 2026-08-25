@@ -123,12 +123,24 @@ export default function HomePage() {
                 fontSize: 'clamp(34px,4.2vw,54px)',
                 lineHeight: 1.08,
                 color: '#F2F4F7',
-                margin: '0 0 20px',
+                margin: '0 0 12px',
                 letterSpacing: '-0.01em',
               }}
             >
-              See everything on your property. Miss nothing that matters.
+              CCTV Installation in Hyderabad — Homes, Offices & Factories
             </h1>
+            <p
+              style={{
+                fontFamily: "var(--font-space), sans-serif",
+                fontSize: 'clamp(18px,1.8vw,22px)',
+                color: '#9BA5B4',
+                margin: '0 0 16px',
+                fontStyle: 'italic',
+                lineHeight: 1.3,
+              }}
+            >
+              See everything on your property. Miss nothing that matters.
+            </p>
             <p style={{ color: '#9BA5B4', fontSize: 17, lineHeight: 1.6, maxWidth: 480, margin: '0 0 32px' }}>
               We design, install and maintain CCTV and access-control systems for homes, offices and
               industrial sites across Hyderabad — done right the first time.

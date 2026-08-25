@@ -17,8 +17,7 @@ export const siteConfig = {
   description:
     'CCTV and security system installation for homes, businesses, and institutions across Hyderabad — based in Mallapur.',
   url: WEBSITE_URL,
-  /** Replace when a real OG image is supplied under /public/images/company/ */
-  ogImage: `${WEBSITE_URL}/assets/aq-logo.png`,
+  ogImage: `${WEBSITE_URL}/assets/og-image.jpg`,
   logo: `${WEBSITE_URL}/assets/aq-logo.png`,
   /** Operational socials only — fake Facebook URL removed */
   socials: {

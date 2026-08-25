@@ -25,7 +25,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ADDRESS, EMAIL, HOURS, PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
-import { BUSINESS_NAME, mapsSearchUrl } from '@/lib/business';
+import { SOCIAL_PROFILES, BUSINESS_NAME, mapsSearchUrl } from '@/lib/business';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -103,7 +103,7 @@ export default function Footer() {
             <Link href="/locations" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Locations</Link>
             <Link href="/projects" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Projects</Link>
             <Link href="/blog" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Blog</Link>
-            <Link href="/#contact" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Contact</Link>
+            <Link href="/contact" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Contact</Link>
           </nav>
         </div>
 
@@ -181,6 +181,29 @@ export default function Footer() {
               style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}
             >
               Maps (address search)
+            </a>
+            <a
+              href={SOCIAL_PROFILES.justdial.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View AQ Enterprises on JustDial"
+              style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <span
+                style={{
+                  background: '#FF6600',
+                  color: '#fff',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: '1px 5px',
+                  borderRadius: 3,
+                  letterSpacing: '0.04em',
+                  lineHeight: 1.5,
+                }}
+              >
+                JD
+              </span>
+              Reviews on JustDial
             </a>
           </address>
         </div>

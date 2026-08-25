@@ -102,16 +102,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          * can use `import 'three'` without a bundler.
          * Must be placed before any <script type="module"> executes.
          */}
+        {/*
+         * Import map for camera-scene.js (served from /public).
+         * Three.js is self-hosted under /vendor/three/ (copied from node_modules at build time)
+         * so there is NO external CDN dependency on page load — good for LCP / CWV.
+         */}
         <script
           type="importmap"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               imports: {
-                three: 'https://unpkg.com/three@0.184.0/build/three.module.js',
+                three: '/vendor/three/three.module.js',
                 'three/addons/environments/RoomEnvironment.js':
-                  'https://unpkg.com/three@0.184.0/examples/jsm/environments/RoomEnvironment.js',
+                  '/vendor/three/addons/environments/RoomEnvironment.js',
                 'three/addons/controls/OrbitControls.js':
-                  'https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js',
+                  '/vendor/three/addons/controls/OrbitControls.js',
               },
             }),
           }}

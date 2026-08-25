@@ -47,7 +47,7 @@ export const NAV_ITEMS = [
   { key: 'services', label: 'Services', href: '/services' },
   { key: 'projects', label: 'Projects', href: '/projects' },
   { key: 'blog', label: 'Blog', href: '/blog' },
-  { key: 'contact', label: 'Contact', href: '/#contact' },
+  { key: 'contact', label: 'Contact', href: '/contact' },
 ] as const;
 
 export type NavKey = (typeof NAV_ITEMS)[number]['key'];

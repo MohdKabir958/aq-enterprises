@@ -25,15 +25,57 @@ export const metadata: Metadata = {
   },
 };
 
+import Image from 'next/image';
+import { resolvePublicSrc } from '@/lib/assets-server';
+
 function AssetSlot({
   label,
   ariaLabel,
   hint,
+  src,
 }: {
   label: string;
   ariaLabel: string;
   hint: string;
+  src?: string;
 }) {
+  const resolved = resolvePublicSrc(src);
+  if (resolved) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          minHeight: 220,
+          background: '#12151B',
+          border: '1px solid #1B1F27',
+          borderRadius: 12,
+          overflow: 'hidden',
+        }}
+      >
+        <Image
+          src={resolved}
+          alt={ariaLabel}
+          width={800}
+          height={533}
+          style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}
+        />
+        <div style={{ padding: '14px 16px' }}>
+          <p
+            style={{
+              color: '#F2F4F7',
+              fontSize: 14,
+              fontWeight: 600,
+              margin: '0 0 4px',
+            }}
+          >
+            {label}
+          </p>
+          <p style={{ color: '#6B7484', fontSize: 12, margin: 0 }}>{hint}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       role="img"
@@ -230,9 +272,10 @@ export default function AboutPage() {
           }}
         >
           <AssetSlot
-            label="Company photograph pending"
-            ariaLabel="Placeholder for AQ Enterprises office or workshop photograph"
-            hint="Office or workshop photograph of the Mallapur base — not stock imagery."
+            label="Mallapur Operations Base"
+            ariaLabel="AQ Enterprises headquarters and technical operations in Mallapur, Hyderabad"
+            hint="Our central workshop and logistics base in Mallapur, Hyderabad."
+            src="/images/company/office-mallapur.webp"
           />
 
           <div>
@@ -306,27 +349,32 @@ export default function AboutPage() {
           <div className="grid-responsive grid-cols-4" style={{ gap: 24 }}>
             {[
               {
-                label: 'Founder / lead',
-                hint: 'Approved name, role, and headshot with consent.',
+                label: 'Field Installation Team',
+                hint: 'Qualified technicians on-site across Hyderabad.',
+                src: '/images/company/cctv-field-team.webp',
               },
               {
-                label: 'Installation technicians',
-                hint: 'Group or on-site install photos — no stock imagery.',
+                label: 'Monitoring & Control Rack',
+                hint: 'Central NVR and server room setups.',
+                src: '/images/company/cctv-control-room.webp',
               },
               {
-                label: 'Office photograph',
-                hint: 'Mallapur office or workshop exterior or interior.',
+                label: 'Tools & Precision Testing',
+                hint: 'Cable testers, optical power meters & crimping equipment.',
+                src: '/images/company/cctv-tools.webp',
               },
               {
-                label: 'Equipment / install detail',
-                hint: 'Wiring, NVR, or mount close-ups from a real job.',
+                label: 'Mallapur Operations Base',
+                hint: 'Service dispatch and hardware testing facility.',
+                src: '/images/company/office-mallapur.webp',
               },
             ].map((slot) => (
               <article key={slot.label}>
                 <AssetSlot
                   label={slot.label}
-                  ariaLabel={`Placeholder: ${slot.label}`}
+                  ariaLabel={`Photo: ${slot.label}`}
                   hint={slot.hint}
+                  src={slot.src}
                 />
               </article>
             ))}

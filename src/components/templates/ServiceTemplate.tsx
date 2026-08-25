@@ -6,6 +6,9 @@ import { serviceBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForService } from '@/lib/links/related';
 import { getFaqsByIds, getServiceLocationsForService } from '@/lib/content/getters';
 import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
+import { IMAGE_SIZES } from '@/lib/assets';
+import { resolvePublicSrc } from '@/lib/assets-server';
+import VerifiedImage from '@/components/VerifiedImage';
 import type { FAQ, ImagePlaceholder, Service } from '@/types';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
@@ -72,7 +75,25 @@ function BulletList({ items }: { items: string[] }) {
   );
 }
 
-function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
+function ImagePlaceholderBlock({ image, slug }: { image: ImagePlaceholder; slug?: string }) {
+  const customSrc = image.src || (slug ? `/images/services/${slug}.webp` : undefined);
+  const resolved = resolvePublicSrc(customSrc);
+  if (resolved) {
+    return (
+      <div style={{ margin: '24px 0', borderRadius: 12, overflow: 'hidden', border: '1px solid #1B1F27' }}>
+        <VerifiedImage
+          src={resolved}
+          alt={image.alt}
+          width={1200}
+          height={800}
+          sizes={IMAGE_SIZES.content}
+          caption={image.label}
+          style={{ height: 'auto', maxHeight: 420, objectFit: 'cover' }}
+        />
+      </div>
+    );
+  }
+
   return (
     <figure
       style={{
@@ -86,6 +107,7 @@ function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
         justifyContent: 'center',
         padding: 24,
         textAlign: 'center',
+        borderRadius: 12,
       }}
       aria-label={image.alt}
     >
@@ -193,7 +215,7 @@ export default function ServiceTemplate({ service }: ServiceTemplateProps) {
               WhatsApp Us
             </Link>
           </div>
-          {service.hero.image ? <ImagePlaceholderBlock image={service.hero.image} /> : null}
+          {service.hero.image ? <ImagePlaceholderBlock image={service.hero.image} slug={service.slug} /> : null}
         </header>
 
         {/* Introduction */}

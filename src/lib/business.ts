@@ -138,6 +138,11 @@ export const SOCIAL_PROFILES = {
     url: WHATSAPP_URL.value,
     status: WHATSAPP_URL.status,
   },
+  justdial: {
+    url: 'https://www.justdial.com/Hyderabad/Aq-Enterprises-Mallapur/040PXX40-XX40-240328220045-N1R5_BZDET',
+    status: 'verified' as VerificationStatus,
+    notes: 'Verified JustDial listing for AQ Enterprises, Mallapur, Hyderabad.',
+  },
   facebook: {
     url: '',
     status: 'unverified' as VerificationStatus,
@@ -207,6 +212,7 @@ export const hoursDisplay = () => HOURS_DISPLAY.value;
 export function schemaSameAs(): string[] {
   const urls: string[] = [];
   const candidates = [
+    SOCIAL_PROFILES.justdial,
     SOCIAL_PROFILES.googleBusinessProfile,
     SOCIAL_PROFILES.facebook,
     SOCIAL_PROFILES.instagram,
