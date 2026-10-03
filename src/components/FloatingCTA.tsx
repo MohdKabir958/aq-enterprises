@@ -96,6 +96,8 @@ export default function FloatingCTA() {
   useEffect(() => {
     if (!quoteOpen) return;
 
+    const currentTrigger = triggerRef.current;
+
     // 1. Initial focus: move focus inside the dialog
     const focusTimer = setTimeout(() => {
       if (nameInputRef.current) {
@@ -146,7 +148,7 @@ export default function FloatingCTA() {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = originalOverflow;
       // Focus restoration: return focus to the trigger button that launched the modal
-      triggerRef.current?.focus();
+      currentTrigger?.focus();
     };
   }, [quoteOpen]);
 
