@@ -227,13 +227,8 @@ export default function Footer() {
           © {currentYear} {BUSINESS_NAME}. All rights reserved.
         </span>
         <div style={{ display: 'flex', gap: 20 }}>
-          {/*
-           * Privacy Policy and Terms pages are planned for Phase 3.
-           * Using <span> until dedicated pages exist is intentional — avoids
-           * broken links. These should be replaced with <Link> once /privacy and /terms are created in future phases.
-           */}
-          <span style={{ color: '#4B5261', fontSize: 13 }}>Privacy Policy</span>
-          <span style={{ color: '#4B5261', fontSize: 13 }}>Terms &amp; Conditions</span>
+          <Link href="/privacy" style={{ color: '#4B5261', fontSize: 13 }}>Privacy Policy</Link>
+          <Link href="/terms" style={{ color: '#4B5261', fontSize: 13 }}>Terms &amp; Conditions</Link>
         </div>
       </div>
     </footer>

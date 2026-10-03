@@ -53,6 +53,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.9,
     },
+    {
+      url: `${siteConfig.url}/privacy`,
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+    },
+    {
+      url: `${siteConfig.url}/terms`,
+      changeFrequency: 'yearly' as const,
+      priority: 0.3,
+    },
   ];
 
   const dynamicRoutes: MetadataRoute.Sitemap = getAllContentPaths().map((entry) => {
