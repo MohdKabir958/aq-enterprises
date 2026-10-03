@@ -177,8 +177,10 @@ export default function ServiceLocationTemplate({ page }: Props) {
             >
               {primaryLabel}
             </Link>
-            <Link
+            <a
               href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 display: 'inline-block',
                 border: '1px solid #2A3140',
@@ -190,8 +192,8 @@ export default function ServiceLocationTemplate({ page }: Props) {
               }}
             >
               WhatsApp
-            </Link>
-            <Link
+            </a>
+            <a
               href={`tel:${PHONE}`}
               style={{
                 display: 'inline-block',
@@ -204,7 +206,7 @@ export default function ServiceLocationTemplate({ page }: Props) {
               }}
             >
               Call {PHONE_DISPLAY}
-            </Link>
+            </a>
           </div>
         </header>
 

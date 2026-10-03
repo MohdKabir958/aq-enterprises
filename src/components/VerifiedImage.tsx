@@ -3,7 +3,9 @@ import Image from 'next/image';
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
 
-type VerifiedImageProps = {
+export type AssetProvenance = 'client_verified' | 'provisional_illustration' | 'system_asset';
+
+export type VerifiedImageProps = {
   src?: string;
   alt: string;
   width: number;
@@ -12,10 +14,23 @@ type VerifiedImageProps = {
   priority?: boolean;
   caption?: string;
   style?: CSSProperties;
+  /**
+   * Provenance of the image asset:
+   * - `client_verified`: Authenticated on-site client photography approved for publication.
+   * - `provisional_illustration`: Illustrative or diagrammatic asset pending client photo replacement.
+   * - `system_asset`: Built-in site graphic (e.g. logo, system diagram).
+   */
+  provenance?: AssetProvenance;
 };
 
 /**
- * Renders next/image only when the file exists under /public.
+ * Safe image renderer with technical availability check and provenance tracking.
+ * Only mounts `<Image>` if the asset file exists under `/public` on disk,
+ * preventing broken image icons or 404 image requests.
+ *
+ * NOTE: Filesystem presence verifies technical availability, NOT client authenticity.
+ * Authenticity is tracked via the `provenance` property.
+ *
  * Server Component — do not import from client components.
  */
 export default function VerifiedImage({
@@ -27,6 +42,7 @@ export default function VerifiedImage({
   priority = false,
   caption,
   style,
+  provenance: _provenance = 'provisional_illustration',
 }: VerifiedImageProps) {
   const resolved = resolvePublicSrc(src);
   if (!resolved) return null;
@@ -50,3 +66,6 @@ export default function VerifiedImage({
     </figure>
   );
 }
+
+/** Semantic alias for clarity across non-verified assets */
+export { VerifiedImage as SafeImage };

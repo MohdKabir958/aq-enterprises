@@ -4,70 +4,44 @@
  * @file CameraScene.tsx
  * @description Renders a 3D interactive CCTV camera using Three.js.
  *
- * This component acts as a bridge between React and the vanilla Three.js
- * implementation located in `/public/camera-scene.js`.
- *
  * ARCHITECTURE:
- * We cannot bundle the vanilla Three.js script directly via Next.js imports
- * because it is written as a browser ES Module relying on CDN import maps.
- * Instead, we dynamically inject a <script type="module"> tag on mount,
- * wait for it to expose its `mountCameraScene` function to the window,
- * and then invoke it, passing the React canvas ref.
+ * Directly mounts Three.js via `camera-scene-core` inside the canvas ref.
+ * Code-split automatically via `CameraSceneLoader` (ssr: false) so Three.js
+ * is only downloaded on the homepage hero route.
  *
  * ACCESSIBILITY:
- * The canvas is marked as presentation/decorative. A screen-reader only
- * description is added to explain what the visual represents.
+ * The canvas is marked as presentation/decorative with an accessible role="img"
+ * and descriptive aria-label explaining what the interactive visual represents.
  */
 
 import { useEffect, useRef } from 'react';
+import { mountCameraScene, type CameraSceneInstance } from './camera-scene-core';
 
 export default function CameraScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Using 'any' for apiRef as the external script doesn't provide TypeScript types
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const apiRef = useRef<any>(null);
+  const instanceRef = useRef<CameraSceneInstance | null>(null);
 
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
     let mounted = true;
 
-    // Dynamically load camera-scene.js from the public directory
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.textContent = `
-      import('/camera-scene.js').then((mod) => {
-        window.__cameraSceneMount = mod.mountCameraScene;
-        window.dispatchEvent(new CustomEvent('cameraSceneReady'));
-      }).catch(err => console.error("Failed to load 3D scene:", err));
-    `;
-    document.head.appendChild(script);
-
-    const onReady = () => {
-      if (!mounted || !canvasRef.current) return;
-      
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const mountFn = (window as any).__cameraSceneMount;
-      
-      if (typeof mountFn === 'function') {
-        // Pass the canvas element and the accent color (cyan)
-        mountFn(canvasRef.current, { accentHex: 0x3fa9f5 })
-          .then((api: { dispose: () => void }) => {
-            if (mounted) {
-              apiRef.current = api;
-            } else {
-              api.dispose();
-            }
-          })
-          .catch((err: Error) => console.error('Error mounting 3D scene:', err));
+    try {
+      const instance = mountCameraScene(canvas, { accentHex: 0x3fa9f5 });
+      if (mounted) {
+        instanceRef.current = instance;
+      } else {
+        instance.dispose();
       }
-    };
+    } catch (err) {
+      console.error('Failed to initialize 3D scene:', err);
+    }
 
-    window.addEventListener('cameraSceneReady', onReady);
-
-    // Cleanup: remove listeners and dispose of the WebGL context to prevent memory leaks
     return () => {
       mounted = false;
-      window.removeEventListener('cameraSceneReady', onReady);
-      apiRef.current?.dispose();
+      instanceRef.current?.dispose();
+      instanceRef.current = null;
     };
   }, []);
 
@@ -82,7 +56,7 @@ export default function CameraScene() {
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: 'grab' }}
         aria-hidden="true"
       />
-      
+
       {/* ── Drag Hint ──────────────────────────────────────────────── */}
       <div
         style={{

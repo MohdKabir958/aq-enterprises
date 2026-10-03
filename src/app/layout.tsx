@@ -4,19 +4,18 @@
  *
  * Responsibilities:
  *   - Sets the HTML shell (`<html>`, `<head>`, `<body>`)
- *   - Injects the Three.js import-map needed by camera-scene.js (served from /public)
  *   - Renders the global FloatingCTA (sticky WhatsApp + quote modal, present on all pages)
- *   - Applies global CSS including font import and keyframe animations
+ *   - Injects Analytics tracking component
+ *   - Applies global CSS including font variables and keyframe animations
  *
  * WHY HEADER/FOOTER ARE NOT HERE:
  * The active nav item differs per page (e.g. "home", "about", "services").
  * Each page renders <Header active="..."> directly so the correct nav link is highlighted.
  * Footer is also rendered per-page to keep page components self-contained.
  *
- * IMPORT MAP NOTE:
- * The importmap allows camera-scene.js (a plain ES module in /public) to import
- * from `three` and `three/addons/...` without a build step.
- * This must live in <head> before any module script executes.
+ * THREE.JS NOTE:
+ * Three.js is route-scoped exclusively to the homepage hero via CameraSceneLoader
+ * with ssr: false, keeping non-homepage bundles lightweight and fast.
  */
 
 import type { Metadata } from 'next';
@@ -94,34 +93,7 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${ibmPlex.variable}`}>
-      <head>
-
-        {/*
-         * Import map for camera-scene.js (served from /public).
-         * Maps bare module specifiers to CDN URLs so the plain ES module
-         * can use `import 'three'` without a bundler.
-         * Must be placed before any <script type="module"> executes.
-         */}
-        {/*
-         * Import map for camera-scene.js (served from /public).
-         * Three.js is self-hosted under /vendor/three/ (copied from node_modules at build time)
-         * so there is NO external CDN dependency on page load — good for LCP / CWV.
-         */}
-        <script
-          type="importmap"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              imports: {
-                three: '/vendor/three/three.module.js',
-                'three/addons/environments/RoomEnvironment.js':
-                  '/vendor/three/addons/environments/RoomEnvironment.js',
-                'three/addons/controls/OrbitControls.js':
-                  '/vendor/three/addons/controls/OrbitControls.js',
-              },
-            }),
-          }}
-        />
-      </head>
+      <head />
       <body>
         {/* Page-specific content: each page renders its own <Header> and <Footer> */}
         {children}

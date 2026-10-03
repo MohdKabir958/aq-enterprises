@@ -7,6 +7,7 @@ import { submitLead } from '@/actions/submit-lead';
 import { getAttribution } from '@/lib/analytics/attribution';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
+import { validateName, validatePhone } from '@/lib/validation/lead';
 
 interface ContactFormState {
   name: string;
@@ -41,12 +42,11 @@ export default function ContactForm() {
     e.preventDefault();
 
     const newErrors: FormErrors = {};
-    if (!form.name.trim()) newErrors.name = 'Please enter your name.';
-    if (!form.phone.trim()) {
-      newErrors.phone = 'Please enter your phone number.';
-    } else if (!/^[6-9]\d{9}$/.test(form.phone.replace(/[\s\-+()]/g, ''))) {
-      newErrors.phone = 'Valid 10-digit number required.';
-    }
+    const nameCheck = validateName(form.name);
+    if (!nameCheck.valid) newErrors.name = nameCheck.error;
+
+    const phoneCheck = validatePhone(form.phone);
+    if (!phoneCheck.valid) newErrors.phone = phoneCheck.error;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);

@@ -103,7 +103,7 @@ Monsoon and outdoor mounts appear only when the office controls a genuine extern
   relatedLocations: ['hitech-city', 'financial-district', 'madhapur'],
   seoTitle: 'CCTV Installation in Gachibowli Hyderabad — Office & Commercial Security | AQ Enterprises',
   seoDescription:
-    'Professional office & commercial CCTV installation in Gachibowli, Hyderabad. IP dome cameras, server room security, access control, structured cabling & 24/7 AMC. Free site survey.',
+    'Professional office & commercial CCTV installation in Gachibowli, Hyderabad. IP dome cameras, server room security, access control, structured cabling & AMC maintenance plans. Free site survey.',
   keywords: [
     'CCTV installation Gachibowli',
     'CCTV installation in Gachibowli Hyderabad',

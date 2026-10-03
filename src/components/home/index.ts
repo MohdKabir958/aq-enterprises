@@ -1,0 +1,9 @@
+export { default as HeroSection } from './HeroSection';
+export { default as TrustHighlightsSection } from './TrustHighlightsSection';
+export { default as ServicesSummarySection } from './ServicesSummarySection';
+export { default as BrandsSection } from './BrandsSection';
+export { default as HowItWorksSection } from './HowItWorksSection';
+export { default as WhyChooseUsSection } from './WhyChooseUsSection';
+export { default as RecentProjectsSection } from './RecentProjectsSection';
+export { default as VerifiedReviewsSection } from './VerifiedReviewsSection';
+export { default as HomeQuoteSection } from './HomeQuoteSection';

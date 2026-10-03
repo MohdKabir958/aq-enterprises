@@ -26,7 +26,7 @@ import { mapsSearchUrl } from '@/lib/business';
 export const metadata: Metadata = {
   title: 'Commercial Internet & Leased Line Hyderabad | LAN Cabling & Server Rooms — AQ Enterprises',
   description:
-    'Dedicated commercial fiber internet, enterprise leased lines, Cat6/Cat6A structured LAN cabling, server room deployment, and 24/7 NOC support in Hyderabad. 99.99% SLA uptime & 1:1 symmetrical bandwidth.',
+    'Dedicated commercial fiber internet, enterprise leased lines, Cat6/Cat6A structured LAN cabling, server room deployment, and scheduled maintenance in Hyderabad. Symmetrical bandwidth and professional cabling.',
   alternates: {
     canonical: '/commercial-internet-hyderabad',
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     'retail commercial broadband Hyderabad',
     'structured cabling IT corridor Hyderabad',
     'dedicated internet leased line Hyderabad',
-    '24/7 NOC support Hyderabad',
+    'commercial network support Hyderabad',
   ],
 };
 
@@ -165,12 +165,12 @@ const solutions = [
         <polyline points="12 6 12 12 16 14" stroke="#3fa9f5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: '24×7 Network Operations Center (NOC)',
-    desc: 'Round-the-clock proactive monitoring of your commercial links and infrastructure. Our network engineering team tracks packet loss, latency fluctuations, and hardware health to resolve anomalies before they impact your operations.',
+    title: 'Proactive Maintenance & Scheduled Network Support',
+    desc: 'Preventive monitoring and rapid troubleshooting for your commercial links and infrastructure. Our network team verifies packet transmission, latency, and hardware health during scheduled AMC checks and service visits.',
     features: [
-      '24/7/365 active link health & ping surveillance',
-      'Guaranteed 4-hour Mean Time to Repair (MTTR)',
-      'Direct L2/L3 NOC escalation hotline & WhatsApp support',
+      'Active link health & port status diagnostics',
+      'Dedicated technician dispatch from our Mallapur base',
+      'Direct escalation helpline & WhatsApp support',
       'Scheduled preventive maintenance & quarterly port auditing',
     ],
   },
@@ -188,8 +188,8 @@ const tiers = [
       '1 Static Public IP included',
       'Up to 32 LAN Drops supported',
       'POS & Cloud ERP priority QoS',
-      '24/7 NOC Active Monitoring',
-      '99.9% Uptime SLA',
+      'Active Network Health Monitoring',
+      'Carrier-Grade Leased Line Fiber',
     ],
   },
   {
@@ -288,7 +288,7 @@ export default function CommercialInternetPage() {
             >
               AQ Enterprises engineers enterprise-grade digital infrastructure across Hyderabad:
               1:1 symmetrical commercial internet, certified Cat6/Cat6A cabling, turnkey server rooms,
-              and 24/7 proactive NOC support backed by strict 99.99% uptime SLAs.
+              and dedicated on-site network engineering support from our Mallapur base.
             </p>
 
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 36 }}>
@@ -1014,8 +1014,8 @@ export default function CommercialInternetPage() {
                 a: 'We design and install the full physical and logical server room setup: 24U/42U equipment racks, structured cable pathways, patch panel termination, managed PoE switches, core routers, firewall placement, online UPS integration, and network segmentation (separating CCTV VLANs, VoIP, and staff data).',
               },
               {
-                q: 'What is included with 24/7 NOC monitoring?',
-                a: 'Our Network Operations Center continuously monitors link latency, packet transmission, and switch port health. If a disruption occurs, our engineering team is alerted automatically and initiates remote diagnostics and on-site dispatch within our 4-hour MTTR commitment.',
+                q: 'What is included with network maintenance & support?',
+                a: 'We monitor link latency, packet transmission, and switch port health during setup and AMC checkups. If a disruption occurs, our engineering team assists with remote diagnostics, carrier coordination, and prompt on-site dispatch from our Mallapur base.',
               },
               {
                 q: 'Can you install structured LAN cabling across multiple floors or buildings?',

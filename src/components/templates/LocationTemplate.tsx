@@ -10,7 +10,7 @@ import {
   getServiceBySlug,
   getServiceLocationsForLocation,
 } from '@/lib/content/getters';
-import { PHONE, PHONE_DISPLAY, PROJECTS_DATA, WHATSAPP_URL } from '@/lib/constants';
+import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
 import type { FAQ, ImagePlaceholder, Location } from '@/types';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
@@ -127,17 +127,16 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
   const verifiedProjects = (location.verifiedProjectIds ?? [])
     .map((id) => {
       const contentProject = getProjectBySlug(id);
-      const legacy = PROJECTS_DATA.find((p) => p.id === id);
-      if (!contentProject && !legacy) return null;
+      if (!contentProject) return null;
       return {
         id,
-        name: contentProject?.name ?? legacy!.name,
-        location: contentProject?.locationLabel ?? legacy!.location,
-        category: contentProject?.category ?? legacy!.category,
-        cameras: contentProject?.cameras ?? legacy!.cameras,
-        brand: contentProject?.brandLabel ?? legacy!.brand,
-        imageAlt: contentProject?.imageAlt ?? legacy!.imageAlt,
-        href: contentProject ? `/projects/${contentProject.slug}` : undefined,
+        name: contentProject.name,
+        location: contentProject.locationLabel,
+        category: contentProject.category,
+        cameras: contentProject.cameras,
+        brand: contentProject.brandLabel,
+        imageAlt: contentProject.imageAlt,
+        href: `/projects/${contentProject.slug}`,
       };
     })
     .filter((p): p is NonNullable<typeof p> => Boolean(p));

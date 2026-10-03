@@ -20,13 +20,14 @@
  *   - Uses semantic <form> with proper onSubmit bindings for keyboard accessibility
  */
 
-import { useState, useEffect, useId, useTransition } from 'react';
+import { useState, useEffect, useId, useTransition, useRef } from 'react';
 import { PHONE, PHONE_DISPLAY, WHATSAPP_URL, SERVICE_OPTIONS } from '@/lib/constants';
 import { CTA_COPY } from '@/lib/business';
 import { submitLead } from '@/actions/submit-lead';
 import { getAttribution } from '@/lib/analytics/attribution';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { trackEvent } from '@/lib/analytics/track';
+import { validateName, validatePhone } from '@/lib/validation/lead';
 
 /** Form state shape for the quote modal. */
 interface QuoteForm {
@@ -43,16 +44,16 @@ interface FormErrors {
   global?: string;
 }
 
-/** Validates the quote form fields. Returns an errors object (empty = valid). */
+/** Validates the quote form fields using centralized validation logic. */
 function validateForm(form: QuoteForm): FormErrors {
   const errors: FormErrors = {};
-  if (!form.name.trim()) {
-    errors.name = 'Please enter your name.';
+  const nameCheck = validateName(form.name);
+  if (!nameCheck.valid) {
+    errors.name = nameCheck.error;
   }
-  if (!form.phone.trim()) {
-    errors.phone = 'Please enter your phone number.';
-  } else if (!/^[6-9]\d{9}$/.test(form.phone.replace(/[\s\-+]/g, ''))) {
-    errors.phone = 'Please enter a valid 10-digit Indian mobile number.';
+  const phoneCheck = validatePhone(form.phone);
+  if (!phoneCheck.valid) {
+    errors.phone = phoneCheck.error;
   }
   return errors;
 }
@@ -70,6 +71,11 @@ export default function FloatingCTA() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   /** Unique IDs for aria associations (avoids collisions when component is mounted once). */
   const modalTitleId = useId();
   const nameId = useId();
@@ -86,18 +92,61 @@ export default function FloatingCTA() {
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  /** Trap focus within modal and allow Escape to close it. */
+  /** Accessible dialog management: focus trapping, initial focus, focus restoration, escape key, body scroll. */
   useEffect(() => {
     if (!quoteOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setQuoteOpen(false);
+
+    // 1. Initial focus: move focus inside the dialog
+    const focusTimer = setTimeout(() => {
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+      } else if (closeButtonRef.current) {
+        closeButtonRef.current.focus();
+      }
+    }, 50);
+
+    // 2. Keyboard handler: Escape to close, Tab to trap focus
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setQuoteOpen(false);
+        return;
+      }
+
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement?.focus();
+          }
+        }
+      }
     };
-    document.addEventListener('keydown', handleKey);
+
+    document.addEventListener('keydown', handleKeyDown);
     // Prevent background page from scrolling while modal is open
+    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
     return () => {
-      document.removeEventListener('keydown', handleKey);
-      document.body.style.overflow = '';
+      clearTimeout(focusTimer);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+      // Focus restoration: return focus to the trigger button that launched the modal
+      triggerRef.current?.focus();
     };
   }, [quoteOpen]);
 
@@ -194,6 +243,7 @@ export default function FloatingCTA() {
         }}
       >
         <button
+          ref={triggerRef}
           type="button"
           onClick={openQuote}
           aria-haspopup="dialog"
@@ -327,6 +377,7 @@ export default function FloatingCTA() {
           }}
         >
           <div
+            ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby={modalTitleId}
@@ -342,6 +393,7 @@ export default function FloatingCTA() {
           >
             {/* Close button */}
             <button
+              ref={closeButtonRef}
               type="button"
               onClick={() => { if (!isPending) setQuoteOpen(false); }}
               aria-label="Close quote form"
@@ -409,6 +461,7 @@ export default function FloatingCTA() {
                   <div>
                     <label htmlFor={nameId} style={srOnly}>Your name</label>
                     <input
+                      ref={nameInputRef}
                       id={nameId}
                       type="text"
                       value={form.name}

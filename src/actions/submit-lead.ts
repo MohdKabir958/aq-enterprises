@@ -2,17 +2,30 @@
 
 /**
  * @file submit-lead.ts
- * @description Server Action for quote / callback requests.
+ * @description Hardened Server Action for site survey & quote requests.
  *
- * ENV (see .env.example):
- * - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
- * - LEAD_DESTINATION_EMAIL
+ * PIPELINE:
+ * 1. Honeypot check (silently drop bot submissions)
+ * 2. Strict server-side input length & format validation
+ * 3. Rate limiting (PII-hashed key, memory-bounded fallback)
+ * 4. Normalization and attribution sanitation
+ * 5. Delivery via LeadDeliveryProvider (SMTP singleton with retries)
  *
- * Never log name/phone/email to the console.
+ * SECURITY:
+ * Zero customer PII is ever written to console streams or system logs.
  */
 
-import nodemailer from 'nodemailer';
 import { headers } from 'next/headers';
+import {
+  LEAD_FIELD_LIMITS,
+  normalizeIndianPhoneNumber,
+  sanitizeAttributionField,
+  validateName,
+  validatePhone,
+} from '@/lib/validation/lead';
+import { defaultLeadRateLimiter, hashRateLimitKey } from '@/lib/security/rate-limiter';
+import { defaultSmtpProvider } from '@/lib/leads/smtp-provider';
+import type { NormalizedLeadPayload } from '@/lib/leads/provider';
 
 export interface LeadAttributionPayload {
   landingPage?: string;
@@ -30,147 +43,94 @@ export interface LeadData {
   name: string;
   phone: string;
   propertyType: string;
-  /** Internal label for form origin — not shown as a business field to the user */
   formSource?: 'bottom_form' | 'quote_modal';
   /** Honeypot — must remain empty */
   website?: string;
   attribution?: LeadAttributionPayload;
 }
 
-const RATE_WINDOW_MS = 60_000;
-const recentByPhone = new Map<string, number>();
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function normalizePhone(phone: string): string {
-  return phone.replace(/[\s\-+()]/g, '');
-}
-
 export async function submitLead(
   data: LeadData,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Honeypot: bots that fill hidden fields are silently accepted without emailing.
+    // 1. Honeypot protection: bots filling hidden fields are silently accepted without sending email
     if (data.website && data.website.trim().length > 0) {
       return { success: true };
     }
 
-    if (!data.name || data.name.trim().length < 2) {
-      return { success: false, error: 'Please provide a valid name.' };
+    // 2. Strict input validation with explicit length bounds
+    const nameCheck = validateName(data.name || '');
+    if (!nameCheck.valid) {
+      return { success: false, error: nameCheck.error };
     }
 
-    const phoneRegex = /^[\d\s+\-()]{8,15}$/;
-    if (!data.phone || !phoneRegex.test(data.phone.trim())) {
-      return { success: false, error: 'Please provide a valid phone number.' };
+    const phoneCheck = validatePhone(data.phone || '');
+    if (!phoneCheck.valid) {
+      return { success: false, error: phoneCheck.error };
     }
 
-    const cleanName = data.name.trim();
-    const cleanPhone = data.phone.trim();
-    const phoneKey = normalizePhone(cleanPhone);
-    const cleanProperty = data.propertyType || 'Not specified';
-    const formSource = data.formSource || 'unknown';
-    const attr = data.attribution || {};
+    const cleanName = data.name.trim().slice(0, LEAD_FIELD_LIMITS.NAME_MAX);
+    const cleanPhone = data.phone.trim().slice(0, LEAD_FIELD_LIMITS.PHONE_MAX);
+    const normalizedPhone = normalizeIndianPhoneNumber(cleanPhone);
+    const cleanProperty = (data.propertyType || 'Not specified')
+      .trim()
+      .slice(0, LEAD_FIELD_LIMITS.PROPERTY_TYPE_MAX);
+    const formSource = (data.formSource || 'bottom_form')
+      .trim()
+      .slice(0, LEAD_FIELD_LIMITS.FORM_SOURCE_MAX);
 
-    const now = Date.now();
-    const last = recentByPhone.get(phoneKey);
-    if (last && now - last < RATE_WINDOW_MS) {
-      return {
-        success: false,
-        error: 'Please wait a moment before submitting again.',
-      };
-    }
-    recentByPhone.set(phoneKey, now);
-
-    // Best-effort IP note for operators (not sent to analytics)
-    let requestHint = '';
+    // 3. Request origin hint for rate-limiting (without trusting arbitrary spoofed headers)
+    let ipHint = 'unknown';
     try {
       const h = await headers();
       const fwd = h.get('x-forwarded-for')?.split(',')[0]?.trim();
-      if (fwd) requestHint = fwd;
+      if (fwd && /^[0-9a-fA-F:.]+$/.test(fwd)) {
+        ipHint = fwd;
+      }
     } catch {
-      requestHint = '';
+      ipHint = 'unknown';
     }
 
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.warn(
-        '[submitLead] SMTP not configured — lead not emailed (PII not logged).',
-      );
+    // 4. Rate-limiting check with hashed PII keys
+    const rateLimitKey = hashRateLimitKey('lead', `${ipHint}:${normalizedPhone}`);
+    const rateCheck = await defaultLeadRateLimiter.check(rateLimitKey);
+    if (!rateCheck.allowed) {
       return {
         success: false,
-        error:
-          'Unable to send your request right now. Please call or WhatsApp us directly.',
+        error: `Please wait ${rateCheck.retryAfterSeconds ?? 30} seconds before submitting again.`,
       };
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: Number(process.env.SMTP_PORT) === 465,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    // 5. Sanitize attribution payload with strict length caps
+    const rawAttr = data.attribution || {};
+    const sanitizedPayload: NormalizedLeadPayload = {
+      name: cleanName,
+      phone: cleanPhone,
+      normalizedPhone,
+      propertyType: cleanProperty,
+      formSource,
+      pagePath: sanitizeAttributionField(rawAttr.pagePath, LEAD_FIELD_LIMITS.URL_MAX),
+      landingPage: sanitizeAttributionField(rawAttr.landingPage, LEAD_FIELD_LIMITS.URL_MAX),
+      referrer: sanitizeAttributionField(rawAttr.referrer, LEAD_FIELD_LIMITS.URL_MAX),
+      firstTouchSource: sanitizeAttributionField(rawAttr.firstTouchSource),
+      utmSource: sanitizeAttributionField(rawAttr.utmSource),
+      utmMedium: sanitizeAttributionField(rawAttr.utmMedium),
+      utmCampaign: sanitizeAttributionField(rawAttr.utmCampaign),
+      utmContent: sanitizeAttributionField(rawAttr.utmContent),
+      utmTerm: sanitizeAttributionField(rawAttr.utmTerm),
+      submittedAt: new Date().toISOString(),
+    };
 
-    const rows: [string, string][] = [
-      ['Name', cleanName],
-      ['Phone', cleanPhone],
-      ['Property / service', cleanProperty],
-      ['Form source', formSource],
-      ['Page path', attr.pagePath || '—'],
-      ['Landing page', attr.landingPage || '—'],
-      ['Referrer', attr.referrer || '—'],
-      ['First-touch source', attr.firstTouchSource || '—'],
-      ['UTM source', attr.utmSource || '—'],
-      ['UTM medium', attr.utmMedium || '—'],
-      ['UTM campaign', attr.utmCampaign || '—'],
-      ['UTM content', attr.utmContent || '—'],
-      ['UTM term', attr.utmTerm || '—'],
-    ];
-    if (requestHint) rows.push(['Request IP (proxy)', requestHint]);
-
-    const htmlBody = `
-      <h2>New Website Lead</h2>
-      <table style="text-align: left; border-collapse: collapse; width: 100%; max-width: 560px;">
-        ${rows
-          .map(
-            ([k, v]) =>
-              `<tr><th style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(k)}</th><td style="padding: 8px; border: 1px solid #ddd;">${
-                k === 'Phone'
-                  ? `<a href="tel:${escapeHtml(v)}">${escapeHtml(v)}</a>`
-                  : escapeHtml(v)
-              }</td></tr>`,
-          )
-          .join('')}
-      </table>
-      <p style="color: #666; font-size: 12px; margin-top: 24px;">Generated by AQ Enterprises website</p>
-    `;
-
-    const textBody = rows.map(([k, v]) => `${k}: ${v}`).join('\n');
-
-    await transporter.sendMail({
-      from: `"AQ Website Alerts" <${process.env.SMTP_USER}>`,
-      to: process.env.LEAD_DESTINATION_EMAIL || process.env.SMTP_USER,
-      subject: `New Lead: ${cleanProperty} (${formSource})`,
-      text: textBody,
-      html: htmlBody,
-    });
-
-    return { success: true };
+    // 6. Deliver lead via abstracted provider (SMTP singleton)
+    return await defaultSmtpProvider.deliver(sanitizedPayload);
   } catch (error) {
-    console.error('[submitLead] Failed to process lead (details omitted).');
+    console.error('[submitLead] Server action execution failed (details omitted for security).');
     if (process.env.NODE_ENV === 'development') {
       console.error(error);
     }
     return {
       success: false,
-      error: 'Internal server error. Please try calling us directly.',
+      error: 'An unexpected error occurred while processing your request. Please call us directly.',
     };
   }
 }

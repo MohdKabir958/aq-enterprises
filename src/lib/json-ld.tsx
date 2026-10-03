@@ -14,13 +14,27 @@ import {
 } from './business';
 
 /**
+ * Safely serializes a JSON-LD schema into a string.
+ * Escapes script termination characters (`<`, `>`, `&`) and Unicode line/paragraph separators
+ * to prevent XSS injection or premature `<script>` tag closing.
+ */
+export function safeJsonLdStringify(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
+/**
  * Injects a JSON-LD script tag safely into the React component tree.
  */
 export function JsonLd({ schema }: { schema: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(schema) }}
     />
   );
 }
