@@ -60,7 +60,7 @@ Growth corridors also mean incomplete street lighting on newer internal roads an
 
   recommendedSolutions: {
     heading: 'Recommended solutions for Kompally sites',
-    body: `School and college CCTV should follow a campus map: main gate, secondary gates, bus bay, corridor junctions, and selected outdoor edges that management actually reviews after an incident. Student dignity rules are non-negotiable. Our verified Greenfield Public School work in Kompally reflects campus-scale camera counts and phased installation; new institutions still receive a fresh design based on their buildings and policies.
+    body: `School and college CCTV should follow a campus map: main gate, secondary gates, bus bay, corridor junctions, and selected outdoor edges that management actually reviews after an incident. Student dignity rules are non-negotiable. Our verified School Campus work in Kompally reflects campus-scale camera counts and phased installation; new institutions still receive a fresh design based on their buildings and policies.
 
 Villas benefit from entrance, compound, and parking coverage with IP cameras sized for longer runs. Apartments and gated communities need clarity on society-owned common cameras versus unit-level kits. Access control on staff or service gates, plus intercom systems for multi-gate layouts, keep visitor flow manageable without posting a guard at every corner.
 

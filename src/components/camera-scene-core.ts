@@ -367,7 +367,7 @@ export function mountCameraScene(
     controls.removeEventListener('end', onControlsEnd);
     controls.dispose();
 
-    scene.traverse((obj: any) => {
+    scene.traverse((obj: THREE.Object3D) => {
       if ('geometry' in obj && obj.geometry instanceof THREE.BufferGeometry) {
         obj.geometry.dispose();
       }

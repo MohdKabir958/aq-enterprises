@@ -282,7 +282,7 @@ export default function ContactPage() {
                 <div>
                   <div style={{ color: '#6B7484', fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>Email</div>
                   <div style={{ color: '#F2F4F7', fontSize: 15, fontWeight: 600 }}>{EMAIL}</div>
-                  <div style={{ color: '#6B7484', fontSize: 13, marginTop: 2 }}>We reply within 24 hours</div>
+                  <div style={{ color: '#6B7484', fontSize: 13, marginTop: 2 }}>We will call you back to arrange a time</div>
                 </div>
               </a>
 
@@ -422,7 +422,7 @@ export default function ContactPage() {
               },
               {
                 q: 'How quickly can you come for a survey?',
-                a: 'We aim to schedule site surveys within 2–3 working days of your request, depending on availability across Hyderabad.',
+                a: 'We call you back to book a site survey at a time that works for you and is available across Hyderabad.',
               },
               {
                 q: 'Do you only serve Mallapur or all of Hyderabad?',

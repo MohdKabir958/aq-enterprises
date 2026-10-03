@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Type declarations for Three.js modules when @types/three is not installed.
+ * The `any` types here are intentional: minimal vendor-boundary stubs.
+ * Replace this file with @types/three once it is added as a dev dependency.
  */
 
 declare module 'three' {

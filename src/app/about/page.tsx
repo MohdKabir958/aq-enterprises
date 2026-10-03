@@ -94,6 +94,20 @@ function AssetSlot({
       }}
     >
       <div>
+        <span
+          style={{
+            display: 'inline-block',
+            padding: '2px 8px',
+            borderRadius: 6,
+            background: 'rgba(63, 169, 245, 0.1)',
+            color: '#3fa9f5',
+            fontSize: 11,
+            fontWeight: 600,
+            marginBottom: 8,
+          }}
+        >
+          Photos coming soon
+        </span>
         <p
           style={{
             color: '#6B7484',
@@ -275,7 +289,6 @@ export default function AboutPage() {
             label="Mallapur Operations Base"
             ariaLabel="AQ Enterprises headquarters and technical operations in Mallapur, Hyderabad"
             hint="Our central workshop and logistics base in Mallapur, Hyderabad."
-            src="/images/company/office-mallapur.webp"
           />
 
           <div>
@@ -351,22 +364,18 @@ export default function AboutPage() {
               {
                 label: 'Field Installation Team',
                 hint: 'Qualified technicians on-site across Hyderabad.',
-                src: '/images/company/cctv-field-team.webp',
               },
               {
                 label: 'Monitoring & Control Rack',
                 hint: 'Central NVR and server room setups.',
-                src: '/images/company/cctv-control-room.webp',
               },
               {
                 label: 'Tools & Precision Testing',
                 hint: 'Cable testers, optical power meters & crimping equipment.',
-                src: '/images/company/cctv-tools.webp',
               },
               {
                 label: 'Mallapur Operations Base',
                 hint: 'Service dispatch and hardware testing facility.',
-                src: '/images/company/office-mallapur.webp',
               },
             ].map((slot) => (
               <article key={slot.label}>
@@ -374,7 +383,6 @@ export default function AboutPage() {
                   label={slot.label}
                   ariaLabel={`Photo: ${slot.label}`}
                   hint={slot.hint}
-                  src={slot.src}
                 />
               </article>
             ))}

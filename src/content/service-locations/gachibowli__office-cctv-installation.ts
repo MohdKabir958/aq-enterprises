@@ -72,7 +72,7 @@ Monsoon and outdoor mounts appear only when the office controls a genuine extern
     },
     {
       id: 'gachibowli-office-project',
-      question: 'Do you use the Lakeview Apartments project as office proof?',
+      question: 'Do you use the Apartment Community project as office proof?',
       answer:
         'No. That listed project is residential society work. We do not treat it as office evidence. Gachibowli workplaces are surveyed on their own commercial layout, power, and retention needs.',
     },

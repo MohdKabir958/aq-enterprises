@@ -42,10 +42,19 @@ export default function VerifiedImage({
   priority = false,
   caption,
   style,
-  provenance: _provenance = 'provisional_illustration',
+  provenance = 'provisional_illustration',
 }: VerifiedImageProps) {
   const resolved = resolvePublicSrc(src);
   if (!resolved) return null;
+
+  const isIllustration = provenance === 'provisional_illustration';
+  const displayCaption = caption
+    ? isIllustration && !caption.toLowerCase().includes('illustrative')
+      ? `${caption} (Illustrative image)`
+      : caption
+    : isIllustration
+      ? 'Illustrative image'
+      : undefined;
 
   return (
     <figure style={{ margin: 0 }}>
@@ -58,9 +67,9 @@ export default function VerifiedImage({
         priority={priority}
         style={{ width: '100%', height: 'auto', display: 'block', ...style }}
       />
-      {caption ? (
+      {displayCaption ? (
         <figcaption style={{ color: '#6B7484', fontSize: 13, lineHeight: 1.5, marginTop: 8 }}>
-          {caption}
+          {displayCaption}
         </figcaption>
       ) : null}
     </figure>

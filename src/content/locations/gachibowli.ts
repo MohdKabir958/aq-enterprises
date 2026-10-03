@@ -30,7 +30,7 @@ export const gachibowliLocation: Location = {
 
 Unlike a pure campus page (Hitech City or DLF Cyber City) or a finance-corridor page (Financial District), Gachibowli content stays balanced: society common areas and ORR-side residential living sit alongside office suites that spill out of the IT belt. Nanakramguda and Kondapur share some of that west-side character, but each locality still needs its own survey for lighting, parking layouts, and who owns the recorder room.
 
-AQ Enterprises serves Gachibowli as a service area from Mallapur. We do not operate a branded branch desk in the locality. Among verified work, our project list includes society surveillance at Lakeview Apartments, Gachibowli — useful context for associations comparing common-area scope, not a promise that every tower gets the same camera count.`,
+AQ Enterprises serves Gachibowli as a service area from Mallapur. We do not operate a branded branch desk in the locality. Among verified work, our project list includes society surveillance at an Apartment Community in Gachibowli — useful context for associations comparing common-area scope, not a promise that every tower gets the same camera count.`,
   propertyTypes: {
     heading: 'Property types we commonly see in Gachibowli',
     intro:
@@ -87,7 +87,7 @@ Offices in and around Gachibowli benefit from reception-to-floor plans, access c
     intro: 'West Hyderabad sites need installers who understand societies and IT-adjacent offices — not only one or the other.',
     items: [
       'Mallapur-based service area coverage with on-site surveys in Gachibowli — no fake local branch claim.',
-      'Verified apartment-society experience at Lakeview Apartments, Gachibowli, listed in our projects data.',
+      'Verified apartment-society experience at an Apartment Community, Gachibowli, listed in our projects data.',
       'Related location pages for Hitech City, Madhapur, Kondapur, Financial District, and Nanakramguda.',
       'Service mix spanning apartment CCTV, home systems, office floors, intercoms, and video door phones.',
       'AMC and support after handover for outdoor and basement cameras.',
@@ -111,7 +111,7 @@ Offices in and around Gachibowli benefit from reception-to-floor plans, access c
       id: 'gachibowli-faq-2',
       question: 'Have you completed work in Gachibowli before?',
       answer:
-        'Our verified project list includes Lakeview Apartments, Gachibowli — a society surveillance installation. Every new site still gets its own survey; past work is not a template camera count for your tower.',
+        'Our verified project list includes an Apartment Community, Gachibowli — a society surveillance installation. Every new site still gets its own survey; past work is not a template camera count for your tower.',
       status: 'published',
     },
     {

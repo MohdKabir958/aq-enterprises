@@ -123,12 +123,12 @@ export default function Footer() {
             Services
           </h3>
           <nav aria-label="Services navigation" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Link href="/services/home-cctv-installation" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Home CCTV Installation</Link>
+            <Link href="/services/office-cctv-installation" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Office CCTV Installation</Link>
+            <Link href="/services/ip-camera-installation" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>IP Camera Installation</Link>
+            <Link href="/services/access-control-systems" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Access Control Systems</Link>
+            <Link href="/services/cctv-amc-maintenance" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>CCTV AMC Maintenance</Link>
             <Link href="/commercial-internet-hyderabad" style={{ color: '#3fa9f5', fontSize: 14, textDecoration: 'none', fontWeight: 600 }}>Commercial Internet &amp; LAN</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Home CCTV Installation</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Office &amp; Factory Security</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>IP &amp; Wireless Cameras</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Access Control &amp; Biometric</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>AMC &amp; Maintenance</Link>
           </nav>
         </div>
 

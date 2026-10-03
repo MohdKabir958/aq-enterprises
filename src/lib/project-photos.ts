@@ -136,7 +136,7 @@ export const PROJECT_PHOTO_SPECS: Record<string, ProjectPhotoSlot[]> = {
     ),
     slot(
       'nvr-rack',
-      'Society NVR room or rack at Lakeview Apartments, Gachibowli',
+      'Society NVR room or rack at an apartment community in Gachibowli',
       'Association recorder room with labelled camera channels.',
       'Society NVR photograph pending',
     ),
@@ -176,7 +176,7 @@ export const PROJECT_PHOTO_SPECS: Record<string, ProjectPhotoSlot[]> = {
   'office-hitech': [
     slot(
       'exterior',
-      'Tech park office tower CCTV installation in Hitech City, Hyderabad',
+      'Office tower CCTV installation in Hitech City, Hyderabad',
       'Office floor or tower approach after install. Follow landlord photo rules.',
       'Office exterior photograph pending',
     ),

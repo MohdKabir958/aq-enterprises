@@ -1,11 +1,10 @@
 /**
  * @file page.tsx (Commercial Internet, LAN Cabling & Server Room Solutions)
  * @description Enterprise page showcasing AQ Enterprises' commercial fiber internet,
- * structured cabling, server room deployment, and 24/7 NOC monitoring across Hyderabad.
+ * structured cabling, and server room deployment across Hyderabad.
  */
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -19,7 +18,6 @@ import {
   WHATSAPP_URL,
   EMAIL,
   ADDRESS,
-  HOURS,
 } from '@/lib/constants';
 import { mapsSearchUrl } from '@/lib/business';
 
@@ -69,39 +67,39 @@ const serviceSchema = {
   },
   serviceType: 'Commercial Internet, Structured LAN Cabling & Enterprise IT Infrastructure',
   description:
-    'Dedicated commercial fiber internet with 99.99% SLA uptime, Cat6/Cat6A structured cabling, server room deployment, and 24/7 NOC monitoring in Hyderabad.',
+    'Dedicated commercial fiber internet, Cat6/Cat6A structured cabling, server room deployment, and scheduled network maintenance in Hyderabad.',
 };
 
 const networkMetrics = [
   {
-    value: '99.99%',
-    label: 'Guaranteed SLA Uptime',
-    detail: 'Enterprise dual-ring redundancy across Hyderabad',
-  },
-  {
-    value: '< 15ms',
-    label: 'Ultra-Low Latency',
-    detail: 'Direct core peering for zero jitter & instant response',
-  },
-  {
-    value: '100+ Gbps',
-    label: 'Metro Backbone Capacity',
-    detail: 'High-throughput fiber backbone ready for multi-gigabit pipes',
-  },
-  {
     value: '1:1',
     label: 'Symmetrical Bandwidth',
-    detail: 'Equal unshared upload & download speeds with zero contention',
+    detail: 'Equal unshared upload & download speeds — not shared with other tenants',
   },
   {
-    value: '24×7',
-    label: 'Active NOC Monitoring',
-    detail: 'Continuous link surveillance & dedicated L2/L3 engineers',
+    value: 'Static IP',
+    label: 'Fixed Public IP',
+    detail: 'Static IPs available for servers, NVRs, and VPN endpoints',
   },
   {
-    value: '4-Hour',
-    label: 'MTTR Commitment',
-    detail: 'Rapid on-site restoration & hardware replacement',
+    value: 'Fiber',
+    label: 'Dedicated Fiber Link',
+    detail: 'Dedicated fiber run — not shared broadband infrastructure',
+  },
+  {
+    value: 'Cat6/6A',
+    label: 'Certified Cabling',
+    detail: 'Structured LAN cabling with port documentation and labeling',
+  },
+  {
+    value: 'VLAN',
+    label: 'Network Segmentation',
+    detail: 'Separate VLANs for CCTV, VoIP, staff, and guest Wi-Fi',
+  },
+  {
+    value: 'AMC',
+    label: 'Scheduled Maintenance',
+    detail: 'Preventive check-ups and quarterly port auditing',
   },
 ];
 
@@ -188,8 +186,8 @@ const tiers = [
       '1 Static Public IP included',
       'Up to 32 LAN Drops supported',
       'POS & Cloud ERP priority QoS',
-      'Active Network Health Monitoring',
-      'Carrier-Grade Leased Line Fiber',
+      'Scheduled Network Health Checks',
+      'Dedicated Fiber — Not Shared Broadband',
     ],
   },
   {
@@ -203,8 +201,8 @@ const tiers = [
       'Multiple Static IP subnet allocation',
       'Full Cat6A LAN & Server Rack setup',
       'Dedicated CCTV & VoIP VLAN config',
-      '4-Hour MTTR On-Site Guarantee',
-      '99.99% Enterprise Uptime SLA',
+      'Priority escalation & direct helpline',
+      'Scheduled preventive maintenance',
     ],
     featured: true,
   },
@@ -215,12 +213,12 @@ const tiers = [
     subtitle: 'Dedicated Internet Access (DIA)',
     desc: 'For tech parks, manufacturing plants, data centres, and institutional campuses.',
     highlights: [
-      'Uncontended 1:1 Pure Leased Pipe',
-      'Dual-Fiber Ring Path Redundancy',
-      'Custom BGP Routing & ASN Peering',
+      'Uncontended 1:1 Dedicated Fiber',
+      'Redundant path options available',
+      'Custom routing & IP subnet allocation',
       'Full Server Room & IDF/MDF Buildout',
-      'Dedicated Account & Senior NOC Lead',
-      '99.99% Strict Financial-Backed SLA',
+      'Dedicated point of contact for the account',
+      'SLA terms agreed at contract — ask for details',
     ],
   },
 ];
@@ -761,24 +759,20 @@ export default function CommercialInternetPage() {
           >
             {[
               {
-                src: '/images/company/cctv-control-room.webp',
                 title: 'Data Rack & Server Room Deployment',
-                desc: '24U/42U equipment enclosures with clean cable dressing & ventilation.',
+                desc: 'Equipment enclosures with clean cable dressing & ventilation.',
               },
               {
-                src: '/images/projects/office-hitech/nvr-rack.webp',
                 title: 'PoE Managed Switches & Core Routing',
-                desc: 'High-density Gigabit switches configured with dedicated security VLANs.',
+                desc: 'Gigabit switches configured with dedicated security VLANs.',
               },
               {
-                src: '/images/services/commercial-lan-cabling-networking.webp',
                 title: 'Cat6A Structured LAN Drops',
                 desc: 'Organized patch panel terminations with end-to-end port numbering.',
               },
               {
-                src: '/images/company/cctv-field-team.webp',
-                title: 'On-Site Technical Handover & Fluke Testing',
-                desc: 'Certified testing of all data nodes before go-live handover.',
+                title: 'On-Site Technical Handover & Cable Verification',
+                desc: 'Structured testing of all data drops before handover.',
               },
             ].map((card) => (
               <div
@@ -792,14 +786,35 @@ export default function CommercialInternetPage() {
                   flexDirection: 'column',
                 }}
               >
-                <div style={{ height: 200, position: 'relative', overflow: 'hidden' }}>
-                  <Image
-                    src={card.src}
-                    alt={card.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 350px"
-                    style={{ objectFit: 'cover' }}
-                  />
+                <div
+                  style={{
+                    height: 140,
+                    background: '#0d1017',
+                    borderBottom: '1px solid #1B1F27',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: 20,
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      padding: '3px 10px',
+                      borderRadius: 6,
+                      background: 'rgba(63, 169, 245, 0.1)',
+                      color: '#3fa9f5',
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Photos coming soon
+                  </span>
+                  <span style={{ color: '#4A5565', fontSize: 12 }}>
+                    On-site installation photography
+                  </span>
                 </div>
                 <div style={{ padding: '18px 20px', flex: 1 }}>
                   <h3 style={{ color: '#F2F4F7', fontSize: 16, fontWeight: 600, margin: '0 0 6px' }}>

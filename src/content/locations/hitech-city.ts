@@ -131,7 +131,7 @@ AMC is especially useful in Hitech City: dusty outdoor approaches, busy lobbies,
       id: 'hitech-city-faq-5',
       question: 'What verified project do you list for Hitech City?',
       answer:
-        'Our published project data includes a tech park office tower CCTV installation in Hitech City (project id office-hitech). Ask us during enquiry if you want to discuss scope patterns similar to that workplace type.',
+        'Our published project data includes an office tower CCTV installation in Hitech City (project id office-hitech). Ask us during enquiry if you want to discuss scope patterns similar to that workplace type.',
       status: 'published',
     },
   ],

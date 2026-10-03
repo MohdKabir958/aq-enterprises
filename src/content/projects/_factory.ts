@@ -60,10 +60,10 @@ export function createVerifiedProject(input: VerifiedProjectInput): Project {
     solution: input.solution,
     equipment:
       input.equipment ??
-      `${input.brandLabel} security system with ${input.cameras} surveillance cameras, central recording, and dedicated power provisioning.`,
+      `${input.brandLabel} CCTV system · ${input.cameras} cameras (published project record). Camera model numbers and NVR/DVR SKUs are not listed in the published project data.`,
     installationApproach:
       input.installationApproach ??
-      `Site survey, structured cabling, hardware mounting, viewing angle calibration, and handover completed within ${input.duration}.`,
+      `Recorded installation duration: ${input.duration}. Detailed site drawings and cabling notes are not published in the project record.`,
     results: input.results,
     technicalDetails: [
       { label: 'Category', value: input.category },

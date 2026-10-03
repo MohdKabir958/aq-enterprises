@@ -10,11 +10,9 @@ import { CTA_COPY, postalAddressSchema } from '@/lib/business';
 import { siteConfig } from '@/lib/config';
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
-import { PROJECT_PHOTO_HEIGHT, PROJECT_PHOTO_WIDTH } from '@/lib/project-photos';
 import Image from 'next/image';
 import type { ImagePlaceholder, Project } from '@/types';
 import TestimonialCard from '@/components/TestimonialCard';
-import VerifiedImage from '@/components/VerifiedImage';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
 
