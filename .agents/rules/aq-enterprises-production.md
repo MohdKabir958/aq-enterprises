@@ -1,62 +1,73 @@
 # AQ Enterprises — Production Engineering Rules & Guardrails
 
-This rule document governs all agent and developer operations for the `aq-enterprises` Next.js codebase.
+This is the single full rulebook for all developers and AI agents working on the `aq-enterprises` codebase.
 
-## 1. Enterprise Code Quality
-- Production-grade, maintainable, readable TypeScript.
-- Prefer simple, explicit, strongly typed code over clever abstractions.
-- Follow SOLID principles where they genuinely improve maintainability.
-- No `any` unless absolutely unavoidable and explicitly justified.
-- No `@ts-ignore` or `@ts-nocheck`.
-- No disabling ESLint rules to bypass checks.
-- Never leave debugging `console.log` statements in production code.
-- Minimal dependency footprint; reuse existing utilities.
+## 1. Code Quality
+- Zero `any`. Use `unknown` and narrow it. Any `as` cast needs a one-line WHY comment.
+- No @ts-ignore, @ts-expect-error, @ts-nocheck, eslint-disable.
+- No console.log. Allowed: console.error / console.warn with a fixed message and an error code only.
+- Files: new files max 300 lines. Existing files over 400 lines may not grow (they are listed in scripts/guardrails-allowlist.json and must only shrink).
+- Do not copy-paste a helper a third time: move it to a shared module.
+- No speculative code: no unused exports, interfaces, parameters or "future" layers. An interface needs two real implementations or a written reason.
+- No new npm dependency without the owner's written approval in the task.
+- Comments explain WHY, not what.
 
-## 2. Next.js App Router Architecture
-- Default to Server Components (`RSC`).
-- Client Components (`'use client'`) only for state, browser events, or browser APIs.
-- Keep server-only code (Nodemailer, secrets) server-only.
-- Preserve static generation with `generateStaticParams()`.
-- Preserve existing routing structure and URLs.
+## 2. Next.js
+- Server Components by default; "use client" only for state, events, browser APIs.
+- Server-only code and env vars stay server-only. Never import them into client files.
+- Public content routes use generateStaticParams(); keep metadata via generateMetadata.
+- Read the matching doc in node_modules/next/dist/docs/ before using any Next API.
 
-## 3. Business Truth & Anti-Fabrication
-- Real Hyderabad security business operating strictly from Mallapur HQ.
-- NEVER invent stats: installations (no "500+"), cameras ("12k+"), technicians, years, customer counts.
-- NEVER invent dealer claims: Only state "commonly install and support" (Hikvision, CP Plus, Dahua, Uniview, Honeywell, Bosch, Godrej, Panasonic).
-- NEVER claim 24/7 monitoring, emergency response SLAs, or fabricated testimonials.
-- Unverified data must stay isolated in `src/lib/business.ts` and never render publicly.
+## 3. Business Truth
+- Never invent: counts, years, clients, reviews, certificates, awards, prices, coverage, response times.
+- Banned claim words in public text: 24/7, 24x7, SLA, uptime, 99.9, MTTR, NOC, BGP, ASN, IRINN, Fluke, leased line, carrier-grade, financial-backed, "within 24 hours", certified, authorized dealer, lifetime, same day. Exceptions only via scripts/guardrails-allowlist.json with a written reason approved by the owner.
+- Every number or claim in public text must trace to a verified source (business.ts verified field or owner-approved content).
+- Project case-study text may use only verified fields: category, location, brand, camera count, duration. Never fill gaps with invented detail.
+- Client or business names in case studies need owner-confirmed permission; otherwise use a plain description.
+- Brands: only "commonly install and support". Testimonials: only verified and published.
+- Stock or AI images must never be shown as our work. Every file under public/images must be listed in public/images/provenance.json with source: "client" or "illustration". Folders projects, company, team accept only source "client". Illustrations must show a visible "Illustrative image" caption.
+- Internet service: connectivity comes from a licensed ISP partner. Never name the partner. Never say AQ is an ISP or owns fiber, backbone, ASN, IP blocks or a NOC. SLA/uptime/repair-time text is allowed only when INTERNET_SLA_PUBLISHED is true in business.ts.
 
-## 4. Business NAP SSOT
-- All phone numbers, display formats, WhatsApp URLs, email addresses, physical addresses, and opening hours must be imported from `src/lib/business.ts` (or `src/lib/constants.ts`).
-- Never hardcode `tel:`, `wa.me`, `mailto:`, address strings, or opening hours directly inside UI components or page files.
+## 4. Contact Details Single Source
+- Phone, WhatsApp, email, address, hours, social links come only from src/lib/business.ts (or constants.ts re-exports). Never typed into components or pages.
 
-## 5. SEO & Content Integrity
-- Every indexable route requires descriptive title, meta description, canonical URL, Open Graph tags, semantic H1, and appropriate JSON-LD schema.
-- No thin doorway pages or keyword stuffing.
-- Sitemap (`src/app/sitemap.ts`) must only list published, canonical URLs.
-- Never use `new Date()` as a fake `lastModified` timestamp; use real content timestamps or omit `lastModified`.
+## 5. SEO
+- Every indexable page: unique title (50-60 chars), unique description (140-160 chars), canonical, Open Graph, one H1, right JSON-LD.
+- Never add review/rating schema without real verified reviews. sameAs only for verified profiles.
+- No doorway pages. Sitemap lists only real indexable URLs with real dates or no date.
 
-## 6. Security & PII Protection
-- Zero PII in logs: Never log customer names, phones, emails, or messages.
-- Server-side input validation and maximum length limits on every field.
-- Secrets (`SMTP_*`, API keys) must only exist in `.env.local` or host environment, never in git or client bundles.
-- Maintain honeypot, rate-limiting, and HTML sanitization.
+## 6. Security and Privacy
+- Validate every input on the server with length limits; client validation is only for UX.
+- Select/dropdown fields are checked against an allowlist on the server. Nothing user-typed goes into an email subject or header.
+- Keep honeypot, rate limiting and HTML escaping. Document honestly: the in-memory limiter is best-effort only; real protection on serverless needs a shared store.
+- No PII (name, phone, email, IP, message) in logs, analytics or error output.
+- Secrets only in env, never in git or client code. Every env var used in src must be listed in .env.example.
+- Security headers stay in next.config.ts. Never weaken them.
 
 ## 7. Accessibility
-- Full keyboard operability for interactive components.
-- Modals/dialogs must implement `role="dialog"`, `aria-modal="true"`, focus trapping, initial focus, Escape closing, and focus restoration.
-- Semantic HTML and descriptive alt text for visual assets.
+- Full keyboard use, visible focus, 4.5:1 text contrast, 44px tap targets, one H1 per page, real alt text, respect prefers-reduced-motion, dialogs trap focus and restore it.
 
 ## 8. Performance
-- Use `next/image` with proper optimization enabled; do not globally disable image optimization.
-- Three.js and heavy 3D canvas assets must be route-scoped (homepage hero only) and loaded dynamically with `ssr: false`. Do not inject import maps or 3D scripts globally across all pages.
-- Keep client bundles minimal and optimize Core Web Vitals (LCP, CLS, INP).
+- Mobile targets: LCP under 2.5s, CLS under 0.1, INP under 200ms.
+- Each image under 200 KB; whole public/ under 5 MB. next/image optimisation stays on.
+- Three.js loads only on the home hero, only on screens 900px or wider, only without reduced motion, only when visible.
 
-## 9. Observability & Error Handling
-- Use Next.js error boundaries (`error.tsx`, `not-found.tsx`) to guard user-facing routes.
-- Never leak stack traces or internal implementation details to users.
-- External integrations (SMTP, analytics) must feature timeouts, bounded retries, and graceful degradation.
+## 9. Reliability
+- error.tsx, global-error.tsx, not-found.tsx stay in place.
+- Every external call has a timeout and a bounded retry. Failures never claim success and never leak stack traces.
 
-## 10. Change Management
-- Work strictly in dedicated Git branches; never push directly to `main`.
-- Validate with `npx tsc --noEmit`, `npm run lint`, and build/content validations before committing.
+## 10. Docs Honesty
+- Docs and comments must describe what the code really does. Audits are dated. No local paths.
+
+## 11. Agent Conduct
+- No infrastructure work: no deploys, SSH, VM, DNS, Vercel/GitHub settings, secrets.
+- Never edit rule files, scripts/guardrails-allowlist.json, public/images/provenance.json, .github/CODEOWNERS or workflows unless the task explicitly says so.
+- Never weaken an existing safeguard (validation, limits, headers, checks) to make a task easier.
+- If a rule conflicts with a task, stop and ask. Do not break the rule.
+- If a fact is unknown, leave it out or write "confirmed in your written quotation".
+- No unrelated refactors. Keep diffs small.
+
+## 12. Change Management
+- Dedicated branch, never main. Small commits with clear messages. No force push.
+- Run `npm run verify` before every push. Paste its real output in the final report. Never say "done" if anything fails.
+- Final report lists: files changed, what and why, and verify output.
