@@ -7,7 +7,7 @@ if (!process.env.TEST_DATABASE_URL)
 const salt = '00000000000000000000000000000000';
 export default defineConfig({
   testDir: './tests',
-  testMatch: 'admin.spec.ts',
+  testMatch: ['admin.spec.ts', 'notifications.spec.ts'],
   workers: 1,
   fullyParallel: false,
   timeout: 60000,

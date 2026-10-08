@@ -8,9 +8,14 @@ import {
   newPlan,
   newProduct,
   newService,
+  newProject, newReview, newFaq,
 } from '@/lib/cms/editor-defaults';
 import Fields from './Fields';
 import MediaField from './MediaField';
+import Enquiries from './Enquiries';
+import Reports from './Reports';
+import type { LeadRecord } from '@/lib/leads/workflow';
+import type { LeadReport } from '@/lib/leads/report';
 export interface AdminEntry {
   key: string;
   value: EditorRecord;
@@ -21,17 +26,14 @@ export interface AdminData {
   blogs: AdminEntry[];
   services: AdminEntry[];
   plans: AdminEntry[];
+  projects: AdminEntry[]; reviews: AdminEntry[]; faqs: AdminEntry[];
   contact: AdminEntry[];
   hero: AdminEntry[];
   images: SavedRecord[];
   assets: string[];
   uploads: { id: string; name: string; size: number }[];
-  enquiries: {
-    id: string;
-    payload: EditorRecord;
-    email_status: string;
-    created_at: string;
-  }[];
+  enquiries: LeadRecord[];
+  report: LeadReport;
 }
 const tabs = [
   'products',
@@ -42,6 +44,8 @@ const tabs = [
   'images',
   'contact',
   'enquiries',
+  'reports',
+  'projects', 'reviews', 'faqs',
 ] as const;
 type Tab = (typeof tabs)[number];
 export default function AdminPanel({ data }: { data: AdminData }) {
@@ -90,12 +94,13 @@ export default function AdminPanel({ data }: { data: AdminData }) {
     }
   }
   const collection = tab as Collection;
-  const entries = tab === 'images' || tab === 'enquiries' ? [] : data[tab];
+  const entries = tab === 'images' || tab === 'enquiries' || tab === 'reports' ? [] : data[tab];
   const templates: Partial<Record<Tab, EditorRecord>> = {
     products: newProduct,
     blogs: newBlog,
     services: newService,
     plans: newPlan,
+    projects: newProject, reviews: newReview, faqs: newFaq,
   };
   return (
     <main className="cms-page">
@@ -131,6 +136,7 @@ export default function AdminPanel({ data }: { data: AdminData }) {
         Publish accurate services, pricing and business details. New entries
         start as drafts. Checkout requests appear in Enquiries.
       </p>
+      {(data.report.due > 0 || data.report.emailAttention > 0) && <p className="cms-notice">{data.report.due} follow-ups due · {data.report.emailAttention} email notifications need attention. Open Enquiries to follow up.</p>}
       <nav className="cms-tabs" aria-label="Admin sections">
         {tabs.map((t) => (
           <button
@@ -144,7 +150,7 @@ export default function AdminPanel({ data }: { data: AdminData }) {
               setMessage('');
             }}
           >
-            {t === 'plans'
+            {t === 'projects' ? 'Case studies' : t === 'faqs' ? 'FAQs' : t === 'plans'
               ? 'Internet plans'
               : t === 'images'
                 ? 'Media library'
@@ -162,61 +168,9 @@ export default function AdminPanel({ data }: { data: AdminData }) {
         </p>
       )}
       {tab === 'enquiries' ? (
-        <section>
-          <h2>Customer enquiries</h2>
-          {!data.enquiries.length && <p>No enquiries yet.</p>}
-          {data.enquiries.map((e) => (
-            <article className="cms-card" key={e.id}>
-              <h3>
-                {String(e.payload.name)} · {String(e.payload.phone)}
-              </h3>
-              <p>
-                {new Date(e.created_at).toLocaleString('en-IN')} · Email:{' '}
-                {e.email_status}
-              </p>
-              <pre className="cms-enquiry">
-                {Object.entries(e.payload)
-                  .filter(([key]) =>
-                    [
-                      'propertyType',
-                      'email',
-                      'address',
-                      'message',
-                      'orderSummary',
-                    ].includes(key),
-                  )
-                  .map(([key, v]) => `${key}: ${String(v ?? '')}`)
-                  .join('\n')}
-              </pre>
-              <button
-                className="cms-danger"
-                disabled={busy}
-                onClick={async () => {
-                  if (!confirm('Permanently delete this customer enquiry?'))
-                    return;
-                  setBusy(true);
-                  setMessage('');
-                  try {
-                    const r = await fetch('/api/admin/enquiries', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ id: e.id }),
-                    });
-                    if (!r.ok) throw new Error('Unable to delete enquiry.');
-                    router.refresh();
-                    setMessage('Enquiry deleted.');
-                  } catch {
-                    setMessage('Unable to delete enquiry. Try again.');
-                  } finally {
-                    setBusy(false);
-                  }
-                }}
-              >
-                Delete enquiry
-              </button>
-            </article>
-          ))}
-        </section>
+        <Enquiries leads={data.enquiries} initialTotal={data.report.stages.reduce((sum,stage) => sum+stage.count,0)} asOf={data.report.generatedAt} />
+      ) : tab === 'reports' ? (
+        <Reports report={data.report} />
       ) : tab === 'images' ? (
         <section>
           <h2>Website images and uploads</h2>
@@ -372,6 +326,7 @@ export default function AdminPanel({ data }: { data: AdminData }) {
               if ('slug' in record) {
                 record.id = record.slug;
                 if (tab === 'blogs') record.name = record.title;
+                if (tab === 'faqs') record.name = record.question;
               }
               save(collection, selected.key, record, selected.revision);
             }}
@@ -423,7 +378,7 @@ export default function AdminPanel({ data }: { data: AdminData }) {
         <section>
           <div className="cms-heading">
             <h2>
-              {tab === 'plans'
+              {tab === 'projects' ? 'Case studies' : tab === 'faqs' ? 'FAQs' : tab === 'plans'
                 ? 'Internet plans'
                 : tab === 'contact'
                   ? 'Contact details'

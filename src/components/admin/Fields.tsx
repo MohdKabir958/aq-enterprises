@@ -2,6 +2,11 @@
 import type { EditorValue, EditorRecord } from '@/lib/cms/models';
 import MediaField from './MediaField';
 const labels: Record<string, string> = {
+  confirmedForPublication: 'I confirm this case study describes completed work and may be published',
+  permissionToPublish: 'Customer permission to publish has been confirmed',
+  verificationStatus: 'Review verification',
+  source: 'Review source', sourceUrl: 'Review source link',
+  showOnHomepage: 'Show on homepage', cameras: 'Camera count (optional)',
   seo: 'Search appearance',
   h1: 'Page heading',
   body: 'Content (plain text; ## headings and - lists supported)',
@@ -46,11 +51,15 @@ const mediaKeys = new Set([
   'poster',
 ]);
 const choice: Record<string, string[]> = {
+  verificationStatus: ['pending', 'verified', 'unverified'],
+  category: ['Home', 'Office', 'Industrial', 'Other'],
   status: ['draft', 'published', 'archived'],
   kind: ['product', 'package', 'combo'],
   mediaType: ['default', 'image', 'video'],
 };
 const arrayDefaults: Record<string, EditorValue> = {
+  gallery: { id: '', alt: '', label: '', src: '', caption: '' },
+  technicalDetails: { label: '', value: '' },
   faqs: { id: '', question: '', answer: '' },
   faq: { id: '', question: '', answer: '' },
   options: { name: '', description: '', suitableFor: '' },

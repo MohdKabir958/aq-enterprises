@@ -8,20 +8,20 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return toStaticParams(getProjectSlugs());
+export async function generateStaticParams() {
+  return toStaticParams(await getProjectSlugs());
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
   return buildMetadata({ seo: project.seo });
 }
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
   return <ProjectTemplate project={project} />;
 }

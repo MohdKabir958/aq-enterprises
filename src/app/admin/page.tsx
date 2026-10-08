@@ -3,11 +3,13 @@ import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { adminConfigured, isAdmin } from '@/lib/cms/auth';
 import { db } from '@/lib/cms/db';
-import { getAllBlogs, getAllServices } from '@/lib/content/getters';
+import { getAllBlogs, getAllServices, getAllProjects, getAllTestimonials, getAllFaqs } from '@/lib/content/getters';
 import { getProducts, getPlans } from '@/lib/cms/catalogue';
 import { getContact, getHero } from '@/lib/cms/settings';
 import { readRecords } from '@/lib/cms/store';
 import type { Collection, EditorRecord } from '@/lib/cms/models';
+import { getLeadReport } from '@/lib/leads/report';
+import { serializeLead, type StoredLeadRecord } from '@/lib/leads/workflow';
 import AdminLogin from '@/components/admin/AdminLogin';
 import AdminPanel, { type AdminEntry } from '@/components/admin/AdminPanel';
 export const dynamic = 'force-dynamic';
@@ -32,6 +34,17 @@ async function entries(
     if (collection === 'blogs') {
       value.featuredImage ||= value.coverImage || '';
       value.featuredImageAlt ||= '';
+    }
+    if (collection === 'projects') {
+      value.h1 ||= value.name;
+      value.image ||= '';
+      value.imageAlt ||= '';
+      value.gallery ||= [];
+      value.confirmedForPublication ??= false;
+    }
+    if (collection === 'reviews') {
+      value.rating ??= null; value.source ||= ''; value.sourceUrl ||= '';
+      value.permissionToPublish ??= false; value.projectSlug ||= ''; value.serviceSlug ||= '';
     }
     if (collection === 'services') {
       const hero = value.hero as EditorRecord;
@@ -81,6 +94,8 @@ export default async function AdminPage() {
     files,
     uploads,
     enquiries,
+    report,
+    projects, reviews, faqs,
   ] = await Promise.all([
     getProducts(true).then((v) => entries('products', v)),
     getAllBlogs({ includeDrafts: true }).then((v) => entries('blogs', v)),
@@ -93,14 +108,13 @@ export default async function AdminPage() {
     db().query<{ id: string; name: string; size: number }>(
       'SELECT id,name,octet_length(bytes) AS size FROM aq_media ORDER BY created_at DESC',
     ),
-    db().query<{
-      id: string;
-      payload: EditorRecord;
-      email_status: string;
-      created_at: Date;
-    }>(
-      'SELECT id,payload,email_status,created_at FROM aq_enquiries ORDER BY created_at DESC LIMIT 200',
+    db().query<StoredLeadRecord>(
+      'SELECT * FROM aq_enquiries ORDER BY created_at DESC,id DESC LIMIT 20',
     ),
+    getLeadReport(),
+    getAllProjects({ includeDrafts: true }).then(v => entries('projects', v)),
+    getAllTestimonials({ includeDrafts: true }).then(v => entries('reviews', v)),
+    getAllFaqs({ includeDrafts: true }).then(v => entries('faqs', v)),
   ]);
   return (
     <AdminPanel
@@ -114,10 +128,8 @@ export default async function AdminPage() {
         images,
         assets: files,
         uploads: uploads.rows,
-        enquiries: enquiries.rows.map((e) => ({
-          ...e,
-          created_at: e.created_at.toISOString(),
-        })),
+        report, projects, reviews, faqs,
+        enquiries: enquiries.rows.map(serializeLead),
       }}
     />
   );

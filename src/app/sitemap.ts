@@ -15,6 +15,7 @@ import { getAllContentPaths } from '@/lib/content/getters';
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${siteConfig.url}/site-survey`, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${siteConfig.url}/products`, changeFrequency: 'weekly', priority: 0.9 },
     {
       url: `${siteConfig.url}`,

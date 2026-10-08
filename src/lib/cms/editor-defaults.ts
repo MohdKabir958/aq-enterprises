@@ -41,6 +41,22 @@ export const newBlog: EditorRecord = {
   seo: { title: '', description: '', canonical: '' },
 };
 const section = (heading: string) => ({ heading, body: '' });
+export const newProject: EditorRecord = {
+  id: '', slug: '', name: '', status: 'draft', sourceId: '', h1: '', summary: '',
+  category: 'Home', locationLabel: '', locationSlug: '', cameras: null, brandLabel: '',
+  duration: '', overview: '', clientRequirement: '', solution: '', equipment: '',
+  installationApproach: '', results: '', technicalDetails: [], image: '', imageAlt: '', gallery: [],
+  relatedServices: [], relatedProjects: [], relatedBlogs: [], relatedLocations: [],
+  confirmedForPublication: false, seo: { title: '', description: '', canonical: '' },
+};
+export const newReview: EditorRecord = {
+  id: '', slug: '', name: '', status: 'draft', quote: '', role: '', source: '', sourceUrl: '',
+  rating: null, verificationStatus: 'pending', permissionToPublish: false, projectSlug: '', serviceSlug: '',
+};
+export const newFaq: EditorRecord = {
+  id: '', slug: '', name: '', status: 'draft', question: '', answer: '', showOnHomepage: true,
+  relatedServices: [], relatedLocations: [], relatedIndustries: [],
+};
 const list = (heading: string) => ({ heading, items: [] });
 export const newService: EditorRecord = {
   id: '',

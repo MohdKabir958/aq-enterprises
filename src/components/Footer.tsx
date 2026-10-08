@@ -109,6 +109,7 @@ export default async function Footer() {
             <Link href="/projects" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Projects</Link>
             <Link href="/blog" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Blog</Link>
             <Link href="/contact" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Contact</Link>
+            <Link href="/site-survey" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Request a Site Survey</Link>
           </nav>
         </div>
 

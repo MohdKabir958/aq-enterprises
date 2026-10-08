@@ -11,7 +11,7 @@ try {
     await readFile(new URL('./admin-schema.sql', import.meta.url), 'utf8'),
   );
   await db.query(
-    'TRUNCATE aq_content,aq_sessions,aq_rate_limits,aq_media,aq_enquiries',
+    'TRUNCATE aq_content,aq_sessions,aq_rate_limits,aq_media,aq_enquiries,aq_activity',
   );
   console.log('Disposable admin test database prepared.');
 } finally {

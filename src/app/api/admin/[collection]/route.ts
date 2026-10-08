@@ -5,9 +5,16 @@ import { assertSameOrigin, isAdmin, readJson } from '@/lib/cms/auth';
 import { saveRecord } from '@/lib/cms/store';
 import { schemas, type Collection } from '@/lib/cms/models';
 import { db } from '@/lib/cms/db';
-import { getAllBlogs, getAllServices } from '@/lib/content/getters';
+import { getAllBlogs, getAllServices, getAllProjects, getAllTestimonials, getAllFaqs } from '@/lib/content/getters';
 import { getPlans, getProducts } from '@/lib/cms/catalogue';
 const collections = Object.keys(schemas);
+const contentReaders = {
+  products: () => getProducts(true), plans: () => getPlans(true),
+  blogs: () => getAllBlogs({ includeDrafts: true }), services: () => getAllServices({ includeDrafts: true }),
+  projects: () => getAllProjects({ includeDrafts: true }),
+  reviews: async () => (await getAllTestimonials({ includeDrafts: true })).map(r => ({ ...r, slug: r.id })),
+  faqs: async () => (await getAllFaqs({ includeDrafts: true })).map(f => ({ ...f, slug: f.slug || f.id })),
+};
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ collection: string }> },
@@ -49,14 +56,7 @@ export async function POST(
       else {
         key = String(record.slug);
         if (!input.key) {
-          const entries =
-            type === 'blogs'
-              ? await getAllBlogs({ includeDrafts: true })
-              : type === 'services'
-                ? await getAllServices({ includeDrafts: true })
-                : type === 'plans'
-                  ? await getPlans(true)
-                  : await getProducts(true);
+          const entries = await contentReaders[type as keyof typeof contentReaders]();
           if (entries.some((entry) => entry.slug === key)) {
             return NextResponse.json(
               {
@@ -76,14 +76,17 @@ export async function POST(
             { status: 400 },
           );
         record.id = key;
-        if (type === 'blogs' || type === 'services') {
+        if (type === 'reviews' && record.rating === null) delete record.rating;
+        if (type === 'blogs' || type === 'services' || type === 'projects') {
           const date = new Date().toISOString().slice(0, 10);
           record.updatedAt = date;
           record.createdAt ||= date;
           if (record.status === 'published') record.publishedAt ||= date;
           (record.seo as Record<string, unknown>).canonical =
-            `/${type === 'blogs' ? 'blog' : 'services'}/${key}`;
+            `/${type === 'blogs' ? 'blog' : type}/${key}`;
           if (type === 'blogs') record.name = record.title;
+          if (type === 'projects') { record.sourceId ||= key; if (record.cameras === null) delete record.cameras; }
+
         }
       }
     } else if (!/^[a-z0-9-]{1,100}$/.test(key))

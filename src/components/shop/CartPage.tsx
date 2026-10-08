@@ -5,6 +5,7 @@ import ContactForm from '@/components/ContactForm';
 import { useCart } from './useCart';
 import { money } from './Catalogue';
 import type { Product } from '@/lib/cms/models';
+import { usePublicBusiness } from '@/components/SiteSettings';
 export default function CartPage({
   products,
   checkout = false,
@@ -14,6 +15,9 @@ export default function CartPage({
 }) {
   const [sent, setSent] = useState(false);
   const cart = useCart();
+  const { WHATSAPP_URL } = usePublicBusiness();
+  const [locality, setLocality] = useState('');
+  const [whatsappRequirements, setWhatsappRequirements] = useState('');
   const selections = cart.items.map((item) => ({
     item,
     product: products.find((p) => p.id === item.id),
@@ -110,6 +114,20 @@ export default function CartPage({
             Installation, taxes, delivery and final availability are confirmed
             in your quotation. Checkout sends an enquiry.
           </p>
+          {available.length === selections.length && <div className="guided-fields">
+            <h3>Ask about these items on WhatsApp</h3>
+            <label>Your Hyderabad locality (optional)<input maxLength={120} value={locality} onChange={e => setLocality(e.target.value)} /></label>
+            <label>Your requirements (optional)<textarea rows={3} maxLength={500} value={whatsappRequirements} onChange={e => setWhatsappRequirements(e.target.value)} /></label>
+            <a className="shop-button" data-cart-share="true" target="_blank" rel="noopener noreferrer"
+              href={`${WHATSAPP_URL}?text=${encodeURIComponent([
+                'Hello AQ Enterprises, please advise on these items:', summary,
+                `Priced items subtotal: ${money(total)}`,
+                locality && `Hyderabad locality: ${locality}`,
+                whatsappRequirements && `Requirements: ${whatsappRequirements}`,
+                'Please confirm availability, installation scope and final pricing.',
+              ].filter(Boolean).join('\n\n'))}`}>Share cart on WhatsApp</a>
+            <small>WhatsApp opens with your selections. Review the message and press Send there.</small>
+          </div>}
           {!checkout && available.length === selections.length && (
             <Link className="shop-button" href="/checkout">
               Proceed to checkout →

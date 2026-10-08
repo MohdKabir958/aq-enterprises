@@ -29,6 +29,8 @@ export interface NormalizedLeadPayload {
   address?: string;
   message?: string;
   orderSummary?: string;
+  requirements?: import('./requirements').Requirements;
+  requirementsSummary?: string;
   orderItems?: {id:string;name:string;quantity:number;unitPrice:number|null}[];
 }
 

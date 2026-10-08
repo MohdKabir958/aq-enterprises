@@ -43,7 +43,7 @@ async function bundle(
     services,
     blogs,
     locations: getAllLocations(),
-    projects: getAllProjects(),
+    projects: await getAllProjects(),
     brands: getAllBrands(),
     industries: getAllIndustries(),
   };

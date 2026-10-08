@@ -5,7 +5,7 @@ import { JsonLd } from '@/lib/json-ld';
 import { generateSchema } from '@/lib/seo';
 import { serviceBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForService } from '@/lib/links/related';
-import { getFaqsByIds, getServiceLocationsForService } from '@/lib/content/getters';
+import { getScopedFaqs, getServiceLocationsForService } from '@/lib/content/getters';
 
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
@@ -127,7 +127,7 @@ export default async function ServiceTemplate({ service }: ServiceTemplateProps)
   const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = await getPublicBusiness();
   const breadcrumbs = serviceBreadcrumbs(service.name, service.slug);
   const related = (await getRelatedForService(service));
-  const collectionFaqs = getFaqsByIds(service.relatedFaqs ?? []);
+  const collectionFaqs = await getScopedFaqs('relatedServices', service.slug, service.relatedFaqs ?? []);
   const faqs: FAQ[] = [...(service.faqs ?? []), ...collectionFaqs];
   const areaPages = (await getServiceLocationsForService(service.slug));
 

@@ -72,7 +72,7 @@ export default async function ServiceLocationTemplate({ page }: Props) {
   const { PHONE, PHONE_DISPLAY, WHATSAPP_URL, ADDRESS } = await getPublicBusiness();
   const service = (await getServiceBySlug(page.serviceSlug));
   const location = getLocationBySlug(page.locationSlug);
-  const project = page.projectSlug ? getProjectBySlug(page.projectSlug) : undefined;
+  const project = page.projectSlug ? await getProjectBySlug(page.projectSlug) : undefined;
 
   const breadcrumbs = serviceLocationBreadcrumbs({
     locationName: location?.name ?? page.locationSlug,

@@ -1,3 +1,4 @@
+import { generateFAQSchema } from '@/lib/seo';
 /**
  * @file page.tsx
  * @description Homepage for AQ Enterprises.
@@ -15,6 +16,7 @@ import FaqSection from '@/components/FaqSection';
 import { getPublicBusiness } from '@/lib/cms/settings';
 import {
   getAllProjects,
+  getHomepageFaqs,
   getPublishedVerifiedTestimonials,
 } from '@/lib/content/getters';
 import {
@@ -49,13 +51,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const recentProjects = getAllProjects().slice(0, 3);
-  const verifiedReviews = getPublishedVerifiedTestimonials();
+  const homepageFaqs = await getHomepageFaqs();
+  const recentProjects = (await getAllProjects()).slice(0, 3);
+  const verifiedReviews = await getPublishedVerifiedTestimonials();
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <JsonLd schema={(await generateOrganizationSchema())} />
       <JsonLd schema={(await generateLocalBusinessSchema())} />
+      {homepageFaqs.length > 0 && <JsonLd schema={generateFAQSchema(homepageFaqs)} />}
       <Header active="home" />
 
       {/* Spacer for fixed header */}
@@ -87,7 +91,7 @@ export default async function HomePage() {
         <VerifiedReviewsSection reviews={verifiedReviews} />
 
         {/* ── FAQ ───────────────────────────────────── */}
-        <FaqSection />
+        <FaqSection faqs={homepageFaqs} />
 
         {/* ── Quote / Contact ───────────────────────── */}
         <HomeQuoteSection />

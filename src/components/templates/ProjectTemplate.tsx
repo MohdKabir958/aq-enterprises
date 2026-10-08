@@ -142,7 +142,7 @@ export default async function ProjectTemplate({ project }: ProjectTemplateProps)
   const cta = project.cta;
   const primaryHref = cta?.primaryHref ?? '/#contact';
   const primaryLabel = cta?.primaryLabel ?? CTA_COPY.survey.heading;
-  const verifiedReview = getVerifiedTestimonialForProject(project.slug);
+  const verifiedReview = await getVerifiedTestimonialForProject(project.slug);
   const heroSrc = resolvePublicSrc(project.image);
 
   const schema = (await generateSchema({
@@ -155,7 +155,7 @@ export default async function ProjectTemplate({ project }: ProjectTemplateProps)
     extra: {
       about: {
         '@type': 'Thing',
-        name: `${project.category} CCTV installation`,
+        name: `${project.category} installation project`,
       },
       provider: {
         '@type': 'LocalBusiness',

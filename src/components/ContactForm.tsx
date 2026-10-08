@@ -1,6 +1,8 @@
 'use client';
 
 import type { CartItem } from '@/lib/cms/cart';
+import GuidedRequirements from './GuidedRequirements';
+import { emptyRequirements, type Requirements } from '@/lib/leads/requirements';
 
 import { useState, useTransition, useId, useRef } from 'react';
 import { PROPERTY_TYPES } from '@/lib/constants';
@@ -31,15 +33,18 @@ export default function ContactForm({
   cartItems,
   orderSummary,
   checkout = false,
+  survey = false,
   onSuccess,
 }: {
   cartItems?: CartItem[];
   orderSummary?: string;
   checkout?: boolean;
+  survey?: boolean;
   onSuccess?: () => void;
 } = {}) {
   const submissionId = useRef('');
-  const formSource = checkout ? 'checkout' : 'bottom_form';
+  const formSource = survey ? 'site_survey' : checkout ? 'checkout' : 'bottom_form';
+  const [requirements, setRequirements] = useState<Requirements>({ ...emptyRequirements, surveyRequested: survey });
   const [form, setForm] = useState<ContactFormState>({
     name: '',
     phone: '',
@@ -74,7 +79,7 @@ export default function ContactForm({
     }
     setErrors({});
 
-    if (checkout && form.address.trim().length < 5) {
+    if ((checkout || requirements.surveyRequested) && form.address.trim().length < 5) {
       setErrors({ global: 'Please enter your site address.' });
       return;
     }
@@ -101,6 +106,7 @@ export default function ContactForm({
           submissionId: submissionId.current,
           website: form.website,
           attribution: getAttribution(),
+          requirements,
         });
 
         if (result.success) {
@@ -108,7 +114,7 @@ export default function ContactForm({
             form_source: formSource,
             property_type: propertyType,
           });
-          trackEvent(ANALYTICS_EVENTS.site_survey_request, {
+          if (requirements.surveyRequested) trackEvent(ANALYTICS_EVENTS.site_survey_request, {
             form_source: formSource,
             property_type: propertyType,
           });
@@ -184,7 +190,7 @@ export default function ContactForm({
           Request Received
         </h3>
         <p style={{ color: '#9BA5B4', fontSize: 14, margin: 0 }}>
-          {CTA_COPY.formSuccess}
+          {requirements.surveyRequested ? 'Your survey request is received. Our team will call to confirm the visit.' : CTA_COPY.formSuccess}
         </p>
       </div>
     );
@@ -211,9 +217,9 @@ export default function ContactForm({
         </div>
       )}
 
-      {checkout && (
+      {(checkout || survey || requirements.surveyRequested) && (
         <div className="checkout-details">
-          <label>
+          {checkout && <label>
             Selected products
             <textarea
               readOnly
@@ -221,7 +227,7 @@ export default function ContactForm({
               rows={5}
               aria-label="Selected products"
             />
-          </label>
+          </label>}
           <label>
             Email (optional)
             <input
@@ -398,6 +404,8 @@ export default function ContactForm({
         </select>
       </div>
 
+      <GuidedRequirements value={requirements} onChange={setRequirements} disabled={isPending} survey={survey} />
+
       <button
         type="submit"
         disabled={isPending}
@@ -416,6 +424,8 @@ export default function ContactForm({
       >
         {isPending
           ? 'Sending request...'
+          : survey
+            ? 'Request site survey'
           : checkout
             ? 'Send quotation request'
             : 'Get Callback'}

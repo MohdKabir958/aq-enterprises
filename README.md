@@ -41,3 +41,5 @@ npm run build
 ## Owner dashboard and enquiry catalogue
 
 The website includes a protected `/admin` dashboard, `/products` catalogue, cart and enquiry checkout. Content and customer enquiries use Neon PostgreSQL; configure owner credentials and SMTP before deployment. See [Admin and Neon setup](docs/admin-and-neon-setup.md) for setup, media limits and validation instructions.
+
+The dashboard also manages lead stages, follow-ups, notification retries, case studies, verified reviews and FAQs. Customers can request visits at `/site-survey`, supply service-specific requirements and share their cart on WhatsApp. Reports combine anonymous website activity with actual enquiry records and owner-marked outcomes. Run `npm run db:setup` before deploying updates that add database fields.

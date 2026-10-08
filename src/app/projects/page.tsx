@@ -31,11 +31,11 @@ export const metadata: Metadata = {
 
 export default async function ProjectsPage() {
   const { PHONE, PHONE_DISPLAY } = await getPublicBusiness();
-  const projects = getAllProjects().map((project) => ({
+  const projects = (await getAllProjects()).map((project) => ({
     ...project,
     image: resolvePublicSrc(project.image),
   }));
-  const verifiedReviews = getPublishedVerifiedTestimonials();
+  const verifiedReviews = await getPublishedVerifiedTestimonials();
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>

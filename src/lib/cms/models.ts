@@ -236,6 +236,35 @@ export const mediaReplacementSchema = z.object({
   alt: short,
 });
 export type MediaReplacement = z.infer<typeof mediaReplacementSchema>;
+export const projectSchema = z.object({
+  ...base, ...timestamps, ...related,
+  sourceId: short, h1: short, summary: text.min(1), category: short.min(1),
+  locationLabel: short.min(1), locationSlug: z.union([z.literal(''), slugSchema]).optional(),
+  cameras: z.number().int().min(0).max(10000).nullable().optional(),
+  brandLabel: short.optional(), brandSlug: z.union([z.literal(''), slugSchema]).optional(),
+  duration: short.optional(), overview: text.min(1), clientRequirement: text.optional(),
+  solution: text.optional(), equipment: text.optional(), installationApproach: text.optional(), results: text.optional(),
+  technicalDetails: z.array(z.object({ label: short, value: short })).max(50),
+  image: mediaUrlSchema, imageAlt: short, gallery: z.array(image).max(40),
+  cta: serviceSchema.shape.cta.optional(), body: text.optional(), seo,
+  confirmedForPublication: z.boolean(),
+}).refine(p => p.status !== 'published' || p.confirmedForPublication, {
+  message: 'Confirm this case study describes completed work and may be published.',
+});
+export const reviewSchema = z.object({
+  ...base, quote: text.min(1), role: short, source: short, sourceUrl: z.union([z.literal(''), z.url().refine(v => v.startsWith('https://'))]),
+  rating: z.number().int().min(1).max(5).nullable(),
+  verificationStatus: z.enum(['pending', 'verified', 'unverified']),
+  permissionToPublish: z.boolean(),
+  projectSlug: z.union([z.literal(''), slugSchema]), serviceSlug: z.union([z.literal(''), slugSchema]),
+}).refine(r => r.status !== 'published' || (r.verificationStatus === 'verified' && r.permissionToPublish && r.source.length > 0), {
+  message: 'Published reviews require a verified source and permission to publish.',
+});
+export const faqEntrySchema = z.object({
+  ...base, question: text.min(1), answer: text.min(1), showOnHomepage: z.boolean(),
+  relatedServices: z.array(slugSchema).max(100), relatedLocations: z.array(slugSchema).max(100),
+  relatedIndustries: z.array(slugSchema).max(100),
+});
 export const schemas = {
   products: productSchema,
   blogs: blogSchema,
@@ -244,6 +273,9 @@ export const schemas = {
   contact: contactSchema,
   hero: heroSchema,
   images: mediaReplacementSchema,
+  projects: projectSchema,
+  reviews: reviewSchema,
+  faqs: faqEntrySchema,
 };
 export type Collection = keyof typeof schemas;
 export type EditorValue =

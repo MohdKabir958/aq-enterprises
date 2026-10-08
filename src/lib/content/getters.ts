@@ -1,3 +1,4 @@
+import { FAQ_DATA } from '@/lib/constants';
 import { mergedCollection } from '@/lib/cms/store';
 /**
  * Scale-ready content accessors.
@@ -107,17 +108,15 @@ export function getIndustrySlugs(): string[] {
 
 // ─── Projects ────────────────────────────────────────────────────────────────
 
-export function getAllProjects(options?: { includeDrafts?: boolean }): Project[] {
-  return options?.includeDrafts ? [...projects] : publishedList(projects);
+export async function getAllProjects(options?: { includeDrafts?: boolean }): Promise<Project[]> {
+  const items = (await mergedCollection<Project>('projects', projects)).sort((a,b) => (b.updatedAt || b.publishedAt || '').localeCompare(a.updatedAt || a.publishedAt || ''));
+  return options?.includeDrafts ? items : publishedList(items);
 }
-
-export function getProjectBySlug(slug: string): Project | undefined {
-  const item = bySlug(projects, slug);
-  return item && isPublished(item) ? item : undefined;
+export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
+  return bySlug(await getAllProjects(), slug);
 }
-
-export function getProjectSlugs(): string[] {
-  return getAllProjects().map((p) => p.slug);
+export async function getProjectSlugs(): Promise<string[]> {
+  return (await getAllProjects()).map(p => p.slug);
 }
 
 // ─── Blogs ───────────────────────────────────────────────────────────────────
@@ -144,32 +143,38 @@ export async function getBlogCategories(): Promise<string[]> {
 
 // ─── FAQs / Testimonials ─────────────────────────────────────────────────────
 
-export function getAllFaqs(options?: { includeDrafts?: boolean }): FAQ[] {
-  return options?.includeDrafts ? [...faqs] : publishedList(faqs);
+const defaultFaqs = [
+  ...FAQ_DATA.map((item, index) => ({ ...item, id: `home-faq-${index + 1}`, slug: `home-faq-${index + 1}`,
+    name: item.question, status: 'published' as const, showOnHomepage: true,
+    relatedServices: [], relatedLocations: [], relatedIndustries: [],
+  })),
+  ...faqs.map(item => ({ ...item, slug: item.slug || item.id, name: item.question, showOnHomepage: false })),
+];
+export async function getAllFaqs(options?: { includeDrafts?: boolean }): Promise<FAQ[]> {
+  const items = await mergedCollection('faqs', defaultFaqs);
+  return options?.includeDrafts ? items : publishedList(items);
 }
-
-export function getFaqById(id: string): FAQ | undefined {
-  const item = faqs.find((f) => f.id === id);
-  return item && isPublished(item) ? item : undefined;
+export async function getHomepageFaqs(): Promise<FAQ[]> {
+  return (await getAllFaqs()).filter(item => (item as FAQ & { showOnHomepage?: boolean }).showOnHomepage === true);
 }
-
-export function getFaqsByIds(ids: string[]): FAQ[] {
-  return ids.map(getFaqById).filter((f): f is FAQ => Boolean(f));
+export async function getFaqById(id: string): Promise<FAQ | undefined> {
+  return (await getAllFaqs()).find(f => f.id === id);
 }
-
-export function getAllTestimonials(options?: { includeDrafts?: boolean }): Testimonial[] {
-  return options?.includeDrafts ? [...testimonials] : publishedList(testimonials);
+export async function getFaqsByIds(ids: string[]): Promise<FAQ[]> {
+  return (await getAllFaqs()).filter(f => ids.includes(f.id));
 }
-
-/** Homepage / social proof — independently verified and explicitly published only. */
-export function getPublishedVerifiedTestimonials(): Testimonial[] {
-  return getAllTestimonials().filter(
-    (t) => t.status === 'published' && t.verificationStatus === 'verified',
-  );
+export async function getScopedFaqs(kind: 'relatedServices' | 'relatedLocations' | 'relatedIndustries', slug: string, ids: string[]): Promise<FAQ[]> {
+  return (await getAllFaqs()).filter(f => ids.includes(f.id) || f[kind]?.includes(slug));
 }
-
-export function getVerifiedTestimonialForProject(projectSlug: string): Testimonial | undefined {
-  return getPublishedVerifiedTestimonials().find((t) => t.projectSlug === projectSlug);
+export async function getAllTestimonials(options?: { includeDrafts?: boolean }): Promise<Testimonial[]> {
+  const items = await mergedCollection('reviews', testimonials.map(t => ({ ...t, slug: t.id })));
+  return options?.includeDrafts ? items : publishedList(items);
+}
+export async function getPublishedVerifiedTestimonials(): Promise<Testimonial[]> {
+  return (await getAllTestimonials()).filter(t => t.status === 'published' && t.verificationStatus === 'verified');
+}
+export async function getVerifiedTestimonialForProject(projectSlug: string): Promise<Testimonial | undefined> {
+  return (await getPublishedVerifiedTestimonials()).find(t => t.projectSlug === projectSlug);
 }
 
 // ─── Service × Location (P1 allowlist) ───────────────────────────────────────
@@ -238,7 +243,7 @@ export async function getAllContentPaths(): Promise<{
   for (const i of getAllIndustries()) {
     paths.push({ path: `/industries/${i.slug}`, lastModified: i.updatedAt ?? i.publishedAt });
   }
-  for (const p of getAllProjects()) {
+  for (const p of await getAllProjects()) {
     paths.push({ path: `/projects/${p.slug}`, lastModified: p.updatedAt ?? p.publishedAt });
   }
   for (const post of await getAllBlogs()) {

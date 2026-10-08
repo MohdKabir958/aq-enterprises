@@ -71,6 +71,7 @@ export class SmtpLeadDeliveryProvider implements LeadDeliveryProvider {
       ['Site address', lead.address || '—'],
       ['Message', lead.message || '—'],
       ['Selected items', lead.orderSummary || '—'],
+      ['Requirements / survey request', lead.requirementsSummary || '—'],
       ['Form source', lead.formSource],
       ['Submitted at', lead.submittedAt],
       ['Page path', lead.pagePath || '—'],

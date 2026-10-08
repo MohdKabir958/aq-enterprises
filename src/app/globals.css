@@ -283,3 +283,20 @@ button {
 .shop-card button { margin-right: 8px; margin-top: 12px; }
 .shop-checkout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
 @media (max-width: 900px) { .shop-checkout { grid-template-columns: minmax(0, 1fr); } }
+/* Lead forms, follow-ups and conversion reports */
+.guided-fields { border: 1px solid #293241; border-radius: 10px; padding: 16px; margin: 12px 0; min-width: 0; display: grid; gap: 14px; }
+.guided-fields legend { padding: 0 6px; color: #e3e8ef; font-weight: 600; }
+.guided-fields label, .lead-filters label { display: grid; gap: 7px; color: #c7cfdc; font-size: 14px; }
+.guided-fields input:not([type="checkbox"]), .guided-fields select, .guided-fields textarea, .lead-filters input, .lead-filters select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid #344052; border-radius: 6px; padding: 12px; font: inherit; font-size: 16px; background: #0a0c10; color: #f2f4f7; }
+.guided-fields .cms-check { display: flex; align-items: center; gap: 10px; }
+.guided-fields p, .guided-fields small { color: #aab4c3; font-size: 14px; line-height: 1.6; }
+.guided-fields input:focus-visible, .guided-fields select:focus-visible, .guided-fields textarea:focus-visible { outline: 2px solid #3fa9f5; outline-offset: 2px; }
+.survey-form { max-width: 720px; margin-inline: auto; }
+.lead-filters { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 16px; margin-block: 20px; }
+.lead-card .cms-actions { margin-top: 12px; }
+.report-metrics, .report-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 16px; }
+.report-metrics strong { font-size: 30px; color: #3fa9f5; }
+.report-table-wrap { overflow-x: auto; }
+.report-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.report-table th, .report-table td { text-align: left; border-bottom: 1px solid #293241; padding: 10px 8px; overflow-wrap: anywhere; }
+.report-table th:first-child { width: 70%; }

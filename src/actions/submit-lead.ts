@@ -19,6 +19,7 @@ import { cartItemsSchema, type CartItem } from '@/lib/cms/cart';
 import { getProducts } from '@/lib/cms/catalogue';
 import { databaseConfigured, db } from '@/lib/cms/db';
 import { consumeRateLimit } from '@/lib/cms/auth';
+import { requirementsSchema, requirementsSummary, indiaToday, surveyDateLimit, type Requirements } from '@/lib/leads/requirements';
 export interface LeadAttributionPayload {
   landingPage?: string;
   referrer?: string;
@@ -34,7 +35,8 @@ export interface LeadData {
   name: string;
   phone: string;
   propertyType: string;
-  formSource?: 'bottom_form' | 'quote_modal' | 'checkout';
+  formSource?: 'bottom_form' | 'quote_modal' | 'checkout' | 'site_survey';
+  requirements?: Requirements;
   website?: string;
   attribution?: LeadAttributionPayload;
   email?: string;
@@ -48,7 +50,7 @@ const leadSchema = z.object({
   phone: z.string().max(20),
   propertyType: z.string().max(80),
   formSource: z
-    .enum(['bottom_form', 'quote_modal', 'checkout'])
+    .enum(['bottom_form', 'quote_modal', 'checkout', 'site_survey'])
     .default('bottom_form'),
   website: z.string().max(100).optional(),
   email: z.union([z.literal(''), z.email().max(254)]).optional(),
@@ -56,6 +58,7 @@ const leadSchema = z.object({
   message: z.string().max(3000).optional(),
   cartItems: cartItemsSchema.optional(),
   submissionId: z.uuid().optional(),
+  requirements: requirementsSchema.optional(),
   attribution: z
     .object({
       landingPage: z.string().max(1024).optional(),
@@ -82,6 +85,14 @@ export async function submitLead(
       };
     const input = parsed.data;
     if (input.website?.trim()) return { success: true };
+    const requirements = input.requirements;
+    if (input.formSource === 'site_survey' && !requirements?.surveyRequested)
+      return { success: false, error: 'Please complete your survey preferences.' };
+    if (requirements?.surveyRequested && (
+      !requirements.service || requirements.locality.length < 3 ||
+      !requirements.preferredTime || requirements.preferredDate < indiaToday() ||
+      requirements.preferredDate > surveyDateLimit() || (input.address?.trim().length ?? 0) < 5
+    )) return { success: false, error: 'Enter your service, locality, site address and a preferred survey time within the next 90 days.' };
     const nameCheck = validateName(input.name),
       phoneCheck = validatePhone(input.phone);
     if (!nameCheck.valid || !phoneCheck.valid)
@@ -162,6 +173,8 @@ export async function submitLead(
       message: input.message?.trim() || '',
       orderSummary,
       orderItems,
+      requirements,
+      requirementsSummary: requirementsSummary(requirements),
       pagePath: sanitizeAttributionField(a.pagePath, LEAD_FIELD_LIMITS.URL_MAX),
       landingPage: sanitizeAttributionField(
         a.landingPage,
@@ -179,14 +192,14 @@ export async function submitLead(
     const id = input.submissionId ?? randomUUID();
     if (databaseConfigured()) {
       const stored = await db().query(
-        'INSERT INTO aq_enquiries(id,payload) VALUES($1,$2) ON CONFLICT DO NOTHING RETURNING id',
+        "INSERT INTO aq_enquiries(id,payload,email_status,email_attempts,last_email_attempt_at) VALUES($1,$2,'sending',1,now()) ON CONFLICT DO NOTHING RETURNING id",
         [id, JSON.stringify(payload)],
       );
       if (!stored.rowCount) return { success: true };
     }
     const delivery = await defaultSmtpProvider.deliver(payload);
     if (databaseConfigured()) {
-      await db().query('UPDATE aq_enquiries SET email_status=$2 WHERE id=$1', [
+      await db().query('UPDATE aq_enquiries SET email_status=$2 WHERE id=$1 AND email_attempts=1', [
         id,
         delivery.success ? 'sent' : 'failed',
       ]);
