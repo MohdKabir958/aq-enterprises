@@ -18,6 +18,12 @@ export type LeadAttribution = {
 const FIRST_TOUCH_KEY = 'aq_first_touch_v1';
 const SESSION_LANDING_KEY = 'aq_session_landing_v1';
 
+function storedString(value: unknown, key: string, maxLength = 255): string {
+  if (!value || typeof value !== 'object') return '';
+  const item = (value as Record<string, unknown>)[key];
+  return typeof item === 'string' ? item.slice(0, maxLength) : '';
+}
+
 function readSearchParams(): URLSearchParams {
   if (typeof window === 'undefined') return new URLSearchParams();
   return new URLSearchParams(window.location.search);
@@ -44,6 +50,7 @@ export function captureAttribution(): void {
   const referrer = document.referrer || '';
   const path = `${window.location.pathname}${window.location.search}`;
 
+  try {
   if (!sessionStorage.getItem(SESSION_LANDING_KEY)) {
     sessionStorage.setItem(
       SESSION_LANDING_KEY,
@@ -69,6 +76,7 @@ export function captureAttribution(): void {
       }),
     );
   }
+  } catch { /* Attribution is optional when browser storage is unavailable. */ }
 }
 
 export function getAttribution(): LeadAttribution {
@@ -90,25 +98,25 @@ export function getAttribution(): LeadAttribution {
   let first: { firstTouchSource?: string } = {};
 
   try {
-    session = JSON.parse(sessionStorage.getItem(SESSION_LANDING_KEY) || '{}');
+    session = JSON.parse(sessionStorage.getItem(SESSION_LANDING_KEY) || '{}') || {};
   } catch {
     session = {};
   }
   try {
-    first = JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || '{}');
+    first = JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || '{}') || {};
   } catch {
     first = {};
   }
 
   return {
-    landingPage: session.landingPage || window.location.pathname || '',
-    referrer: session.referrer || document.referrer || '',
-    utmSource: session.utmSource || '',
-    utmMedium: session.utmMedium || '',
-    utmCampaign: session.utmCampaign || '',
-    utmContent: session.utmContent || '',
-    utmTerm: session.utmTerm || '',
-    firstTouchSource: first.firstTouchSource || 'direct',
-    pagePath: window.location.pathname || '',
+    landingPage: storedString(session, 'landingPage', 1024) || window.location.pathname.slice(0, 1024),
+    referrer: storedString(session, 'referrer', 1024) || document.referrer.slice(0, 1024),
+    utmSource: storedString(session, 'utmSource'),
+    utmMedium: storedString(session, 'utmMedium'),
+    utmCampaign: storedString(session, 'utmCampaign'),
+    utmContent: storedString(session, 'utmContent'),
+    utmTerm: storedString(session, 'utmTerm'),
+    firstTouchSource: storedString(first, 'firstTouchSource') || 'direct',
+    pagePath: window.location.pathname.slice(0, 1024),
   };
 }

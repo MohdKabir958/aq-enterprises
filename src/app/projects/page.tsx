@@ -14,7 +14,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProjectsGrid from '@/components/ProjectsGrid';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { PHONE, PHONE_DISPLAY } from '@/lib/constants';
+import { getPublicBusiness } from '@/lib/cms/settings';
 import { CTA_COPY } from '@/lib/business';
 import { getAllProjects, getPublishedVerifiedTestimonials } from '@/lib/content/getters';
 import { resolvePublicSrc } from '@/lib/assets-server';
@@ -29,25 +29,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProjectsPage() {
-  const projects = getAllProjects().map((project) => ({
+export default async function ProjectsPage() {
+  const { PHONE, PHONE_DISPLAY } = await getPublicBusiness();
+  const projects = (await getAllProjects()).map((project) => ({
     ...project,
     image: resolvePublicSrc(project.image),
   }));
-  const verifiedReviews = getPublishedVerifiedTestimonials();
+  const verifiedReviews = await getPublishedVerifiedTestimonials();
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <Header active="projects" />
       {/* Spacer for fixed header */}
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 32px 0' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px var(--page-gutter) 0' }}>
           <Breadcrumbs items={[{ name: 'Projects', url: '/projects' }]} />
         </div>
         {/* ── Hero ──────────────────────────────────────────────────────── */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 32px 40px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '64px var(--page-gutter) 40px' }}>
           <span
             style={{
               display: 'inline-block',
@@ -85,7 +86,7 @@ export default function ProjectsPage() {
         {verifiedReviews.length > 0 ? (
           <section
             aria-label="Verified customer feedback"
-            style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 96px' }}
+            style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 96px' }}
           >
             <div className="grid-responsive grid-cols-3" style={{ gap: 24 }}>
               {verifiedReviews.map((review) => (
@@ -107,7 +108,7 @@ export default function ProjectsPage() {
 
         <section
           aria-label="Call to action"
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 96px', textAlign: 'center' }}
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 96px', textAlign: 'center' }}
         >
           <h2
             style={{

@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { JsonLd } from '@/lib/json-ld';
@@ -8,7 +9,7 @@ import {
   getProjectBySlug,
   getServiceBySlug,
 } from '@/lib/content/getters';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL, ADDRESS } from '@/lib/constants';
+
 import { siteConfig } from '@/lib/config';
 import type { FAQ, ServiceLocationPage } from '@/types';
 import PageShell from './PageShell';
@@ -67,10 +68,11 @@ function BulletList({ items }: { items: string[] }) {
   );
 }
 
-export default function ServiceLocationTemplate({ page }: Props) {
-  const service = getServiceBySlug(page.serviceSlug);
+export default async function ServiceLocationTemplate({ page }: Props) {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL, ADDRESS } = await getPublicBusiness();
+  const service = (await getServiceBySlug(page.serviceSlug));
   const location = getLocationBySlug(page.locationSlug);
-  const project = page.projectSlug ? getProjectBySlug(page.projectSlug) : undefined;
+  const project = page.projectSlug ? await getProjectBySlug(page.projectSlug) : undefined;
 
   const breadcrumbs = serviceLocationBreadcrumbs({
     locationName: location?.name ?? page.locationSlug,
@@ -80,14 +82,13 @@ export default function ServiceLocationTemplate({ page }: Props) {
   });
 
   const faqs: FAQ[] = page.faqs ?? [];
-  const relatedServiceLinks = (page.relatedServices ?? [])
-    .map((slug) => getServiceBySlug(slug))
+  const relatedServiceLinks = (await Promise.all((page.relatedServices ?? []).map(getServiceBySlug)))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
   const relatedLocationLinks = (page.relatedLocations ?? [])
     .map((slug) => getLocationBySlug(slug))
     .filter((l): l is NonNullable<typeof l> => Boolean(l));
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'service',
     name: page.h1,
     description: page.seo.description || page.summary,
@@ -114,7 +115,7 @@ export default function ServiceLocationTemplate({ page }: Props) {
         },
       },
     },
-  });
+  }));
 
   const primaryHref = page.cta.primaryHref ?? '/#contact';
   const primaryLabel = page.cta.primaryLabel ?? 'Request a Free Site Survey';

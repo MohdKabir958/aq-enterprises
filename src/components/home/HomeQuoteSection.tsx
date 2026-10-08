@@ -1,10 +1,12 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 import ContactForm from '@/components/ContactForm';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL, EMAIL, ADDRESS, HOURS } from '@/lib/constants';
-import { mapsSearchUrl } from '@/lib/business';
 
-export default function HomeQuoteSection() {
+
+
+export default async function HomeQuoteSection() {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL, EMAIL, ADDRESS, HOURS, mapsLocationUrl } = await getPublicBusiness();
   return (
-    <section id="quote" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 96px' }}>
+    <section id="quote" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 96px' }}>
       <div
         id="contact"
         className="grid-split grid-split-form"
@@ -16,7 +18,7 @@ export default function HomeQuoteSection() {
         }}
       >
         {/* Form Side */}
-        <div style={{ padding: 48 }}>
+        <div style={{ padding: 'clamp(20px, 4vw, 48px)' }}>
           <span
             style={{
               color: '#3fa9f5',
@@ -43,7 +45,7 @@ export default function HomeQuoteSection() {
         </div>
 
         {/* Contact Info Side */}
-        <div style={{ background: '#0d0f13', padding: 48, borderLeft: '1px solid #1B1F27' }}>
+        <div style={{ background: '#0d0f13', padding: 'clamp(20px, 4vw, 48px)', borderLeft: '1px solid #1B1F27' }}>
           <div style={{ color: '#F2F4F7', fontSize: 15, fontWeight: 600, marginBottom: 22 }}>
             Talk to us directly
           </div>
@@ -73,7 +75,7 @@ export default function HomeQuoteSection() {
           </address>
 
           <a
-            href={mapsSearchUrl()}
+            href={mapsLocationUrl()}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -93,7 +95,7 @@ export default function HomeQuoteSection() {
               {ADDRESS.full}
             </span>
             <span style={{ display: 'block', color: '#3fa9f5', fontSize: 13, marginTop: 12 }}>
-              Open address search in Google Maps →
+              Open in Google Maps →
             </span>
           </a>
         </div>

@@ -7,7 +7,7 @@ export default function WhyChooseUsSection() {
         background: '#0d0f13',
         borderTop: '1px solid #1B1F27',
         borderBottom: '1px solid #1B1F27',
-        padding: '80px 32px',
+        padding: '80px var(--page-gutter)',
       }}
     >
       <div

@@ -4,7 +4,7 @@ export default function BrandsSection() {
   return (
     <section
       aria-label="Brands we commonly install"
-      style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}
+      style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
     >
       <div
         style={{

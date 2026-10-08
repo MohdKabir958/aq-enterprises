@@ -49,7 +49,7 @@ function LinkGroup({ title, items }: { title: string; items: InternalLink[] }) {
           margin: 0,
           display: 'grid',
           gap: 12,
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
         }}
       >
         {items.map((item) => (

@@ -1,3 +1,5 @@
+import { getAllServices } from '@/lib/content/getters';
+import { getPublicBusiness } from '@/lib/cms/settings';
 /**
  * @file Footer.tsx
  * @description Global site footer with brand info, navigation, services, and contact.
@@ -22,12 +24,14 @@
  *   - Phone/email links use proper tel: and mailto: hrefs
  */
 
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import Link from 'next/link';
-import { ADDRESS, EMAIL, HOURS, PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
-import { SOCIAL_PROFILES, BUSINESS_NAME, mapsSearchUrl } from '@/lib/business';
 
-export default function Footer() {
+import { BUSINESS_NAME } from '@/lib/business';
+
+export default async function Footer() {
+  const services = await getAllServices();
+  const { ADDRESS, EMAIL, HOURS, PHONE, PHONE_DISPLAY, WHATSAPP_URL, SOCIAL_PROFILES, mapsLocationUrl } = await getPublicBusiness();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -35,7 +39,7 @@ export default function Footer() {
       style={{
         background: '#0A0C10',
         borderTop: '1px solid #1B1F27',
-        padding: '64px 32px 28px',
+        padding: '64px var(--page-gutter) 28px',
       }}
     >
       {/* ── Main 4-column grid ────────────────────────────────────────── */}
@@ -100,10 +104,12 @@ export default function Footer() {
             <Link href="/" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Home</Link>
             <Link href="/about" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>About Us</Link>
             <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Services</Link>
+            <Link href="/products" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Products &amp; Packages</Link>
             <Link href="/locations" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Locations</Link>
             <Link href="/projects" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Projects</Link>
             <Link href="/blog" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Blog</Link>
             <Link href="/contact" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Contact</Link>
+            <Link href="/site-survey" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Request a Site Survey</Link>
           </nav>
         </div>
 
@@ -124,11 +130,7 @@ export default function Footer() {
           </h3>
           <nav aria-label="Services navigation" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <Link href="/commercial-internet-hyderabad" style={{ color: '#3fa9f5', fontSize: 14, textDecoration: 'none', fontWeight: 600 }}>Commercial Internet &amp; LAN</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Home CCTV Installation</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Office &amp; Factory Security</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>IP &amp; Wireless Cameras</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>Access Control &amp; Biometric</Link>
-            <Link href="/services" style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>AMC &amp; Maintenance</Link>
+            {services.slice(0, 6).map(service => <Link key={service.slug} href={`/services/${service.slug}`} style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}>{service.name}</Link>)}
           </nav>
         </div>
 
@@ -176,12 +178,12 @@ export default function Footer() {
             </span>
             <span style={{ color: '#6B7484', fontSize: 13 }}>{HOURS}</span>
             <a
-              href={mapsSearchUrl()}
+              href={mapsLocationUrl()}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: '#9BA5B4', fontSize: 14, textDecoration: 'none' }}
             >
-              Maps (address search)
+              Open in Google Maps
             </a>
             <a
               href={SOCIAL_PROFILES.justdial.url}

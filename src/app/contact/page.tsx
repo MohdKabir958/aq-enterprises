@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 /**
  * @file page.tsx (Contact)
  * @description Dedicated contact page for AQ Enterprises.
@@ -21,47 +22,20 @@ import ContactForm from '@/components/ContactForm';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { JsonLd, generateLocalBusinessSchema } from '@/lib/json-ld';
 import { siteConfig } from '@/lib/config';
-import {
-  PHONE,
-  PHONE_DISPLAY,
-  WHATSAPP_URL,
-  EMAIL,
-  ADDRESS,
-  HOURS,
-} from '@/lib/constants';
-import { CTA_COPY, mapsSearchUrl, SOCIAL_PROFILES } from '@/lib/business';
 
-export const metadata: Metadata = {
+import { CTA_COPY } from '@/lib/business';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { PHONE_DISPLAY } = await getPublicBusiness();
+  return {
   title: 'Contact AQ Enterprises — CCTV Installation Hyderabad',
   description: `Get in touch with AQ Enterprises for CCTV installation, security systems, and site surveys in Hyderabad. Call ${PHONE_DISPLAY} or request a free callback. Based in Mallapur.`,
   alternates: {
     canonical: '/contact',
   },
-};
+  };
+}
 
-const contactPageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ContactPage',
-  name: 'Contact AQ Enterprises',
-  url: `${siteConfig.url}/contact`,
-  description:
-    'Contact page for AQ Enterprises — CCTV and security system installation in Hyderabad.',
-  mainEntity: {
-    '@type': 'LocalBusiness',
-    name: siteConfig.name,
-    telephone: PHONE,
-    email: EMAIL,
-    url: siteConfig.url,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`,
-      addressLocality: 'Hyderabad',
-      addressRegion: 'Telangana',
-      postalCode: ADDRESS.pincode,
-      addressCountry: 'IN',
-    },
-  },
-};
 
 const nextSteps = [
   {
@@ -86,17 +60,43 @@ const nextSteps = [
   },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL, EMAIL, ADDRESS, HOURS, mapsLocationUrl, SOCIAL_PROFILES } = await getPublicBusiness();
+  const contactPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact AQ Enterprises',
+  url: `${siteConfig.url}/contact`,
+  description:
+    'Contact page for AQ Enterprises — CCTV and security system installation in Hyderabad.',
+  mainEntity: {
+    '@type': 'LocalBusiness',
+    name: siteConfig.name,
+    telephone: PHONE,
+    email: EMAIL,
+    url: siteConfig.url,
+    hasMap: mapsLocationUrl(),
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`,
+      addressLocality: 'Hyderabad',
+      addressRegion: 'Telangana',
+      postalCode: ADDRESS.pincode,
+      addressCountry: 'IN',
+    },
+  },
+};
+
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <JsonLd schema={contactPageSchema} />
-      <JsonLd schema={generateLocalBusinessSchema()} />
+      <JsonLd schema={(await generateLocalBusinessSchema())} />
       <Header active="contact" />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
         {/* ── Hero ─────────────────────────────────────────────────────── */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 32px 0' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '56px var(--page-gutter) 0' }}>
           <Breadcrumbs
             items={[
               { name: 'Home', url: '/' },
@@ -145,11 +145,10 @@ export default function ContactPage() {
         </section>
 
         {/* ── Two-column: Form + Details ────────────────────────────────── */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 96px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 96px' }}>
           <div
+            className="grid-split grid-split-form"
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,0.9fr)',
               gap: 32,
               alignItems: 'start',
             }}
@@ -222,7 +221,7 @@ export default function ContactPage() {
                 <div>
                   <div style={{ color: '#6B7484', fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>Call us</div>
                   <div style={{ color: '#F2F4F7', fontSize: 15, fontWeight: 600 }}>{PHONE_DISPLAY}</div>
-                  <div style={{ color: '#6B7484', fontSize: 13, marginTop: 2 }}>Mon–Sat, 9 am – 7 pm</div>
+                  <div style={{ color: '#6B7484', fontSize: 13, marginTop: 2 }}>{HOURS}</div>
                 </div>
               </a>
 
@@ -282,7 +281,7 @@ export default function ContactPage() {
                 <div>
                   <div style={{ color: '#6B7484', fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 3 }}>Email</div>
                   <div style={{ color: '#F2F4F7', fontSize: 15, fontWeight: 600 }}>{EMAIL}</div>
-                  <div style={{ color: '#6B7484', fontSize: 13, marginTop: 2 }}>We reply within 24 hours</div>
+                  <div style={{ color: '#6B7484', fontSize: 13, marginTop: 2 }}>Share your requirements for a callback</div>
                 </div>
               </a>
 
@@ -341,7 +340,7 @@ export default function ContactPage() {
                     <div style={{ color: '#9BA5B4', fontSize: 14 }}>{ADDRESS.line2}, {ADDRESS.pincode}</div>
                     <div style={{ color: '#6B7484', fontSize: 13, marginTop: 4 }}>{HOURS}</div>
                     <a
-                      href={mapsSearchUrl()}
+                      href={mapsLocationUrl()}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ display: 'inline-block', marginTop: 10, color: '#3fa9f5', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
@@ -361,7 +360,7 @@ export default function ContactPage() {
             background: '#0d0f13',
             borderTop: '1px solid #1B1F27',
             borderBottom: '1px solid #1B1F27',
-            padding: '80px 32px',
+            padding: '80px var(--page-gutter)',
           }}
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -398,7 +397,7 @@ export default function ContactPage() {
         </section>
 
         {/* ── FAQ ──────────────────────────────────────────────────────── */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 32px 96px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '80px var(--page-gutter) 96px' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <span style={{ color: '#3fa9f5', fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Common Questions
@@ -477,11 +476,6 @@ export default function ContactPage() {
 
       <Footer />
 
-      <style>{`
-        @media (max-width: 768px) {
-          .contact-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

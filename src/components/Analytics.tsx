@@ -10,6 +10,8 @@ import Script from 'next/script';
 import { captureAttribution } from '@/lib/analytics/attribution';
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events';
 import { getGaMeasurementId, trackEvent } from '@/lib/analytics/track';
+import { usePathname } from 'next/navigation';
+import { recordActivity } from '@/lib/analytics/activity-client';
 
 function classifyContactHref(href: string): keyof typeof ANALYTICS_EVENTS | null {
   const h = href.trim().toLowerCase();
@@ -23,14 +25,15 @@ function classifyContactHref(href: string): keyof typeof ANALYTICS_EVENTS | null
 
 export default function Analytics() {
   const measurementId = getGaMeasurementId();
+  const pathname = usePathname();
 
   useEffect(() => {
     captureAttribution();
   }, []);
 
-  useEffect(() => {
-    if (!measurementId) return;
+  useEffect(() => { recordActivity('page_view'); }, [pathname]);
 
+  useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
       if (!target) return;
@@ -39,6 +42,8 @@ export default function Analytics() {
       const href = anchor.getAttribute('href') || '';
       const eventName = classifyContactHref(href);
       if (!eventName) return;
+      if (eventName === 'phone_click' || eventName === 'whatsapp_click')
+        recordActivity(anchor.hasAttribute('data-cart-share') ? 'cart_share' : eventName);
 
       trackEvent(ANALYTICS_EVENTS[eventName], {
         page_path: window.location.pathname,

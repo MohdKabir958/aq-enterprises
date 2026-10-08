@@ -18,7 +18,7 @@ export type AnalyticsEventName =
 
 /** Safe event params — never include name, phone, email, or free-text PII. */
 export type AnalyticsEventParams = {
-  form_source?: 'bottom_form' | 'quote_modal';
+  form_source?: 'bottom_form' | 'quote_modal' | 'checkout' | 'site_survey';
   property_type?: string;
   link_location?: string;
   page_path?: string;

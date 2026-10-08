@@ -47,7 +47,7 @@ export default function CameraScene() {
 
   return (
     <div
-      style={{ position: 'relative', height: 440 }}
+      style={{ position: 'relative', height: 'clamp(260px, 55vw, 440px)' }}
       aria-label="3D interactive model of a security camera"
       role="img"
     >

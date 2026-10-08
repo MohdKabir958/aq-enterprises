@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { JsonLd } from '@/lib/json-ld';
@@ -5,12 +6,12 @@ import { generateSchema } from '@/lib/seo';
 import { locationBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForLocation } from '@/lib/links/related';
 import {
-  getFaqsByIds,
+  getScopedFaqs,
   getProjectBySlug,
   getServiceBySlug,
   getServiceLocationsForLocation,
 } from '@/lib/content/getters';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
+
 import type { FAQ, ImagePlaceholder, Location } from '@/types';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
@@ -113,20 +114,20 @@ function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
   );
 }
 
-export default function LocationTemplate({ location }: LocationTemplateProps) {
+export default async function LocationTemplate({ location }: LocationTemplateProps) {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = await getPublicBusiness();
   const breadcrumbs = locationBreadcrumbs(location.name, location.slug);
-  const related = getRelatedForLocation(location);
-  const collectionFaqs = getFaqsByIds(location.relatedFaqs ?? []);
+  const related = (await getRelatedForLocation(location));
+  const collectionFaqs = await getScopedFaqs('relatedLocations', location.slug, location.relatedFaqs ?? []);
   const faqs: FAQ[] = [...(location.faqs ?? []), ...collectionFaqs];
 
-  const areaServices = (location.relatedServices ?? [])
-    .map((slug) => getServiceBySlug(slug))
+  const areaServices = (await Promise.all((location.relatedServices ?? []).map(getServiceBySlug)))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
-  const localServicePages = getServiceLocationsForLocation(location.slug);
-  const verifiedProjects = (location.verifiedProjectIds ?? [])
-    .map((id) => {
-      const contentProject = getProjectBySlug(id);
+  const localServicePages = (await getServiceLocationsForLocation(location.slug));
+  const verifiedProjects = (await Promise.all((location.verifiedProjectIds ?? [])
+    .map(async (id) => {
+      const contentProject = await getProjectBySlug(id);
       if (!contentProject) return null;
       return {
         id,
@@ -138,10 +139,10 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
         imageAlt: contentProject.imageAlt,
         href: `/projects/${contentProject.slug}`,
       };
-    })
+    })))
     .filter((p): p is NonNullable<typeof p> => Boolean(p));
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'location',
     name: location.h1 || location.name,
     description: location.seo.description || location.summary,
@@ -152,7 +153,7 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
     extra: {
       areaServedName: `${location.name}, ${location.city}`,
     },
-  });
+  }));
 
   const primaryHref = location.cta.primaryHref ?? '/#contact';
   const primaryLabel = location.cta.primaryLabel ?? 'Request a Free Site Survey';
@@ -428,7 +429,7 @@ export default function LocationTemplate({ location }: LocationTemplateProps) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
                 gap: 20,
                 marginTop: 20,
               }}

@@ -1,3 +1,4 @@
+import { getPublicBusiness, getContact, contactAddress } from '@/lib/cms/settings';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { JsonLd } from '@/lib/json-ld';
@@ -5,16 +6,14 @@ import { generateSchema } from '@/lib/seo';
 import { projectBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForProject } from '@/lib/links/related';
 import { getVerifiedTestimonialForProject } from '@/lib/content/getters';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
-import { CTA_COPY, postalAddressSchema } from '@/lib/business';
+
+import { CTA_COPY } from '@/lib/business';
 import { siteConfig } from '@/lib/config';
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
-import { PROJECT_PHOTO_HEIGHT, PROJECT_PHOTO_WIDTH } from '@/lib/project-photos';
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import type { ImagePlaceholder, Project } from '@/types';
 import TestimonialCard from '@/components/TestimonialCard';
-import VerifiedImage from '@/components/VerifiedImage';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
 
@@ -135,17 +134,18 @@ function ImagePlaceholderBlock({ image }: { image: ImagePlaceholder }) {
   );
 }
 
-export default function ProjectTemplate({ project }: ProjectTemplateProps) {
+export default async function ProjectTemplate({ project }: ProjectTemplateProps) {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = await getPublicBusiness();
   const title = project.h1 || project.name;
   const breadcrumbs = projectBreadcrumbs(project.name, project.slug);
-  const related = getRelatedForProject(project);
+  const related = (await getRelatedForProject(project));
   const cta = project.cta;
   const primaryHref = cta?.primaryHref ?? '/#contact';
   const primaryLabel = cta?.primaryLabel ?? CTA_COPY.survey.heading;
-  const verifiedReview = getVerifiedTestimonialForProject(project.slug);
+  const verifiedReview = await getVerifiedTestimonialForProject(project.slug);
   const heroSrc = resolvePublicSrc(project.image);
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'project',
     name: title,
     description: project.seo.description || project.summary,
@@ -155,14 +155,14 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
     extra: {
       about: {
         '@type': 'Thing',
-        name: `${project.category} CCTV installation`,
+        name: `${project.category} installation project`,
       },
       provider: {
         '@type': 'LocalBusiness',
         name: siteConfig.name,
         url: siteConfig.url,
         telephone: PHONE,
-        address: postalAddressSchema(),
+        address: contactAddress(await getContact()),
       },
       ...(project.locationLabel
         ? {
@@ -173,7 +173,7 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
           }
         : {}),
     },
-  });
+  }));
 
   return (
     <PageShell active="projects" breadcrumbs={breadcrumbs}>
@@ -331,7 +331,7 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
             style={{
               margin: 0,
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))',
               gap: 16,
             }}
           >
@@ -357,7 +357,7 @@ export default function ProjectTemplate({ project }: ProjectTemplateProps) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',
                 gap: 24,
                 marginTop: 20,
               }}

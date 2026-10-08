@@ -367,12 +367,14 @@ export function mountCameraScene(
     controls.removeEventListener('end', onControlsEnd);
     controls.dispose();
 
-    scene.traverse((obj: any) => {
-      if ('geometry' in obj && obj.geometry instanceof THREE.BufferGeometry) {
+    scene.traverse((obj) => {
+      if (!(obj instanceof THREE.Mesh)) return;
+
+      if (obj.geometry instanceof THREE.BufferGeometry) {
         obj.geometry.dispose();
       }
       if ('material' in obj) {
-        const mat = (obj as THREE.Mesh).material;
+        const mat = obj.material;
         if (Array.isArray(mat)) {
           mat.forEach((m) => m.dispose());
         } else if (mat) {

@@ -4,14 +4,8 @@
  */
 
 import { siteConfig } from './config';
-import {
-  EMAIL,
-  HOURS_SCHEMA,
-  PHONE,
-  SERVICE_AREA,
-  postalAddressSchema,
-  schemaSameAs,
-} from './business';
+import { schemaSameAs } from './business';
+import { getContact, contactAddress } from './cms/settings';
 
 /**
  * Safely serializes a JSON-LD schema into a string.
@@ -47,8 +41,9 @@ export function JsonLd({ schema }: { schema: Record<string, unknown> }) {
  * telephone / email / address / openingHours are the live published NAP from
  * business.ts (status pending client confirmation — not invented placeholders).
  */
-export function generateLocalBusinessSchema() {
-  const sameAs = schemaSameAs();
+export async function generateLocalBusinessSchema() {
+  const contact = await getContact();
+  const sameAs = [...new Set([contact.justdialUrl, ...schemaSameAs().filter(url => !url.startsWith('https://www.justdial.com/'))])];
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
@@ -56,19 +51,20 @@ export function generateLocalBusinessSchema() {
     image: siteConfig.logo,
     '@id': `${siteConfig.url}/#business`,
     url: siteConfig.url,
-    telephone: PHONE.value,
-    email: EMAIL.value,
-    address: postalAddressSchema(),
+    telephone: contact.phone,
+    email: contact.email,
+    address: contactAddress(contact),
+    hasMap: contact.mapsUrl,
     areaServed: {
       '@type': 'City',
-      name: SERVICE_AREA.primary,
+      name: 'Hyderabad',
     },
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
-        dayOfWeek: [...HOURS_SCHEMA.days],
-        opens: HOURS_SCHEMA.opens,
-        closes: HOURS_SCHEMA.closes,
+        dayOfWeek: contact.days,
+        opens: contact.opens,
+        closes: contact.closes,
       },
     ],
     ...(sameAs.length ? { sameAs } : {}),
@@ -78,8 +74,9 @@ export function generateLocalBusinessSchema() {
 /**
  * Organization schema (best for home page).
  */
-export function generateOrganizationSchema() {
-  const sameAs = schemaSameAs();
+export async function generateOrganizationSchema() {
+  const contact = await getContact();
+  const sameAs = [...new Set([contact.justdialUrl, ...schemaSameAs().filter(url => !url.startsWith('https://www.justdial.com/'))])];
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -88,13 +85,13 @@ export function generateOrganizationSchema() {
     logo: siteConfig.logo,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: PHONE.value,
-      email: EMAIL.value,
+      telephone: contact.phone,
+      email: contact.email,
       contactType: 'customer service',
-      areaServed: SERVICE_AREA.primary,
+      areaServed: 'Hyderabad',
       availableLanguage: ['en'],
     },
-    address: postalAddressSchema(),
+    address: contactAddress(contact),
     ...(sameAs.length ? { sameAs } : {}),
   };
 }

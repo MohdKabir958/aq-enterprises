@@ -16,8 +16,12 @@
  */
 
 import { useRef, useEffect, useState } from 'react';
+import { useSiteSettings } from '@/components/SiteSettings';
 
 export default function AboutVideo() {
+  const { images } = useSiteSettings();
+  const override = images.find(image => image.original === '/assets/about-hero.mp4');
+  const videoSrc = override?.replacement ?? '/assets/about-hero.mp4';
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -51,7 +55,7 @@ export default function AboutVideo() {
       v.removeEventListener('stalled', fail);
       clearTimeout(timer);
     };
-  }, []);
+  }, [videoSrc]);
 
   return (
     <div
@@ -78,9 +82,9 @@ export default function AboutVideo() {
       />
       
       {/* ── Video Element ───────────────────────────────────────────── */}
-      <video
+      {override?.replacement !== null && <video
         ref={videoRef}
-        src="/assets/about-hero.mp4"
+        src={videoSrc}
         autoPlay
         muted
         loop
@@ -96,7 +100,7 @@ export default function AboutVideo() {
           transition: 'opacity 0.3s',
           opacity: videoFailed ? 0 : 1,
         }}
-      />
+      />}
     </div>
   );
 }

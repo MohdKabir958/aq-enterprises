@@ -2,7 +2,7 @@ import { JsonLd } from '@/lib/json-ld';
 import { generateSchema } from '@/lib/seo';
 import { industryBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForIndustry } from '@/lib/links/related';
-import { getFaqsByIds } from '@/lib/content/getters';
+import { getScopedFaqs } from '@/lib/content/getters';
 import type { Industry } from '@/types';
 import PageShell from './PageShell';
 import RelatedLinks from './RelatedLinks';
@@ -11,12 +11,12 @@ interface IndustryTemplateProps {
   industry: Industry;
 }
 
-export default function IndustryTemplate({ industry }: IndustryTemplateProps) {
+export default async function IndustryTemplate({ industry }: IndustryTemplateProps) {
   const breadcrumbs = industryBreadcrumbs(industry.name, industry.slug);
-  const related = getRelatedForIndustry(industry);
-  const faqs = getFaqsByIds(industry.relatedFaqs ?? []);
+  const related = (await getRelatedForIndustry(industry));
+  const faqs = await getScopedFaqs('relatedIndustries', industry.slug, industry.relatedFaqs ?? []);
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'industry',
     name: industry.name,
     description: industry.seo.description || industry.summary,
@@ -24,7 +24,7 @@ export default function IndustryTemplate({ industry }: IndustryTemplateProps) {
     image: industry.image,
     breadcrumbs,
     faqs,
-  });
+  }));
 
   return (
     <PageShell active="services" breadcrumbs={breadcrumbs}>

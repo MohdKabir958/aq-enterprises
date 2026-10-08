@@ -8,13 +8,13 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return toStaticParams(getBlogSlugs());
+export async function generateStaticParams() {
+  return toStaticParams((await getBlogSlugs()));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = (await getBlogBySlug(slug));
   if (!post) return {};
   return buildMetadata({
     seo: post.seo,
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPage({ params }: Props) {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = (await getBlogBySlug(slug));
   if (!post) notFound();
   return <BlogTemplate post={post} />;
 }

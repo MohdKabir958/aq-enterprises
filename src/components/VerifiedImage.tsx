@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
 
@@ -42,13 +42,13 @@ export default function VerifiedImage({
   priority = false,
   caption,
   style,
-  provenance: _provenance = 'provisional_illustration',
+  provenance = 'provisional_illustration',
 }: VerifiedImageProps) {
   const resolved = resolvePublicSrc(src);
   if (!resolved) return null;
 
   return (
-    <figure style={{ margin: 0 }}>
+    <figure data-provenance={provenance} style={{ margin: 0 }}>
       <Image
         src={resolved}
         alt={alt}

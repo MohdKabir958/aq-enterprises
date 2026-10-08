@@ -45,6 +45,8 @@ export const NAV_ITEMS = [
   { key: 'home', label: 'Home', href: '/' },
   { key: 'about', label: 'About', href: '/about' },
   { key: 'services', label: 'Services', href: '/services' },
+  { key: 'products', label: 'Products', href: '/products' },
+  { key: 'cart', label: 'Cart', href: '/cart' },
   { key: 'projects', label: 'Projects', href: '/projects' },
   { key: 'blog', label: 'Blog', href: '/blog' },
   { key: 'contact', label: 'Contact', href: '/contact' },

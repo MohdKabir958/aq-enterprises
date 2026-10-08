@@ -56,16 +56,16 @@ function checkDuplicateSlugs<T extends { slug: string }>(
   }
 }
 
-function runValidation() {
+async function runValidation() {
   console.log('🔍 Starting AQ Enterprises content integrity audit...\n');
 
-  const services = getAllServices({ includeDrafts: true });
+  const services = await getAllServices({ includeDrafts: true });
   const locations = getAllLocations({ includeDrafts: true });
-  const serviceLocations = getAllServiceLocations({ includeDrafts: true });
-  const projects = getAllProjects({ includeDrafts: true });
-  const blogs = getAllBlogs({ includeDrafts: true });
-  const faqs = getAllFaqs({ includeDrafts: true });
-  const testimonials = getAllTestimonials({ includeDrafts: true });
+  const serviceLocations = await getAllServiceLocations({ includeDrafts: true });
+  const projects = await getAllProjects({ includeDrafts: true });
+  const blogs = await getAllBlogs({ includeDrafts: true });
+  const faqs = await getAllFaqs({ includeDrafts: true });
+  const testimonials = await getAllTestimonials({ includeDrafts: true });
   const brands = getAllBrands({ includeDrafts: true });
   const industries = getAllIndustries({ includeDrafts: true });
 

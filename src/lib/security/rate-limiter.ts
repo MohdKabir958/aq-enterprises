@@ -101,7 +101,11 @@ export class MemoryRateLimiter implements RateLimiter {
     const existing = this.store.get(key);
 
     if (!existing || existing.resetAt <= now) {
-      // First hit or window expired
+      // Enforce capacity on every insertion, even between scheduled TTL sweeps.
+      if (!existing && this.store.size >= this.maxEntries) {
+        const oldest = this.store.keys().next().value;
+        if (oldest !== undefined) this.store.delete(oldest);
+      }
       this.store.set(key, {
         count: 1,
         resetAt: now + this.windowMs,

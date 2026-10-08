@@ -11,20 +11,20 @@ type Props = {
   params: Promise<{ slug: string; service: string }>;
 };
 
-export function generateStaticParams() {
-  return getServiceLocationStaticParams();
+export async function generateStaticParams() {
+  return (await getServiceLocationStaticParams());
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, service } = await params;
-  const page = getServiceLocation(slug, service);
+  const page = (await getServiceLocation(slug, service));
   if (!page) return {};
   return buildMetadata({ seo: page.seo });
 }
 
 export default async function ServiceLocationPageRoute({ params }: Props) {
   const { slug, service } = await params;
-  const page = getServiceLocation(slug, service);
+  const page = (await getServiceLocation(slug, service));
   if (!page) notFound();
   return <ServiceLocationTemplate page={page} />;
 }

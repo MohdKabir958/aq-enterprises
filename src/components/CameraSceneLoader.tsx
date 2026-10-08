@@ -14,7 +14,10 @@
 
 import dynamic from 'next/dynamic';
 
-const CameraScene = dynamic(() => import('./CameraScene'), { ssr: false });
+const CameraScene = dynamic(() => import('./CameraScene'), {
+  ssr: false,
+  loading: () => <div aria-hidden="true" style={{ height: 'clamp(260px, 55vw, 440px)' }} />,
+});
 
 export default function CameraSceneLoader() {
   return <CameraScene />;

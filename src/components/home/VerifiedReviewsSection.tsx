@@ -1,14 +1,16 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 import Link from 'next/link';
 import TestimonialCard from '@/components/TestimonialCard';
-import { PHONE, PHONE_DISPLAY } from '@/lib/constants';
+
 import { CTA_COPY } from '@/lib/business';
 import type { Testimonial } from '@/types';
 
-export default function VerifiedReviewsSection({ reviews }: { reviews: Testimonial[] }) {
+export default async function VerifiedReviewsSection({ reviews }: { reviews: Testimonial[] }) {
+  const { PHONE, PHONE_DISPLAY } = await getPublicBusiness();
   return (
     <section
       aria-labelledby="reviews-heading"
-      style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}
+      style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
     >
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
         <span

@@ -7,8 +7,7 @@
  * Each FAQ item is a button that expands/collapses its answer.
  * Only one item can be open at a time — clicking an open item closes it.
  *
- * FAQ data is imported from constants.ts (single source of truth).
- * Previously, all FAQ content was hardcoded inline here.
+ * Receives published FAQs from the live content layer.
  *
  * ACCESSIBILITY:
  *   - The trigger button has aria-expanded to communicate state to screen readers
@@ -20,9 +19,9 @@
  */
 
 import { useState, useId } from 'react';
-import { FAQ_DATA } from '@/lib/constants';
+import type { FAQ } from '@/types';
 
-export default function FaqSection() {
+export default function FaqSection({ faqs }: { faqs: FAQ[] }) {
   const [openIdx, setOpenIdx] = useState<number>(-1);
   const baseId = useId();
 
@@ -36,7 +35,7 @@ export default function FaqSection() {
   return (
     <section
       aria-labelledby="faq-heading"
-      style={{ maxWidth: 900, margin: '0 auto', padding: '0 32px 88px' }}
+      style={{ maxWidth: 900, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
     >
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
         <span
@@ -64,7 +63,7 @@ export default function FaqSection() {
       </div>
 
       <dl>
-        {FAQ_DATA.map((faq, i) => {
+        {faqs.map((faq, i) => {
           const answerId = `${baseId}-faq-answer-${i}`;
           const isOpen = openIdx === i;
 
