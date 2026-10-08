@@ -7,7 +7,7 @@ import type { Project } from '@/types';
 
 export default function RecentProjectsSection({ projects }: { projects: Project[] }) {
   return (
-    <section style={{ maxWidth: 1280, margin: '0 auto', padding: '88px 32px' }}>
+    <section style={{ maxWidth: 1280, margin: '0 auto', padding: '88px var(--page-gutter)' }}>
       <div
         style={{
           display: 'flex',

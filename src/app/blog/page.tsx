@@ -25,8 +25,8 @@ function formatDate(iso?: string) {
   });
 }
 
-export default function BlogIndexPage() {
-  const posts = [...getAllBlogs()].sort((a, b) =>
+export default async function BlogIndexPage() {
+  const posts = [...(await getAllBlogs())].sort((a, b) =>
     (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''),
   );
   const featured = posts[0];
@@ -39,7 +39,7 @@ export default function BlogIndexPage() {
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <Header active="blog" />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 20px 0' }}>
@@ -175,7 +175,7 @@ export default function BlogIndexPage() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
                 gap: 20,
               }}
             >

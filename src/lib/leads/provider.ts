@@ -25,6 +25,11 @@ export interface NormalizedLeadPayload {
   utmContent: string;
   utmTerm: string;
   submittedAt: string;
+  email?: string;
+  address?: string;
+  message?: string;
+  orderSummary?: string;
+  orderItems?: {id:string;name:string;quantity:number;unitPrice:number|null}[];
 }
 
 export interface LeadDeliveryResult {

@@ -12,7 +12,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FaqSection from '@/components/FaqSection';
-import { PHONE_DISPLAY } from '@/lib/constants';
+import { getPublicBusiness } from '@/lib/cms/settings';
 import {
   getAllProjects,
   getPublishedVerifiedTestimonials,
@@ -34,7 +34,9 @@ import {
   HomeQuoteSection,
 } from '@/components/home';
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const { PHONE_DISPLAY } = await getPublicBusiness();
+  return {
   title: {
     absolute: 'AQ Enterprises — CCTV & Security Systems, Hyderabad',
   },
@@ -43,20 +45,21 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-};
+  };
+}
 
-export default function HomePage() {
+export default async function HomePage() {
   const recentProjects = getAllProjects().slice(0, 3);
   const verifiedReviews = getPublishedVerifiedTestimonials();
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
-      <JsonLd schema={generateOrganizationSchema()} />
-      <JsonLd schema={generateLocalBusinessSchema()} />
+      <JsonLd schema={(await generateOrganizationSchema())} />
+      <JsonLd schema={(await generateLocalBusinessSchema())} />
       <Header active="home" />
 
       {/* Spacer for fixed header */}
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
         {/* ── Hero Section (with isolated 3D Camera) ── */}

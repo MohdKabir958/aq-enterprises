@@ -1,16 +1,21 @@
+import Image from '@/components/ManagedImage';
+import { getHero } from '@/lib/cms/settings';
+import { getPublicBusiness } from '@/lib/cms/settings';
 import CameraSceneLoader from '@/components/CameraSceneLoader';
-import { PHONE, WHATSAPP_URL } from '@/lib/constants';
 
-export default function HeroSection() {
+
+export default async function HeroSection() {
+  const hero = await getHero();
+  const { PHONE, WHATSAPP_URL } = await getPublicBusiness();
   return (
     <section
       id="hero"
-      className="grid-split"
+      className="grid-split hero-section"
       style={{
         position: 'relative',
         maxWidth: 1280,
         margin: '0 auto',
-        padding: '64px 32px 80px',
+        padding: '64px var(--page-gutter) 80px',
         gap: 24,
         alignItems: 'center',
       }}
@@ -40,7 +45,7 @@ export default function HeroSection() {
             marginBottom: 18,
           }}
         >
-          CCTV Installation · Hyderabad
+          {hero.eyebrow}
         </span>
         <h1
           style={{
@@ -52,7 +57,7 @@ export default function HeroSection() {
             letterSpacing: '-0.01em',
           }}
         >
-          CCTV Installation in Hyderabad — Homes, Offices &amp; Factories
+          {hero.title}
         </h1>
         <p
           style={{
@@ -64,11 +69,10 @@ export default function HeroSection() {
             lineHeight: 1.3,
           }}
         >
-          See everything on your property. Miss nothing that matters.
+          {hero.subtitle}
         </p>
         <p style={{ color: '#9BA5B4', fontSize: 17, lineHeight: 1.6, maxWidth: 480, margin: '0 0 32px' }}>
-          We design, install and maintain CCTV and access-control systems for homes, offices and
-          industrial sites across Hyderabad — done right the first time.
+          {hero.description}
         </p>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 28 }}>
           <a
@@ -107,7 +111,7 @@ export default function HeroSection() {
           Mallapur, Hyderabad &nbsp;·&nbsp; Site survey before quote &nbsp;·&nbsp; Published local projects
         </div>
       </div>
-      <CameraSceneLoader />
+      {hero.mediaType === 'image' && hero.mediaUrl ? <Image src={hero.mediaUrl} alt={hero.mediaAlt} width={1200} height={800} priority style={{ width: '100%', height: 'auto', borderRadius: 16 }} /> : hero.mediaType === 'video' && hero.mediaUrl ? <video src={hero.mediaUrl} poster={hero.poster || undefined} controls preload="metadata" aria-label={hero.mediaAlt || 'Business introduction video'} style={{ width: '100%', borderRadius: 16 }} /> : <CameraSceneLoader />}
     </section>
   );
 }

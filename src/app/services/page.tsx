@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 /**
  * @file page.tsx (Services)
  * @description Services index — lists all published services from the content layer.
@@ -8,7 +9,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { PHONE } from '@/lib/constants';
+
 import { getAllServices } from '@/lib/content/getters';
 
 export const metadata: Metadata = {
@@ -20,20 +21,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServicesPage() {
-  const services = getAllServices();
+export default async function ServicesPage() {
+  const { PHONE } = await getPublicBusiness();
+  const services = (await getAllServices());
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <Header active="services" />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 32px 0' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px var(--page-gutter) 0' }}>
           <Breadcrumbs items={[{ name: 'Services', url: '/services' }]} />
         </div>
 
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 32px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '64px var(--page-gutter) 56px' }}>
           <span
             style={{
               display: 'inline-block',
@@ -71,7 +73,7 @@ export default function ServicesPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '0 32px 96px',
+            padding: '0 var(--page-gutter) 96px',
             gap: 20,
           }}
         >
@@ -118,7 +120,7 @@ export default function ServicesPage() {
 
         <section
           aria-label="Call to action"
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 96px', textAlign: 'center' }}
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 96px', textAlign: 'center' }}
         >
           <h2
             style={{

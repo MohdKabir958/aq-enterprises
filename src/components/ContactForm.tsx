@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useTransition, useId } from 'react';
+import type { CartItem } from '@/lib/cms/cart';
+
+import { useState, useTransition, useId, useRef } from 'react';
 import { PROPERTY_TYPES } from '@/lib/constants';
 import { CTA_COPY } from '@/lib/business';
 import { submitLead } from '@/actions/submit-lead';
@@ -14,6 +16,9 @@ interface ContactFormState {
   phone: string;
   propertyType: string;
   website: string;
+  email: string;
+  address: string;
+  message: string;
 }
 
 interface FormErrors {
@@ -22,12 +27,27 @@ interface FormErrors {
   global?: string;
 }
 
-export default function ContactForm() {
+export default function ContactForm({
+  cartItems,
+  orderSummary,
+  checkout = false,
+  onSuccess,
+}: {
+  cartItems?: CartItem[];
+  orderSummary?: string;
+  checkout?: boolean;
+  onSuccess?: () => void;
+} = {}) {
+  const submissionId = useRef('');
+  const formSource = checkout ? 'checkout' : 'bottom_form';
   const [form, setForm] = useState<ContactFormState>({
     name: '',
     phone: '',
     propertyType: '',
     website: '',
+    email: '',
+    address: '',
+    message: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -54,39 +74,57 @@ export default function ContactForm() {
     }
     setErrors({});
 
+    if (checkout && form.address.trim().length < 5) {
+      setErrors({ global: 'Please enter your site address.' });
+      return;
+    }
+    submissionId.current ||= crypto.randomUUID();
     const propertyType = form.propertyType || 'Not specified';
     trackEvent(ANALYTICS_EVENTS.quote_form_submit, {
-      form_source: 'bottom_form',
+      form_source: formSource,
       property_type: propertyType,
-      page_path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      page_path:
+        typeof window !== 'undefined' ? window.location.pathname : undefined,
     });
 
     startTransition(async () => {
-      const result = await submitLead({
-        name: form.name,
-        phone: form.phone,
-        propertyType,
-        formSource: 'bottom_form',
-        website: form.website,
-        attribution: getAttribution(),
-      });
+      try {
+        const result = await submitLead({
+          name: form.name,
+          phone: form.phone,
+          propertyType,
+          formSource,
+          email: form.email,
+          address: form.address,
+          message: form.message,
+          cartItems,
+          submissionId: submissionId.current,
+          website: form.website,
+          attribution: getAttribution(),
+        });
 
-      if (result.success) {
-        trackEvent(ANALYTICS_EVENTS.quote_form_success, {
-          form_source: 'bottom_form',
-          property_type: propertyType,
+        if (result.success) {
+          trackEvent(ANALYTICS_EVENTS.quote_form_success, {
+            form_source: formSource,
+            property_type: propertyType,
+          });
+          trackEvent(ANALYTICS_EVENTS.site_survey_request, {
+            form_source: formSource,
+            property_type: propertyType,
+          });
+          setSubmitted(true);
+          onSuccess?.();
+        } else {
+          trackEvent(ANALYTICS_EVENTS.quote_form_error, {
+            form_source: formSource,
+            error_code: 'submit_failed',
+          });
+          setErrors({ global: result.error || 'Failed to submit.' });
+        }
+      } catch {
+        setErrors({
+          global: 'Unable to send your request. Please try again or call us.',
         });
-        trackEvent(ANALYTICS_EVENTS.site_survey_request, {
-          form_source: 'bottom_form',
-          property_type: propertyType,
-        });
-        setSubmitted(true);
-      } else {
-        trackEvent(ANALYTICS_EVENTS.quote_form_error, {
-          form_source: 'bottom_form',
-          error_code: 'submit_failed',
-        });
-        setErrors({ global: result.error || 'Failed to submit.' });
       }
     });
   };
@@ -105,7 +143,15 @@ export default function ContactForm() {
 
   if (submitted) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px', background: 'rgba(52,211,153,0.05)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 12 }}>
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '40px 20px',
+          background: 'rgba(52,211,153,0.05)',
+          border: '1px solid rgba(52,211,153,0.2)',
+          borderRadius: 12,
+        }}
+      >
         <div
           style={{
             width: 48,
@@ -118,11 +164,25 @@ export default function ContactForm() {
             margin: '0 auto 16px',
           }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M5 13l4 4L19 7" stroke="#34D399" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M5 13l4 4L19 7"
+              stroke="#34D399"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
-        <h3 style={{ color: '#F2F4F7', fontSize: 18, margin: '0 0 8px' }}>Request Received</h3>
+        <h3 style={{ color: '#F2F4F7', fontSize: 18, margin: '0 0 8px' }}>
+          Request Received
+        </h3>
         <p style={{ color: '#9BA5B4', fontSize: 14, margin: 0 }}>
           {CTA_COPY.formSuccess}
         </p>
@@ -131,10 +191,75 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
+    >
       {errors.global && (
-        <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: 6, padding: '10px 14px', color: '#ef4444', fontSize: 13 }} role="alert">
+        <div
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            borderRadius: 6,
+            padding: '10px 14px',
+            color: '#ef4444',
+            fontSize: 13,
+          }}
+          role="alert"
+        >
           {errors.global}
+        </div>
+      )}
+
+      {checkout && (
+        <div className="checkout-details">
+          <label>
+            Selected products
+            <textarea
+              readOnly
+              value={orderSummary || ''}
+              rows={5}
+              aria-label="Selected products"
+            />
+          </label>
+          <label>
+            Email (optional)
+            <input
+              type="email"
+              autoComplete="email"
+              maxLength={254}
+              value={form.email}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, email: e.target.value }))
+              }
+              disabled={isPending}
+            />
+          </label>
+          <label>
+            Site address / Hyderabad locality
+            <input
+              autoComplete="street-address"
+              maxLength={500}
+              required
+              value={form.address}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, address: e.target.value }))
+              }
+              disabled={isPending}
+            />
+          </label>
+          <label>
+            Additional requirements (optional)
+            <textarea
+              maxLength={3000}
+              rows={4}
+              value={form.message}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, message: e.target.value }))
+              }
+              disabled={isPending}
+            />
+          </label>
         </div>
       )}
 
@@ -153,7 +278,9 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor={nameId} style={srOnly}>Full name</label>
+        <label htmlFor={nameId} style={srOnly}>
+          Full name
+        </label>
         <input
           id={nameId}
           type="text"
@@ -178,11 +305,25 @@ export default function ContactForm() {
             opacity: isPending ? 0.6 : 1,
           }}
         />
-        {errors.name && <span id={`${nameId}-error`} style={{ color: '#ef4444', fontSize: 12, marginTop: 4, display: 'block' }}>{errors.name}</span>}
+        {errors.name && (
+          <span
+            id={`${nameId}-error`}
+            style={{
+              color: '#ef4444',
+              fontSize: 12,
+              marginTop: 4,
+              display: 'block',
+            }}
+          >
+            {errors.name}
+          </span>
+        )}
       </div>
 
       <div>
-        <label htmlFor={phoneId} style={srOnly}>Phone number</label>
+        <label htmlFor={phoneId} style={srOnly}>
+          Phone number
+        </label>
         <input
           id={phoneId}
           type="tel"
@@ -208,15 +349,31 @@ export default function ContactForm() {
             opacity: isPending ? 0.6 : 1,
           }}
         />
-        {errors.phone && <span id={`${phoneId}-error`} style={{ color: '#ef4444', fontSize: 12, marginTop: 4, display: 'block' }}>{errors.phone}</span>}
+        {errors.phone && (
+          <span
+            id={`${phoneId}-error`}
+            style={{
+              color: '#ef4444',
+              fontSize: 12,
+              marginTop: 4,
+              display: 'block',
+            }}
+          >
+            {errors.phone}
+          </span>
+        )}
       </div>
 
       <div>
-        <label htmlFor={propertyId} style={srOnly}>Property type</label>
+        <label htmlFor={propertyId} style={srOnly}>
+          Property type
+        </label>
         <select
           id={propertyId}
           value={form.propertyType}
-          onChange={(e) => setForm((f) => ({ ...f, propertyType: e.target.value }))}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, propertyType: e.target.value }))
+          }
           disabled={isPending}
           style={{
             background: '#0A0C10',
@@ -230,8 +387,14 @@ export default function ContactForm() {
             opacity: isPending ? 0.6 : 1,
           }}
         >
-          <option value="" disabled hidden>Select property type</option>
-          {PROPERTY_TYPES.map(pt => <option key={pt} value={pt}>{pt}</option>)}
+          <option value="" disabled hidden>
+            Select property type
+          </option>
+          {PROPERTY_TYPES.map((pt) => (
+            <option key={pt} value={pt}>
+              {pt}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -251,7 +414,11 @@ export default function ContactForm() {
           opacity: isPending ? 0.7 : 1,
         }}
       >
-        {isPending ? 'Sending request...' : 'Get Callback'}
+        {isPending
+          ? 'Sending request...'
+          : checkout
+            ? 'Send quotation request'
+            : 'Get Callback'}
       </button>
     </form>
   );

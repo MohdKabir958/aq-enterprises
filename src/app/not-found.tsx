@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
+import { getPublicBusiness } from '@/lib/cms/settings';
 import { CTA_COPY } from '@/lib/business';
 
 export const metadata: Metadata = {
@@ -10,11 +10,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = await getPublicBusiness();
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh', color: '#F2F4F7' }}>
       <Header />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
       <main
         style={{
           maxWidth: 720,

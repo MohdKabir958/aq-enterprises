@@ -1,5 +1,6 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 import type { CSSProperties } from 'react';
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import Link from 'next/link';
 import { JsonLd } from '@/lib/json-ld';
 import { generateSchema } from '@/lib/seo';
@@ -7,7 +8,7 @@ import { blogBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForBlog } from '@/lib/links/related';
 import { parseArticleBody, renderInline } from '@/lib/blog/parse-body';
 import { CTA_COPY } from '@/lib/business';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
+
 import { siteConfig } from '@/lib/config';
 import type { BlogPost } from '@/types';
 import PageShell from './PageShell';
@@ -66,10 +67,11 @@ function Blocks({ blocks }: { blocks: ReturnType<typeof parseArticleBody>['lead'
   );
 }
 
-export default function BlogTemplate({ post }: BlogTemplateProps) {
+export default async function BlogTemplate({ post }: BlogTemplateProps) {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = await getPublicBusiness();
   const title = post.title || post.name;
   const breadcrumbs = blogBreadcrumbs(title, post.slug);
-  const related = getRelatedForBlog(post);
+  const related = (await getRelatedForBlog(post));
   const parsed = parseArticleBody(post.body);
   const image = post.featuredImage || post.coverImage;
   const published = formatDate(post.publishedAt);
@@ -89,7 +91,7 @@ export default function BlogTemplate({ post }: BlogTemplateProps) {
           author: { '@type': 'Person', name: post.author },
         };
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'blog',
     name: title,
     description: post.seo.description || post.summary,
@@ -106,7 +108,7 @@ export default function BlogTemplate({ post }: BlogTemplateProps) {
         '@id': post.seo.canonical,
       },
     },
-  });
+  }));
 
   return (
     <PageShell active="blog" breadcrumbs={breadcrumbs}>

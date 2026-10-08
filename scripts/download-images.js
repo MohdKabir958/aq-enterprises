@@ -1,6 +1,6 @@
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
+import https from 'node:https';
+import fs from 'node:fs';
+import path from 'node:path';
 
 function downloadImage(url, destPath) {
   return new Promise((resolve, reject) => {

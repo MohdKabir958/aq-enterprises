@@ -44,6 +44,7 @@ export function captureAttribution(): void {
   const referrer = document.referrer || '';
   const path = `${window.location.pathname}${window.location.search}`;
 
+  try {
   if (!sessionStorage.getItem(SESSION_LANDING_KEY)) {
     sessionStorage.setItem(
       SESSION_LANDING_KEY,
@@ -69,6 +70,7 @@ export function captureAttribution(): void {
       }),
     );
   }
+  } catch { /* Attribution is optional when browser storage is unavailable. */ }
 }
 
 export function getAttribution(): LeadAttribution {
@@ -90,12 +92,12 @@ export function getAttribution(): LeadAttribution {
   let first: { firstTouchSource?: string } = {};
 
   try {
-    session = JSON.parse(sessionStorage.getItem(SESSION_LANDING_KEY) || '{}');
+    session = JSON.parse(sessionStorage.getItem(SESSION_LANDING_KEY) || '{}') || {};
   } catch {
     session = {};
   }
   try {
-    first = JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || '{}');
+    first = JSON.parse(localStorage.getItem(FIRST_TOUCH_KEY) || '{}') || {};
   } catch {
     first = {};
   }

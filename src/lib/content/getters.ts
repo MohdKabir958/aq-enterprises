@@ -1,3 +1,4 @@
+import { mergedCollection } from '@/lib/cms/store';
 /**
  * Scale-ready content accessors.
  *
@@ -45,17 +46,18 @@ function publishedList<T extends WithStatus>(items: T[]): T[] {
 
 // ─── Services ────────────────────────────────────────────────────────────────
 
-export function getAllServices(options?: { includeDrafts?: boolean }): Service[] {
-  return options?.includeDrafts ? [...services] : publishedList(services);
+export async function getAllServices(options?: { includeDrafts?: boolean }): Promise<Service[]> {
+  const items = await mergedCollection<Service>('services', services);
+  return options?.includeDrafts ? items : publishedList(items);
 }
 
-export function getServiceBySlug(slug: string): Service | undefined {
-  const item = bySlug(services, slug);
+export async function getServiceBySlug(slug: string): Promise<Service | undefined> {
+  const item = bySlug(await getAllServices({ includeDrafts: true }), slug);
   return item && isPublished(item) ? item : undefined;
 }
 
-export function getServiceSlugs(): string[] {
-  return getAllServices().map((s) => s.slug);
+export async function getServiceSlugs(): Promise<string[]> {
+  return (await getAllServices()).map((s) => s.slug);
 }
 
 // ─── Locations ───────────────────────────────────────────────────────────────
@@ -120,22 +122,23 @@ export function getProjectSlugs(): string[] {
 
 // ─── Blogs ───────────────────────────────────────────────────────────────────
 
-export function getAllBlogs(options?: { includeDrafts?: boolean }): BlogPost[] {
-  return options?.includeDrafts ? [...blogs] : publishedList(blogs);
+export async function getAllBlogs(options?: { includeDrafts?: boolean }): Promise<BlogPost[]> {
+  const items = await mergedCollection<BlogPost>('blogs', blogs);
+  return options?.includeDrafts ? items : publishedList(items);
 }
 
-export function getBlogBySlug(slug: string): BlogPost | undefined {
-  const item = bySlug(blogs, slug);
+export async function getBlogBySlug(slug: string): Promise<BlogPost | undefined> {
+  const item = bySlug(await getAllBlogs({ includeDrafts: true }), slug);
   return item && isPublished(item) ? item : undefined;
 }
 
-export function getBlogSlugs(): string[] {
-  return getAllBlogs().map((b) => b.slug);
+export async function getBlogSlugs(): Promise<string[]> {
+  return (await getAllBlogs()).map((b) => b.slug);
 }
 
-export function getBlogCategories(): string[] {
+export async function getBlogCategories(): Promise<string[]> {
   return Array.from(
-    new Set(getAllBlogs().flatMap((b) => b.categories ?? [])),
+    new Set((await getAllBlogs()).flatMap((b) => b.categories ?? [])),
   ).sort();
 }
 
@@ -171,32 +174,34 @@ export function getVerifiedTestimonialForProject(projectSlug: string): Testimoni
 
 // ─── Service × Location (P1 allowlist) ───────────────────────────────────────
 
-export function getAllServiceLocations(options?: {
+export async function getAllServiceLocations(options?: {
   includeDrafts?: boolean;
-}): ServiceLocationPage[] {
-  return options?.includeDrafts ? [...serviceLocations] : publishedList(serviceLocations);
+}): Promise<ServiceLocationPage[]> {
+  const available = new Set((await getAllServices()).map(s => s.slug));
+  const items = serviceLocations.filter(p => available.has(p.serviceSlug));
+  return options?.includeDrafts ? items : publishedList(items);
 }
 
-export function getServiceLocation(
+export async function getServiceLocation(
   locationSlug: string,
   serviceSlug: string,
-): ServiceLocationPage | undefined {
-  const item = serviceLocations.find(
+): Promise<ServiceLocationPage | undefined> {
+  const item = (await getAllServiceLocations()).find(
     (p) => p.locationSlug === locationSlug && p.serviceSlug === serviceSlug,
   );
   return item && isPublished(item) ? item : undefined;
 }
 
-export function getServiceLocationsForLocation(locationSlug: string): ServiceLocationPage[] {
-  return getAllServiceLocations().filter((p) => p.locationSlug === locationSlug);
+export async function getServiceLocationsForLocation(locationSlug: string): Promise<ServiceLocationPage[]> {
+  return (await getAllServiceLocations()).filter((p) => p.locationSlug === locationSlug);
 }
 
-export function getServiceLocationsForService(serviceSlug: string): ServiceLocationPage[] {
-  return getAllServiceLocations().filter((p) => p.serviceSlug === serviceSlug);
+export async function getServiceLocationsForService(serviceSlug: string): Promise<ServiceLocationPage[]> {
+  return (await getAllServiceLocations()).filter((p) => p.serviceSlug === serviceSlug);
 }
 
-export function getServiceLocationStaticParams(): { slug: string; service: string }[] {
-  return getAllServiceLocations().map((p) => ({
+export async function getServiceLocationStaticParams(): Promise<{ slug: string; service: string }[]> {
+  return (await getAllServiceLocations()).map((p) => ({
     slug: p.locationSlug,
     service: p.serviceSlug,
   }));
@@ -209,19 +214,19 @@ export function toStaticParams(slugs: string[]): { slug: string }[] {
 }
 
 /** All indexable content URLs for sitemap generation. */
-export function getAllContentPaths(): {
+export async function getAllContentPaths(): Promise<{
   path: string;
   lastModified?: string;
-}[] {
+}[]> {
   const paths: { path: string; lastModified?: string }[] = [];
 
-  for (const s of getAllServices()) {
+  for (const s of await getAllServices()) {
     paths.push({ path: `/services/${s.slug}`, lastModified: s.updatedAt ?? s.publishedAt });
   }
   for (const l of getAllLocations()) {
     paths.push({ path: `/locations/${l.slug}`, lastModified: l.updatedAt ?? l.publishedAt });
   }
-  for (const pair of getAllServiceLocations()) {
+  for (const pair of await getAllServiceLocations()) {
     paths.push({
       path: `/locations/${pair.locationSlug}/${pair.serviceSlug}`,
       lastModified: pair.updatedAt ?? pair.publishedAt,
@@ -236,7 +241,7 @@ export function getAllContentPaths(): {
   for (const p of getAllProjects()) {
     paths.push({ path: `/projects/${p.slug}`, lastModified: p.updatedAt ?? p.publishedAt });
   }
-  for (const post of getAllBlogs()) {
+  for (const post of await getAllBlogs()) {
     paths.push({ path: `/blog/${post.slug}`, lastModified: post.updatedAt ?? post.publishedAt });
   }
 

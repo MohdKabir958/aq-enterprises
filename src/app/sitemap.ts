@@ -1,3 +1,5 @@
+import { getProducts } from '@/lib/cms/catalogue';
+export const dynamic = 'force-dynamic';
 import { MetadataRoute } from 'next';
 import { siteConfig } from '@/lib/config';
 import { getAllContentPaths } from '@/lib/content/getters';
@@ -11,8 +13,9 @@ import { getAllContentPaths } from '@/lib/content/getters';
  * - If real `lastModified` date is available from content metadata, format it.
  * - If no trustworthy modification date exists, omit `lastModified`.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${siteConfig.url}/products`, changeFrequency: 'weekly', priority: 0.9 },
     {
       url: `${siteConfig.url}`,
       changeFrequency: 'weekly' as const,
@@ -55,7 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const dynamicRoutes: MetadataRoute.Sitemap = getAllContentPaths().map((entry) => {
+  const dynamicRoutes: MetadataRoute.Sitemap = (await getAllContentPaths()).map((entry) => {
     const item: MetadataRoute.Sitemap[number] = {
       url: `${siteConfig.url}${entry.path}`,
       changeFrequency: 'weekly' as const,
@@ -67,5 +70,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return item;
   });
 
-  return [...staticRoutes, ...dynamicRoutes];
+  const products = (await getProducts()).map(p => ({ url: `${siteConfig.url}/products/${p.slug}`, changeFrequency: 'weekly' as const, priority: 0.8 }));
+  return [...staticRoutes, ...dynamicRoutes, ...products];
 }

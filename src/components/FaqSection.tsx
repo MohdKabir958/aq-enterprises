@@ -36,7 +36,7 @@ export default function FaqSection() {
   return (
     <section
       aria-labelledby="faq-heading"
-      style={{ maxWidth: 900, margin: '0 auto', padding: '0 32px 88px' }}
+      style={{ maxWidth: 900, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
     >
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
         <span

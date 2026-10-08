@@ -1,6 +1,6 @@
 export default function HowItWorksSection() {
   return (
-    <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}>
+    <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}>
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
         <span
           style={{

@@ -5,7 +5,7 @@
 
 import type { FAQ, SchemaInput, SchemaObject } from '@/types';
 import { siteConfig } from '@/lib/config';
-import { PHONE, postalAddressSchema } from '@/lib/business';
+import { getContact, contactAddress } from '@/lib/cms/settings';
 import { generateCanonical } from './canonical';
 import {
   generateBreadcrumbSchema,
@@ -34,7 +34,8 @@ export function generateFAQSchema(
 /**
  * Entity-aware schema builder. Returns one or more JSON-LD graphs.
  */
-export function generateSchema(input: SchemaInput): SchemaObject | SchemaObject[] {
+export async function generateSchema(input: SchemaInput): Promise<SchemaObject | SchemaObject[]> {
+  const contact = await getContact();
   const url = generateCanonical(input.url);
   const schemas: SchemaObject[] = [];
 
@@ -81,8 +82,8 @@ export function generateSchema(input: SchemaInput): SchemaObject | SchemaObject[
           '@type': 'LocalBusiness',
           name: siteConfig.name,
           url: siteConfig.url,
-          telephone: PHONE.value,
-          address: postalAddressSchema(),
+          telephone: contact.phone,
+          address: contactAddress(contact),
         },
         ...extra,
       });
@@ -157,11 +158,11 @@ export function generateSchema(input: SchemaInput): SchemaObject | SchemaObject[
       break;
 
     case 'organization':
-      schemas.push(generateOrganizationSchema() as SchemaObject);
+      schemas.push(await generateOrganizationSchema() as SchemaObject);
       break;
 
     case 'localBusiness':
-      schemas.push(generateLocalBusinessSchema() as SchemaObject);
+      schemas.push(await generateLocalBusinessSchema() as SchemaObject);
       break;
 
     case 'breadcrumb':

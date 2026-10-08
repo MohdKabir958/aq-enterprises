@@ -67,6 +67,10 @@ export class SmtpLeadDeliveryProvider implements LeadDeliveryProvider {
       ['Name', lead.name],
       ['Phone', lead.phone],
       ['Property / service', lead.propertyType],
+      ['Customer email', lead.email || '—'],
+      ['Site address', lead.address || '—'],
+      ['Message', lead.message || '—'],
+      ['Selected items', lead.orderSummary || '—'],
       ['Form source', lead.formSource],
       ['Submitted at', lead.submittedAt],
       ['Page path', lead.pagePath || '—'],
@@ -82,7 +86,7 @@ export class SmtpLeadDeliveryProvider implements LeadDeliveryProvider {
 
     const htmlBody = `
       <h2>New Website Lead</h2>
-      <table style="text-align: left; border-collapse: collapse; width: 100%; max-width: 580px; font-family: sans-serif;">
+      <table style="text-align: left; border-collapse: collapse; width: 100%; max-width: 580px; font-family: sans-serif; white-space: pre-wrap;">
         ${rows
           .map(
             ([k, v]) =>

@@ -20,8 +20,9 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
-import FloatingCTA from '@/components/FloatingCTA';
-import Analytics from '@/components/Analytics';
+import SiteSettings from '@/components/SiteSettings';
+import PublicChrome from '@/components/PublicChrome';
+import { getContact, getImageReplacements } from '@/lib/cms/settings';
 import { Space_Grotesk, IBM_Plex_Sans } from 'next/font/google';
 
 const spaceGrotesk = Space_Grotesk({
@@ -88,23 +89,29 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: '#0A0C10',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const [contact, images] = await Promise.all([getContact(), getImageReplacements()]);
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${ibmPlex.variable}`}>
       <head />
       <body>
         {/* Page-specific content: each page renders its own <Header> and <Footer> */}
-        {children}
+        <SiteSettings contact={contact} images={images}>{children}<PublicChrome /></SiteSettings>
 
         {/*
          * FloatingCTA is rendered at the layout level so it persists across
          * all pages without remounting. It contains the WhatsApp button,
          * the "Get Free Quote" modal, and the mobile bottom action bar.
          */}
-        <FloatingCTA />
-        <Analytics />
+
       </body>
     </html>
   );

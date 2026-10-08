@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import Link from 'next/link';
 import type { Project } from '@/types';
 import { IMAGE_SIZES } from '@/lib/assets';
@@ -32,7 +32,7 @@ export default function ProjectsGrid({ projects }: ProjectsGridProps) {
         style={{
           maxWidth: 1280,
           margin: '0 auto',
-          padding: '0 32px 16px',
+          padding: '0 var(--page-gutter) 16px',
           display: 'flex',
           gap: 10,
           flexWrap: 'wrap',
@@ -70,7 +70,7 @@ export default function ProjectsGrid({ projects }: ProjectsGridProps) {
         style={{
           maxWidth: 1280,
           margin: '0 auto',
-          padding: '24px 32px 96px',
+          padding: '24px var(--page-gutter) 96px',
         }}
       >
         {visible.map((project) => (

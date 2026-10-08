@@ -7,22 +7,30 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "validate:content": "node --loader ./scripts/ts-loader.mjs scripts/validate-content.ts"
+    "validate:content": "node --loader ./scripts/ts-loader.mjs scripts/validate-content.ts",
+    "db:setup": "node --env-file-if-exists=.env.local scripts/setup-admin.mjs",
+    "admin:password": "node scripts/hash-admin-password.mjs",
+    "test:admin": "playwright test"
   },
   "dependencies": {
-    "next": "16.3.0",
-    "nodemailer": "^9.0.5",
+    "next": "^16.4.0",
+    "nodemailer": "^10.0.16",
+    "pg": "^8.23.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "three": "0.184.0"
+    "three": "0.184.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.1",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "0.184.1",
     "eslint": "^9",
-    "eslint-config-next": "16.3.0",
+    "eslint-config-next": "^16.4.0",
     "typescript": "^5"
   }
 }

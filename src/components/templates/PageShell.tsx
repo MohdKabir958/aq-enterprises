@@ -19,7 +19,7 @@ export default function PageShell({ active, breadcrumbs, children }: PageShellPr
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh', color: '#F2F4F7' }}>
       <Header active={active} />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
       <main style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 20px 80px' }}>
         <Breadcrumbs items={breadcrumbs} />
         {children}

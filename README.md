@@ -37,3 +37,7 @@ npx tsc --noEmit
 npm run lint
 npm run build
 ```
+
+## Owner dashboard and enquiry catalogue
+
+The website includes a protected `/admin` dashboard, `/products` catalogue, cart and enquiry checkout. Content and customer enquiries use Neon PostgreSQL; configure owner credentials and SMTP before deployment. See [Admin and Neon setup](docs/admin-and-neon-setup.md) for setup, media limits and validation instructions.

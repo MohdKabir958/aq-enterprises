@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { JsonLd } from '@/lib/json-ld';
@@ -5,7 +6,7 @@ import { generateSchema } from '@/lib/seo';
 import { serviceBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForService } from '@/lib/links/related';
 import { getFaqsByIds, getServiceLocationsForService } from '@/lib/content/getters';
-import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from '@/lib/constants';
+
 import { IMAGE_SIZES } from '@/lib/assets';
 import { resolvePublicSrc } from '@/lib/assets-server';
 import VerifiedImage from '@/components/VerifiedImage';
@@ -122,22 +123,23 @@ function ImagePlaceholderBlock({ image, slug }: { image: ImagePlaceholder; slug?
   );
 }
 
-export default function ServiceTemplate({ service }: ServiceTemplateProps) {
+export default async function ServiceTemplate({ service }: ServiceTemplateProps) {
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = await getPublicBusiness();
   const breadcrumbs = serviceBreadcrumbs(service.name, service.slug);
-  const related = getRelatedForService(service);
+  const related = (await getRelatedForService(service));
   const collectionFaqs = getFaqsByIds(service.relatedFaqs ?? []);
   const faqs: FAQ[] = [...(service.faqs ?? []), ...collectionFaqs];
-  const areaPages = getServiceLocationsForService(service.slug);
+  const areaPages = (await getServiceLocationsForService(service.slug));
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'service',
     name: service.h1 || service.name,
     description: service.seo.description || service.summary,
     url: service.seo.canonical,
-    image: service.image || service.hero.image?.id,
+    image: service.image || service.hero.image?.src,
     breadcrumbs,
     faqs,
-  });
+  }));
 
   const primaryHref = service.cta.primaryHref ?? '/#contact';
   const primaryLabel = service.cta.primaryLabel ?? 'Get a Free Site Survey';

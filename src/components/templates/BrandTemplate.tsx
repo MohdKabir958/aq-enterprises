@@ -10,18 +10,18 @@ interface BrandTemplateProps {
   brand: Brand;
 }
 
-export default function BrandTemplate({ brand }: BrandTemplateProps) {
+export default async function BrandTemplate({ brand }: BrandTemplateProps) {
   const breadcrumbs = brandBreadcrumbs(brand.name, brand.slug);
-  const related = getRelatedForBrand(brand);
+  const related = (await getRelatedForBrand(brand));
 
-  const schema = generateSchema({
+  const schema = (await generateSchema({
     type: 'brand',
     name: brand.name,
     description: brand.seo.description || brand.summary,
     url: brand.seo.canonical,
     image: brand.logo,
     breadcrumbs,
-  });
+  }));
 
   return (
     <PageShell breadcrumbs={breadcrumbs}>

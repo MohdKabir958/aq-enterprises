@@ -1,32 +1,26 @@
+import { getPlans } from '@/lib/cms/catalogue';
+import { getPublicBusiness } from '@/lib/cms/settings';
 /**
  * @file page.tsx (Commercial Internet, LAN Cabling & Server Room Solutions)
  * @description Enterprise page showcasing AQ Enterprises' commercial fiber internet,
- * structured cabling, server room deployment, and 24/7 NOC monitoring across Hyderabad.
+ * structured cabling, server room deployment, and scheduled support across Hyderabad.
  */
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContactForm from '@/components/ContactForm';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { JsonLd, generateLocalBusinessSchema } from '@/lib/json-ld';
 import { siteConfig } from '@/lib/config';
-import {
-  PHONE,
-  PHONE_DISPLAY,
-  WHATSAPP_URL,
-  EMAIL,
-  ADDRESS,
-  HOURS,
-} from '@/lib/constants';
-import { mapsSearchUrl } from '@/lib/business';
+
+
 
 export const metadata: Metadata = {
   title: 'Commercial Internet & Leased Line Hyderabad | LAN Cabling & Server Rooms — AQ Enterprises',
   description:
-    'Dedicated commercial fiber internet, enterprise leased lines, Cat6/Cat6A structured LAN cabling, server room deployment, and scheduled maintenance in Hyderabad. Symmetrical bandwidth and professional cabling.',
+    'Commercial internet planning, Cat6/Cat6A structured LAN cabling, server room setup and scheduled network support in Hyderabad. Request a site survey and quotation.',
   alternates: {
     canonical: '/commercial-internet-hyderabad',
   },
@@ -43,65 +37,38 @@ export const metadata: Metadata = {
   ],
 };
 
-const serviceSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: 'Commercial Internet, Leased Lines, LAN Cabling & Server Room Setup Hyderabad',
-  url: `${siteConfig.url}/commercial-internet-hyderabad`,
-  provider: {
-    '@type': 'LocalBusiness',
-    name: siteConfig.name,
-    telephone: PHONE,
-    email: EMAIL,
-    url: siteConfig.url,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`,
-      addressLocality: 'Hyderabad',
-      addressRegion: 'Telangana',
-      postalCode: ADDRESS.pincode,
-      addressCountry: 'IN',
-    },
-  },
-  areaServed: {
-    '@type': 'City',
-    name: 'Hyderabad',
-  },
-  serviceType: 'Commercial Internet, Structured LAN Cabling & Enterprise IT Infrastructure',
-  description:
-    'Dedicated commercial fiber internet with 99.99% SLA uptime, Cat6/Cat6A structured cabling, server room deployment, and 24/7 NOC monitoring in Hyderabad.',
-};
 
-const networkMetrics = [
+
+const networkCapabilities = [
   {
-    value: '99.99%',
-    label: 'Guaranteed SLA Uptime',
-    detail: 'Enterprise dual-ring redundancy across Hyderabad',
+    value: 'Internet',
+    label: 'Connection Planning',
+    detail: 'Availability, bandwidth and carrier terms confirmed after a survey',
   },
   {
-    value: '< 15ms',
-    label: 'Ultra-Low Latency',
-    detail: 'Direct core peering for zero jitter & instant response',
+    value: 'Diagnostics',
+    label: 'Network Checks',
+    detail: 'Review latency, link health and hardware during service visits',
   },
   {
-    value: '100+ Gbps',
-    label: 'Metro Backbone Capacity',
-    detail: 'High-throughput fiber backbone ready for multi-gigabit pipes',
+    value: 'Cabling',
+    label: 'Structured LAN',
+    detail: 'Plan cable routes, terminations and labelled network ports',
   },
   {
-    value: '1:1',
-    label: 'Symmetrical Bandwidth',
-    detail: 'Equal unshared upload & download speeds with zero contention',
+    value: 'Coverage',
+    label: 'Office Connectivity',
+    detail: 'Size wired and wireless coverage for your devices and floor plan',
   },
   {
-    value: '24×7',
-    label: 'Active NOC Monitoring',
-    detail: 'Continuous link surveillance & dedicated L2/L3 engineers',
+    value: 'Maintenance',
+    label: 'Scheduled Support',
+    detail: 'Agree inspection frequency and support scope in your quotation',
   },
   {
-    value: '4-Hour',
-    label: 'MTTR Commitment',
-    detail: 'Rapid on-site restoration & hardware replacement',
+    value: 'Mallapur',
+    label: 'Hyderabad Service Base',
+    detail: 'Arrange surveys and service visits from our Mallapur location',
   },
 ];
 
@@ -113,12 +80,12 @@ const solutions = [
       </svg>
     ),
     title: 'Commercial & Retail Fiber Internet',
-    desc: 'High-speed, unthrottled internet designed for retail chains, showrooms, corporate floors, and multi-tenant commercial complexes. Symmetrical upload/download ensures POS billing, cloud ERPs, and live CCTV feeds never stutter.',
+    desc: 'Commercial internet planning for retail stores, showrooms and office floors. We assess POS billing, cloud applications and CCTV needs before recommending an available connection.',
     features: [
-      'Dedicated Symmetrical bandwidth (50 Mbps up to 1 Gbps+)',
-      'Static Public IP allocation for servers & CCTV NVRs',
-      'Dual-WAN auto failover configurations',
-      'Direct peering for AWS, Microsoft 365, Google Workspace & Cloud ERP',
+      'Bandwidth options confirmed with the available provider',
+      'Static IP requirements discussed for servers and remote access',
+      'Backup connection and failover planning where appropriate',
+      'Connection sizing for cloud applications and business devices',
     ],
   },
   {
@@ -131,12 +98,12 @@ const solutions = [
       </svg>
     ),
     title: 'Commercial LAN & Structured Cabling',
-    desc: 'End-to-end copper and fiber cabling infrastructure for office floors, industrial sheds, and multi-story buildings. Eliminates messy cables with certified pathways, patch panels, and clear channel labeling.',
+    desc: 'Copper and fiber cabling infrastructure for office floors, industrial sheds and multi-story buildings, with planned pathways, patch panels and clear channel labels.',
     features: [
       'Cat6 / Cat6A Gigabit structured cabling & terminations',
       'Single-Mode & Multi-Mode fiber backbone links between blocks',
       'Cable tray routing, raceways, and ceiling conduit drops',
-      'Channel & link certifier testing with comprehensive port documentation',
+      'Link checks and labelled port documentation; testing scope agreed in advance',
     ],
   },
   {
@@ -176,62 +143,43 @@ const solutions = [
   },
 ];
 
-const tiers = [
-  {
-    name: 'Retail & Showroom',
-    tag: 'Commercial Retail',
-    speed: '100 Mbps',
-    subtitle: 'Symmetrical Dedicated Fiber',
-    desc: 'Perfect for retail stores, showrooms, clinics, and multi-counter outlets.',
-    highlights: [
-      '1:1 Symmetrical Upload / Download',
-      '1 Static Public IP included',
-      'Up to 32 LAN Drops supported',
-      'POS & Cloud ERP priority QoS',
-      'Active Network Health Monitoring',
-      'Carrier-Grade Leased Line Fiber',
-    ],
+export default async function CommercialInternetPage() {
+  const tiers = await getPlans();
+  const { PHONE, PHONE_DISPLAY, WHATSAPP_URL, EMAIL, ADDRESS, mapsLocationUrl } = await getPublicBusiness();
+  const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Commercial Internet, Leased Lines, LAN Cabling & Server Room Setup Hyderabad',
+  url: `${siteConfig.url}/commercial-internet-hyderabad`,
+  provider: {
+    '@type': 'LocalBusiness',
+    name: siteConfig.name,
+    telephone: PHONE,
+    email: EMAIL,
+    url: siteConfig.url,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: `${ADDRESS.line1} ${ADDRESS.line2}`,
+      addressLocality: 'Hyderabad',
+      addressRegion: 'Telangana',
+      postalCode: ADDRESS.pincode,
+      addressCountry: 'IN',
+    },
   },
-  {
-    name: 'Corporate Office Pro',
-    tag: 'Most Popular',
-    speed: '300 – 500 Mbps',
-    subtitle: 'High-Density Enterprise',
-    desc: 'Engineered for growing IT companies, financial workplaces, and multi-floor offices.',
-    highlights: [
-      '1:1 Symmetrical Unshared Bandwidth',
-      'Multiple Static IP subnet allocation',
-      'Full Cat6A LAN & Server Rack setup',
-      'Dedicated CCTV & VoIP VLAN config',
-      '4-Hour MTTR On-Site Guarantee',
-      '99.99% Enterprise Uptime SLA',
-    ],
-    featured: true,
+  areaServed: {
+    '@type': 'City',
+    name: 'Hyderabad',
   },
-  {
-    name: 'Enterprise Leased Line',
-    tag: 'Mission Critical',
-    speed: '1 Gbps+',
-    subtitle: 'Dedicated Internet Access (DIA)',
-    desc: 'For tech parks, manufacturing plants, data centres, and institutional campuses.',
-    highlights: [
-      'Uncontended 1:1 Pure Leased Pipe',
-      'Dual-Fiber Ring Path Redundancy',
-      'Custom BGP Routing & ASN Peering',
-      'Full Server Room & IDF/MDF Buildout',
-      'Dedicated Account & Senior NOC Lead',
-      '99.99% Strict Financial-Backed SLA',
-    ],
-  },
-];
-
-export default function CommercialInternetPage() {
+  serviceType: 'Commercial Internet, Structured LAN Cabling & Enterprise IT Infrastructure',
+  description:
+    'Commercial internet planning, Cat6/Cat6A structured cabling, server room deployment and scheduled network support in Hyderabad. Provider availability and service terms are confirmed after a survey.',
+};
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <JsonLd schema={serviceSchema} />
-      <JsonLd schema={generateLocalBusinessSchema()} />
+      <JsonLd schema={(await generateLocalBusinessSchema())} />
       <Header active="services" />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
         {/* ── Hero Section ──────────────────────────────────────────────── */}
@@ -239,7 +187,7 @@ export default function CommercialInternetPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '56px 32px 40px',
+            padding: '56px var(--page-gutter) 40px',
             position: 'relative',
           }}
         >
@@ -287,8 +235,8 @@ export default function CommercialInternetPage() {
               }}
             >
               AQ Enterprises engineers enterprise-grade digital infrastructure across Hyderabad:
-              1:1 symmetrical commercial internet, certified Cat6/Cat6A cabling, turnkey server rooms,
-              and dedicated on-site network engineering support from our Mallapur base.
+              commercial internet planning, Cat6/Cat6A cabling, server room setup,
+              and scheduled on-site network support from our Mallapur base.
             </p>
 
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 36 }}>
@@ -369,14 +317,14 @@ export default function CommercialInternetPage() {
           </div>
         </section>
 
-        {/* ── Network Performance / Trust Numbers Strip ────────────────── */}
+        {/* ── Network planning and support ────────────────────────────── */}
         <section
-          aria-label="Enterprise Network Performance Metrics"
+          aria-label="Business network planning and support"
           style={{
             background: '#0d0f13',
             borderTop: '1px solid #1B1F27',
             borderBottom: '1px solid #1B1F27',
-            padding: '56px 32px',
+            padding: '56px var(--page-gutter)',
           }}
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -391,16 +339,16 @@ export default function CommercialInternetPage() {
                 marginBottom: 32,
               }}
             >
-              Enterprise Network Backbone &amp; Service Commitments
+              Business Network Planning &amp; Support
             </div>
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
                 gap: 24,
               }}
             >
-              {networkMetrics.map((m) => (
+              {networkCapabilities.map((m) => (
                 <div
                   key={m.label}
                   style={{
@@ -447,7 +395,7 @@ export default function CommercialInternetPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '88px 32px',
+            padding: '88px var(--page-gutter)',
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
@@ -481,7 +429,7 @@ export default function CommercialInternetPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
               gap: 28,
             }}
           >
@@ -566,7 +514,7 @@ export default function CommercialInternetPage() {
             background: '#0d0f13',
             borderTop: '1px solid #1B1F27',
             borderBottom: '1px solid #1B1F27',
-            padding: '88px 32px',
+            padding: '88px var(--page-gutter)',
           }}
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -600,7 +548,7 @@ export default function CommercialInternetPage() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
                 gap: 28,
                 alignItems: 'stretch',
               }}
@@ -668,6 +616,7 @@ export default function CommercialInternetPage() {
                     {tier.desc}
                   </p>
 
+                  <p>{tier.price === null ? 'Request a quotation' : `₹${tier.price.toLocaleString('en-IN')}`} · {tier.billing}</p>
                   <ul
                     style={{
                       margin: '0 0 28px',
@@ -725,7 +674,7 @@ export default function CommercialInternetPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '88px 32px',
+            padding: '88px var(--page-gutter)',
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -755,7 +704,7 @@ export default function CommercialInternetPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
               gap: 24,
             }}
           >
@@ -820,20 +769,19 @@ export default function CommercialInternetPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '0 32px 96px',
+            padding: '0 var(--page-gutter) 96px',
           }}
         >
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,0.9fr)',
               gap: 32,
               background: '#12151B',
               border: '1px solid #1B1F27',
               borderRadius: 16,
               overflow: 'hidden',
             }}
-            className="contact-grid"
+            className="grid-split grid-split-form"
           >
             {/* Form side */}
             <div style={{ padding: 'clamp(28px,4vw,48px)' }}>
@@ -886,7 +834,7 @@ export default function CommercialInternetPage() {
                     margin: '0 0 16px',
                   }}
                 >
-                  Direct Enterprise Sales &amp; NOC
+                  Commercial Enquiries &amp; Support
                 </h3>
                 <p style={{ color: '#8892A0', fontSize: 14, lineHeight: 1.6, margin: '0 0 24px' }}>
                   Prefer to speak with our network engineers right away? Reach us via phone, WhatsApp, or email.
@@ -958,7 +906,7 @@ export default function CommercialInternetPage() {
                 {ADDRESS.full}
                 <div style={{ marginTop: 6 }}>
                   <a
-                    href={mapsSearchUrl()}
+                    href={mapsLocationUrl()}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ color: '#3fa9f5', textDecoration: 'none', fontWeight: 600 }}
@@ -976,7 +924,7 @@ export default function CommercialInternetPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '0 32px 96px',
+            padding: '0 var(--page-gutter) 96px',
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -1066,11 +1014,6 @@ export default function CommercialInternetPage() {
 
       <Footer />
 
-      <style>{`
-        @media (max-width: 768px) {
-          .contact-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

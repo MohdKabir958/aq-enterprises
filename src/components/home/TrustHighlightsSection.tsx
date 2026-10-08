@@ -8,7 +8,7 @@ export default function TrustHighlightsSection() {
       style={{
         maxWidth: 1280,
         margin: '0 auto',
-        padding: '0 32px 72px',
+        padding: '0 var(--page-gutter) 72px',
       }}
     >
       {TRUST_HIGHLIGHTS.map((s) => (

@@ -1,3 +1,4 @@
+import { getPublicBusiness } from '@/lib/cms/settings';
 /**
  * @file page.tsx (About)
  * @description About Us page for AQ Enterprises — trust-focused, no fabricated team/stats.
@@ -9,23 +10,26 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AboutVideo from '@/components/AboutVideo';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import { PHONE, PHONE_DISPLAY, EMAIL, HOURS, WHATSAPP_URL, BRANDS, CERTIFICATIONS, TRUST_HIGHLIGHTS } from '@/lib/constants';
-import { CTA_COPY, ADDRESS, mapsSearchUrl } from '@/lib/business';
+import { BRANDS, CERTIFICATIONS, TRUST_HIGHLIGHTS } from '@/lib/constants';
+import { CTA_COPY } from '@/lib/business';
 import {
   JsonLd,
   generateLocalBusinessSchema,
 } from '@/lib/json-ld';
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const { PHONE_DISPLAY } = await getPublicBusiness();
+  return {
   title: 'About Us',
   description:
     `AQ Enterprises — CCTV and security installation based in Mallapur, Hyderabad. Site survey before quote. Call ${PHONE_DISPLAY}.`,
   alternates: {
     canonical: '/about',
   },
-};
+  };
+}
 
-import Image from 'next/image';
+import Image from '@/components/ManagedImage';
 import { resolvePublicSrc } from '@/lib/assets-server';
 
 function AssetSlot({
@@ -111,15 +115,16 @@ function AssetSlot({
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { PHONE, PHONE_DISPLAY, EMAIL, HOURS, WHATSAPP_URL, ADDRESS, mapsLocationUrl } = await getPublicBusiness();
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
-      <JsonLd schema={generateLocalBusinessSchema()} />
+      <JsonLd schema={(await generateLocalBusinessSchema())} />
       <Header active="about" />
-      <div style={{ height: 74 }} aria-hidden="true" />
+      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 32px 0' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px var(--page-gutter) 0' }}>
           <Breadcrumbs items={[{ name: 'About', url: '/about' }]} />
         </div>
 
@@ -129,7 +134,7 @@ export default function AboutPage() {
             position: 'relative',
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '64px 32px 56px',
+            padding: '64px var(--page-gutter) 56px',
             gap: 40,
             alignItems: 'center',
           }}
@@ -175,7 +180,7 @@ export default function AboutPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '0 32px 88px',
+            padding: '0 var(--page-gutter) 88px',
           }}
         >
           {TRUST_HIGHLIGHTS.map((s) => (
@@ -198,7 +203,7 @@ export default function AboutPage() {
 
         <section
           aria-labelledby="nap-heading"
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
         >
           <h2
             id="nap-heading"
@@ -250,12 +255,12 @@ export default function AboutPage() {
             <span>{ADDRESS.full}</span>
             <span>{HOURS}</span>
             <a
-              href={mapsSearchUrl()}
+              href={mapsLocationUrl()}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: '#3fa9f5', textDecoration: 'none' }}
             >
-              Open address search in Google Maps
+              Open in Google Maps
             </a>
           </address>
         </section>
@@ -266,7 +271,7 @@ export default function AboutPage() {
           style={{
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '0 32px 88px',
+            padding: '0 var(--page-gutter) 88px',
             gap: 64,
             alignItems: 'center',
           }}
@@ -315,7 +320,7 @@ export default function AboutPage() {
         {/* Team slots — no fabricated names or roles */}
         <section
           aria-labelledby="team-heading"
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px 88px' }}
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
         >
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <span
@@ -387,7 +392,7 @@ export default function AboutPage() {
             background: '#0d0f13',
             borderTop: '1px solid #1B1F27',
             borderBottom: '1px solid #1B1F27',
-            padding: '64px 32px',
+            padding: '64px var(--page-gutter)',
           }}
         >
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -475,7 +480,7 @@ export default function AboutPage() {
 
         <section
           aria-label="Call to action"
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '88px 32px', textAlign: 'center' }}
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '88px var(--page-gutter)', textAlign: 'center' }}
         >
           <h2
             style={{

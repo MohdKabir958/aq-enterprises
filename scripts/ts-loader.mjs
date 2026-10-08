@@ -9,6 +9,8 @@ function normalizePath(filePath) {
 
 export async function resolve(specifier, context, nextResolve) {
   const root = process.cwd();
+  // Preserve dependency package formats (notably pg's CommonJS internals).
+  if (context.parentURL?.includes('/node_modules/')) return nextResolve(specifier, context);
 
   // Resolve @/ path alias
   if (specifier.startsWith('@/')) {
