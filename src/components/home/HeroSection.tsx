@@ -2,6 +2,7 @@ import Image from '@/components/ManagedImage';
 import { getHero } from '@/lib/cms/settings';
 import { getPublicBusiness } from '@/lib/cms/settings';
 import CameraSceneLoader from '@/components/CameraSceneLoader';
+import Icon from '@/components/Icon';
 
 
 export default async function HeroSection() {
@@ -106,6 +107,7 @@ export default async function HeroSection() {
           >
             WhatsApp Us
           </a>
+          <a href="#internet" className="home-connectivity-jump"><Icon name="wifi" size={17} /> Internet & networking <Icon name="arrow-right" size={16} /></a>
         </div>
         <div style={{ color: '#6B7484', fontSize: 14 }}>
           Mallapur, Hyderabad &nbsp;·&nbsp; Site survey before quote &nbsp;·&nbsp; Published local projects
