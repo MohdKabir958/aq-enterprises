@@ -28,11 +28,11 @@ export const defaultContact: ContactSettings = {
   justdialUrl: SOCIAL_PROFILES.justdial.url,
 };
 export const defaultHero: HeroSettings = {
-  eyebrow: 'CCTV Installation · Hyderabad',
-  title: 'CCTV Installation in Hyderabad — Homes, Offices & Factories',
-  subtitle: 'See everything on your property. Miss nothing that matters.',
+  eyebrow: 'Your local security & networking team',
+  title: 'CCTV & Internet Services in Hyderabad.',
+  subtitle: 'Protect your space. Connect your business.',
   description:
-    'We design, install and maintain CCTV and access-control systems for homes, offices and industrial sites across Hyderabad — done right the first time.',
+    'CCTV installation, business internet, Wi-Fi and LAN networking — planned around your property, installed by our Mallapur team.',
   mediaType: 'default',
   mediaUrl: '',
   mediaAlt: '',

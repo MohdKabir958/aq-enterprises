@@ -128,6 +128,40 @@ test('business email migration updates the old default once and preserves later 
   assert.deepEqual(preserved, { value: { ...contact, email: 'later-owner-email@example.test' }, revision: 6 });
 });
 
+test('hero refresh migrates only old default copy, preserving media and later edits', async (t) => {
+  const oldCopy = {
+    eyebrow: 'CCTV Installation · Hyderabad',
+    title: 'CCTV Installation in Hyderabad — Homes, Offices & Factories',
+    subtitle: 'See everything on your property. Miss nothing that matters.',
+    description: 'We design, install and maintain CCTV and access-control systems for homes, offices and industrial sites across Hyderabad — done right the first time.',
+    mediaType: 'image', mediaUrl: '/api/media/test-fixture',
+    mediaAlt: 'Owner equipment image', poster: '',
+  };
+  for (const custom of [false, true]) {
+    const { url, pool } = await isolatedSchema(t);
+    await pool.query("CREATE TABLE aq_content (collection text NOT NULL, key text NOT NULL, value jsonb NOT NULL, deleted boolean NOT NULL DEFAULT false, revision integer NOT NULL DEFAULT 1, updated_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(collection,key))");
+    const initial = { ...oldCopy, ...(custom ? { title: 'Custom owner headline' } : {}) };
+    await pool.query("INSERT INTO aq_content(collection,key,value,revision) VALUES ('hero','settings',$1,4)", [JSON.stringify(initial)]);
+    const first = await runSetup({ DATABASE_URL: url });
+    assert.equal(first.code, 0, first.output);
+    const result = (await pool.query("SELECT value,revision FROM aq_content WHERE collection='hero' AND key='settings'")).rows[0];
+    if (custom) {
+      assert.deepEqual(result, { value: initial, revision: 4 });
+    } else {
+      assert.equal(result.revision, 5);
+      assert.equal(result.value.title, 'CCTV & Internet Services in Hyderabad.');
+      for (const key of ['mediaType', 'mediaUrl', 'mediaAlt', 'poster']) {
+        assert.equal(result.value[key], initial[key]);
+      }
+    }
+    const later = { ...result.value, title: 'Later owner headline' };
+    await pool.query("UPDATE aq_content SET value=$1,revision=revision+1 WHERE collection='hero' AND key='settings'", [JSON.stringify(later)]);
+    const again = await runSetup({ DATABASE_URL: url });
+    assert.equal(again.code, 0, again.output);
+    assert.deepEqual((await pool.query("SELECT value,revision FROM aq_content WHERE collection='hero' AND key='settings'")).rows[0], { value: later, revision: result.revision + 1 });
+  }
+});
+
 test('failed schema setup rolls back new tables and preserves existing tables', async (t) => {
   const { url, pool } = await isolatedSchema(t);
   await pool.query('CREATE TABLE aq_sessions (fixture integer)');

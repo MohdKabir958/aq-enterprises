@@ -4,6 +4,7 @@ import { usePublicBusiness } from '@/components/SiteSettings';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
 import { useCart } from '@/components/shop/useCart';
+import { usePathname } from 'next/navigation';
 
 /**
  * @file FloatingCTA.tsx
@@ -64,11 +65,13 @@ function validateForm(form: QuoteForm): FormErrors {
 }
 
 export default function FloatingCTA() {
+  const pathname = usePathname();
   const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = usePublicBusiness();
   const { items } = useCart();
   const cartCount = items.reduce((count, item) => count + item.quantity, 0);
   const submissionId = useRef('');
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState<QuoteForm>({
@@ -89,6 +92,18 @@ export default function FloatingCTA() {
   const phoneId = useId();
   const serviceId = useId();
   const honeypotId = useId();
+
+  useEffect(() => {
+    if (pathname !== '/') return;
+    const hero = document.getElementById('hero');
+    if (!hero) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroVisible(entry.isIntersecting),
+      { rootMargin: '-76px 0px 0px 0px' },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [pathname]);
 
   /** Accessible dialog management: focus trapping, initial focus, focus restoration, escape key, body scroll. */
   useEffect(() => {
@@ -258,6 +273,9 @@ export default function FloatingCTA() {
       >
         <button
           type="button"
+          className={
+            pathname === '/' && heroVisible ? 'hero-quote-hidden' : undefined
+          }
           onClick={openQuote}
           aria-haspopup="dialog"
           style={{

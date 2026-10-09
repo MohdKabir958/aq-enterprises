@@ -192,6 +192,48 @@ button {
 }
 
 .hero-section { overflow: clip; }
+.home-hero { position: relative; max-width: 1280px; margin: 0 auto; padding: 44px var(--page-gutter) 52px; }
+.home-hero::before { content: ''; position: absolute; inset: 0 0 0 35%; background: radial-gradient(ellipse at 60% 45%, #153d5b55, transparent 70%); pointer-events: none; }
+.home-hero-main { position: relative; display: grid; grid-template-columns: .98fr 1.02fr; align-items: center; gap: clamp(24px, 3vw, 44px); }
+.home-hero-copy { min-width: 0; position: relative; z-index: 1; }
+.home-hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; color: #d7e5f3; font-size: 10px; text-transform: uppercase; font-weight: 500; letter-spacing: .13em; margin-bottom: 22px; }
+.home-hero-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: #ff7b42; box-shadow: 0 0 12px #ff713955; }
+.home-hero h1 { font-family: var(--font-space), sans-serif; font-size: clamp(38px, 4.35vw, 60px); line-height: 1.04; letter-spacing: -.045em; font-weight: 700; color: #f4f7fc; margin: 0 0 21px; }
+.home-hero h1 > span { color: #8cceff; }
+.home-hero-promise { color: #e0e8f2; font-size: clamp(15px, 1.5vw, 18px); font-weight: 500; margin: 0 0 13px; line-height: 1.5; }
+.home-hero-description { max-width: 450px; color: #a6b5c7; font-size: 14px; line-height: 1.8; margin: 0 0 26px; }
+.home-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.home-hero-primary, .home-hero-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 15px 20px; font-weight: 600; font-size: 13px; border-radius: 9px; line-height: 1.3; transition: background .2s, border-color .2s; }
+.home-hero-primary { background: #ff6a2c; border: 1px solid #ff7c44; color: #111821; box-shadow: 0 7px 22px #ff6a2c20; }
+.home-hero-primary:hover { background: #ff864e; color: #0b121b; }
+.home-hero-secondary { background: #14202b; border: 1px solid #3c5163; color: #eef7fd; }
+.home-hero-secondary:hover { background: #203547; border-color: #6d95b3; color: #fff; }
+.home-hero-secondary svg { color: #79d5a3; }
+.home-hero-phone { display: inline-flex; gap: 9px; align-items: center; color: #acbdcf; font-size: 11px; margin-top: 18px; min-height: 28px; }
+.home-hero-phone strong { color: #e2edf7; font-weight: 500; margin-left: 4px; white-space: nowrap; }
+.home-hero-phone:hover, .home-hero-phone:hover strong { color: #a3d9ff; }
+.home-hero-assurance { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 16px; color: #93a9bb; font-size: 10px; line-height: 1.6; }
+.home-hero-assurance > svg { color: #7cbfa0; }
+.home-hero-assurance > span { margin: 0 3px; }
+.home-hero-visual { min-width: 0; padding-right: 8px; }
+.hero-art-interaction { perspective: 1100px; }
+.hero-art-stage { position: relative; aspect-ratio: 1.25; background: #0b1420; border: 1px solid #30465b; border-radius: 24px; overflow: hidden; transform: rotateX(var(--hero-pitch, 0deg)) rotateY(var(--hero-yaw, 0deg)); transition: transform .55s ease-out; box-shadow: 0 24px 64px #0004; }
+.hero-art-stage > img { object-fit: cover; }
+.hero-art-stage > video { width: 100%; height: 100%; object-fit: contain; background: #0b1420; }
+.hero-art-label { position: absolute; left: 19px; top: 18px; display: inline-flex; align-items: center; gap: 8px; color: #d3e6f5; background: #0c1827c9; backdrop-filter: blur(6px); border: 1px solid #ffffff24; border-radius: 7px; padding: 8px 11px; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; pointer-events: none; }
+.hero-art-label svg { color: #80c8f8; }
+.hero-service-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0 0; }
+.hero-service-links > a { display: flex; gap: 10px; align-items: center; min-width: 0; border: 1px solid #2c3c4e; background: #101c28; border-radius: 11px; padding: 15px 13px; color: #aacbe5; transition: background .2s, border-color .2s; }
+.hero-service-links > a:hover { background: #1a3044; border-color: #6387a6; }
+.hero-service-icon { display: grid; place-items: center; flex-shrink: 0; width: 31px; height: 34px; color: #89caff; }
+.hero-service-links small { display: block; font-size: 9px; color: #9fb3c6; margin-bottom: 4px; }
+.hero-service-links strong { display: block; font-size: 11px; color: #e3eff9; font-weight: 600; line-height: 1.4; }
+.hero-service-links > a > svg { margin-left: auto; flex-shrink: 0; }
+.floating-contact-stack > .hero-quote-hidden { display: none; }
+@media (max-width: 1023px) { .home-hero { padding-top: 32px; } .hero-service-icon { display: none; } .hero-service-links > a { padding: 12px 10px; gap: 5px; } .home-hero-actions { gap: 9px; } .home-hero-primary, .home-hero-secondary { padding: 14px 16px; font-size: 12px; } }
+@media (max-width: 767px) { .home-hero { padding-top: 26px; padding-bottom: 38px; } .home-hero-main { grid-template-columns: 1fr; gap: 22px; } .home-hero h1 { font-size: clamp(40px, 8vw, 57px); margin-bottom: 16px; } .home-hero-eyebrow { font-size: 9px; letter-spacing: .09em; margin-bottom: 16px; } .home-hero-promise { font-size: 14px; margin-bottom: 10px; } .home-hero-description { max-width: 520px; font-size: 13px; line-height: 1.7; margin-bottom: 20px; } .home-hero-phone { margin-top: 14px; } .home-hero-assurance { margin-top: 12px; } .home-hero-visual { padding-right: 0; } .hero-art-stage { aspect-ratio: 4 / 3; transform: none; } .hero-service-icon { display: grid; } .hero-art-label { left: 14px; top: 14px; font-size: 8px; } }
+@media (max-width: 374px) { .home-hero-primary, .home-hero-secondary { flex: 1 1 100%; } .hero-service-icon { display: none; } .home-hero h1 { font-size: 37px; } }
+@media (prefers-reduced-motion: reduce) { .hero-art-stage { transform: none !important; transition: none; } .home-hero-primary, .home-hero-secondary, .hero-service-links > a { transition: none; } }
 .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: #090d13ee; border-bottom: 1px solid #26303c; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: calc(76px + env(safe-area-inset-top)); padding: calc(16px + env(safe-area-inset-top)) var(--page-gutter) 16px; }
 .header-brand { min-width: 0; display: flex; align-items: center; gap: 11px; color: #f2f4f7; }

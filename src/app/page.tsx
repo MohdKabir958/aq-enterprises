@@ -71,7 +71,7 @@ export default async function HomePage() {
       />
 
       <main>
-        {/* ── Hero Section (with isolated 3D Camera) ── */}
+        {/* ── Security and connectivity hero ────────── */}
         <HeroSection />
 
         {/* ── Trust highlights (evidenced facts only) ── */}

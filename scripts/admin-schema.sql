@@ -47,3 +47,22 @@ SET value=jsonb_set(value,'{email}','"aqenterprises204@gmail.com"'::jsonb),
 WHERE EXISTS (SELECT 1 FROM migration)
   AND collection='contact' AND key='settings' AND NOT deleted
   AND value->>'email'='mohammedtalha204@gmail.com';
+
+-- Refresh only the previous default copy. Never replace custom text or media.
+WITH migration AS (
+  INSERT INTO aq_schema_migrations(name) VALUES ('hero-copy-2026-10-09')
+  ON CONFLICT DO NOTHING RETURNING name
+)
+UPDATE aq_content
+SET value=value || jsonb_build_object(
+      'eyebrow', 'Your local security & networking team',
+      'title', 'CCTV & Internet Services in Hyderabad.',
+      'subtitle', 'Protect your space. Connect your business.',
+      'description', 'CCTV installation, business internet, Wi-Fi and LAN networking — planned around your property, installed by our Mallapur team.'
+    ), revision=revision+1, updated_at=now()
+WHERE EXISTS (SELECT 1 FROM migration)
+  AND collection='hero' AND key='settings' AND NOT deleted
+  AND value->>'eyebrow'='CCTV Installation · Hyderabad'
+  AND value->>'title'='CCTV Installation in Hyderabad — Homes, Offices & Factories'
+  AND value->>'subtitle'='See everything on your property. Miss nothing that matters.'
+  AND value->>'description'='We design, install and maintain CCTV and access-control systems for homes, offices and industrial sites across Hyderabad — done right the first time.';

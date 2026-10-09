@@ -97,6 +97,38 @@ test('service and blog photography, business email, location map and Internet na
   await expect(page.getByRole('link', { name: 'Internet', exact: true })).toHaveAttribute('aria-current', 'page');
   expect(errors).toEqual([]);
 });
+test('homepage hero stays responsive, respects reduced motion and leads to the survey form', async ({ page }) => {
+  const quote = page.locator('.floating-contact-stack > button');
+  for (const width of [320, 390, 768, 1024, 1200, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    await expect(page.locator('#hero h1')).toHaveText('CCTV & Internet Services in Hyderabad.');
+    const image = page.locator('.hero-art-stage img');
+    await expect(image).toBeVisible();
+    await expect.poll(() => image.evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(await page.locator('#hero canvas').count()).toBe(0);
+    expect(await page.evaluate(() => Boolean(document.getElementById('services')!.compareDocumentPosition(document.getElementById('internet')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+    await expect(quote).toBeHidden();
+  }
+  await page.locator('.hero-art-interaction').hover({ position: { x: 80, y: 80 } });
+  await expect.poll(() => page.locator('.hero-art-interaction').getAttribute('style')).toContain('--hero-yaw');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.hero-art-stage')).toHaveCSS('transform', 'none');
+  await page.locator('#services').scrollIntoViewIfNeeded();
+  await expect(quote).toBeVisible();
+  await page.locator('header').getByRole('link', { name: 'About', exact: true }).click();
+  await expect(quote).toBeVisible();
+  await page.locator('header').getByRole('link', { name: 'Home', exact: true }).click();
+  await expect(quote).toBeHidden();
+  const whatsapp = page.locator('.home-hero-secondary');
+  await expect(whatsapp).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+$/);
+  await expect(page.locator('.floating-basket')).toHaveAttribute('href', '/cart');
+  await page.locator('#hero').getByRole('link', { name: 'Request a Site Survey', exact: true }).click();
+  await expect(page).toHaveURL(/\/site-survey$/);
+  await expect(page.locator('form')).toBeVisible();
+});
+
 test('protects admin data, rejects cross-site writes, validates products and stale saves', async ({
   page,
   request,

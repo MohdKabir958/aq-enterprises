@@ -1,119 +1,124 @@
+import Link from 'next/link';
 import Image from '@/components/ManagedImage';
-import { getHero } from '@/lib/cms/settings';
-import { getPublicBusiness } from '@/lib/cms/settings';
-import CameraSceneLoader from '@/components/CameraSceneLoader';
+import { defaultHero, getHero, getPublicBusiness } from '@/lib/cms/settings';
 import Icon from '@/components/Icon';
-
+import HeroVisual from './HeroVisual';
 
 export default async function HeroSection() {
-  const hero = await getHero();
-  const { PHONE, WHATSAPP_URL } = await getPublicBusiness();
+  const [hero, business] = await Promise.all([getHero(), getPublicBusiness()]);
+  const defaultMedia = hero.mediaType === 'default' || !hero.mediaUrl;
+  const defaultTitle = hero.title === defaultHero.title;
   return (
-    <section
-      id="hero"
-      className="grid-split hero-section"
-      style={{
-        position: 'relative',
-        maxWidth: 1280,
-        margin: '0 auto',
-        padding: '64px var(--page-gutter) 80px',
-        gap: 24,
-        alignItems: 'center',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: -120,
-          right: -160,
-          width: 560,
-          height: 560,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(63,169,245,0.16),transparent 70%)',
-          pointerEvents: 'none',
-        }}
-        aria-hidden="true"
-      />
-      <div style={{ position: 'relative', zIndex: 1, animation: 'fadeUp 0.7s ease both' }}>
-        <span
-          style={{
-            display: 'inline-block',
-            color: '#FF5A1F',
-            fontSize: 13,
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            marginBottom: 18,
-          }}
-        >
-          {hero.eyebrow}
-        </span>
-        <h1
-          style={{
-            fontFamily: 'var(--font-space), sans-serif',
-            fontSize: 'clamp(34px,4.2vw,54px)',
-            lineHeight: 1.08,
-            color: '#F2F4F7',
-            margin: '0 0 12px',
-            letterSpacing: '-0.01em',
-          }}
-        >
-          {hero.title}
-        </h1>
-        <p
-          style={{
-            fontFamily: 'var(--font-space), sans-serif',
-            fontSize: 'clamp(18px,1.8vw,22px)',
-            color: '#9BA5B4',
-            margin: '0 0 16px',
-            fontStyle: 'italic',
-            lineHeight: 1.3,
-          }}
-        >
-          {hero.subtitle}
-        </p>
-        <p style={{ color: '#9BA5B4', fontSize: 17, lineHeight: 1.6, maxWidth: 480, margin: '0 0 32px' }}>
-          {hero.description}
-        </p>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 28 }}>
-          <a
-            href={`tel:${PHONE}`}
-            style={{
-              background: '#FF5A1F',
-              color: '#0A0C10',
-              fontWeight: 600,
-              fontSize: 15,
-              padding: '15px 26px',
-              borderRadius: 6,
-              textDecoration: 'none',
-            }}
-          >
-            Call Now →
+    <section id="hero" className="home-hero" aria-labelledby="hero-title">
+      <div className="home-hero-main">
+        <div className="home-hero-copy">
+          <span className="home-hero-eyebrow">
+            <span aria-hidden="true" />
+            {hero.eyebrow}
+          </span>
+          <h1 id="hero-title">
+            {defaultTitle ? (
+              <>
+                CCTV &amp; Internet{' '}
+                <br />
+                Services in{' '}
+                <br />
+                <span>Hyderabad.</span>
+              </>
+            ) : (
+              hero.title
+            )}
+          </h1>
+          {hero.subtitle && (
+            <p className="home-hero-promise">{hero.subtitle}</p>
+          )}
+          <p className="home-hero-description">{hero.description}</p>
+          <div className="home-hero-actions">
+            <Link href="/site-survey" className="home-hero-primary">
+              Request a Site Survey <Icon name="arrow-up-right" size={18} />
+            </Link>
+            <a
+              href={business.WHATSAPP_URL}
+              className="home-hero-secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="chat" size={18} />
+              WhatsApp Us
+            </a>
+          </div>
+          <a className="home-hero-phone" href={`tel:${business.PHONE}`}>
+            <Icon name="phone" size={15} />
+            <span>
+              Prefer to talk? <strong>{business.PHONE_DISPLAY}</strong>
+            </span>
           </a>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              background: '#12151B',
-              border: '1px solid #232833',
-              color: '#F2F4F7',
-              fontWeight: 600,
-              fontSize: 15,
-              padding: '15px 26px',
-              borderRadius: 6,
-              textDecoration: 'none',
-            }}
-          >
-            WhatsApp Us
-          </a>
-          <a href="#internet" className="home-connectivity-jump"><Icon name="wifi" size={17} /> Internet & networking <Icon name="arrow-right" size={16} /></a>
+          <div className="home-hero-assurance">
+            <Icon name="check" size={16} /> Site survey before quote{' '}
+            <span aria-hidden="true">·</span> Installation & support
+          </div>
         </div>
-        <div style={{ color: '#6B7484', fontSize: 14 }}>
-          Mallapur, Hyderabad &nbsp;·&nbsp; Site survey before quote &nbsp;·&nbsp; Published local projects
+
+        <div className="home-hero-visual">
+          <HeroVisual interactive={hero.mediaType !== 'video'}>
+            <div className="hero-art-stage">
+              {hero.mediaType === 'video' && hero.mediaUrl ? (
+                <video
+                  src={hero.mediaUrl}
+                  poster={hero.poster || undefined}
+                  controls
+                  preload="metadata"
+                  aria-label={hero.mediaAlt || 'Business introduction video'}
+                />
+              ) : (
+                <Image
+                  src={
+                    defaultMedia
+                      ? '/images/illustrations/hero-security-connectivity.webp'
+                      : hero.mediaUrl
+                  }
+                  alt={
+                    defaultMedia
+                      ? 'Modern outdoor CCTV camera with a wall mount and a Wi-Fi router, illustrative equipment scene'
+                      : hero.mediaAlt
+                  }
+                  fill
+                  sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 610px"
+                  preload
+                />
+              )}
+              {defaultMedia && (
+                <div className="hero-art-label">
+                  <Icon name="shield" size={16} />
+                  <span>Security + connectivity</span>
+                </div>
+              )}
+            </div>
+          </HeroVisual>
+          <div className="hero-service-links">
+            <a href="#services">
+              <span className="hero-service-icon">
+                <Icon name="shield" size={19} />
+              </span>
+              <span>
+                <small>Protect your space</small>
+                <strong>CCTV installation</strong>
+              </span>
+              <Icon name="arrow-up-right" size={17} />
+            </a>
+            <a href="#internet">
+              <span className="hero-service-icon">
+                <Icon name="wifi" size={19} />
+              </span>
+              <span>
+                <small>Connect your business</small>
+                <strong>Internet & networking</strong>
+              </span>
+              <Icon name="arrow-up-right" size={17} />
+            </a>
+          </div>
         </div>
       </div>
-      {hero.mediaType === 'image' && hero.mediaUrl ? <Image src={hero.mediaUrl} alt={hero.mediaAlt} width={1200} height={800} priority style={{ width: '100%', height: 'auto', borderRadius: 16 }} /> : hero.mediaType === 'video' && hero.mediaUrl ? <video src={hero.mediaUrl} poster={hero.poster || undefined} controls preload="metadata" aria-label={hero.mediaAlt || 'Business introduction video'} style={{ width: '100%', borderRadius: 16 }} /> : <CameraSceneLoader />}
     </section>
   );
 }
