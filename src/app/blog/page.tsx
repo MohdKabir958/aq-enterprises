@@ -3,27 +3,23 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import Image from '@/components/ManagedImage';
+import Icon from '@/components/Icon';
 import { getAllBlogs } from '@/lib/content/getters';
+import { getBlogVisual, formatArticleDate } from '@/lib/blog/visuals';
+import { JsonLd } from '@/lib/json-ld';
+import { siteConfig } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: 'Blog — CCTV & Security Guides',
+  title: 'Blog — CCTV, Security & Networking Guides',
   description:
-    'Practical CCTV and security guides from AQ Enterprises: systems, planning, property applications, access control, and Hyderabad context.',
-  alternates: {
-    canonical: '/blog',
+    'Practical guides to CCTV cameras, video storage, installation planning, access control and networking from AQ Enterprises in Hyderabad.',
+  alternates: { canonical: '/blog' },
+  openGraph: {
+    title: 'CCTV & Security Guides — AQ Enterprises',
+    images: ['/images/illustrations/home-security.webp'],
   },
 };
-
-function formatDate(iso?: string) {
-  if (!iso) return '';
-  const d = new Date(`${iso}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
 
 export default async function BlogIndexPage() {
   const posts = [...(await getAllBlogs())].sort((a, b) =>
@@ -31,186 +27,162 @@ export default async function BlogIndexPage() {
   );
   const featured = posts[0];
   const rest = posts.slice(1);
-
   const categories = Array.from(
-    new Set(posts.flatMap((p) => p.categories ?? [])),
+    new Set(posts.flatMap((post) => post.categories ?? [])),
   ).sort();
-
+  const featureImage = featured ? getBlogVisual(featured) : null;
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <Header active="blog" />
-      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
-
+      <div
+        style={{ height: 'calc(76px + env(safe-area-inset-top))' }}
+        aria-hidden="true"
+      />
       <main>
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 20px 0' }}>
+        <JsonLd
+          schema={{
+            '@context': 'https://schema.org',
+            '@type': 'Blog',
+            name: 'AQ Enterprises security and networking guides',
+            url: `${siteConfig.url}/blog`,
+            blogPost: posts.map((post) => ({
+              '@type': 'BlogPosting',
+              headline: post.title,
+              url: `${siteConfig.url}/blog/${post.slug}`,
+              image: getBlogVisual(post).src.startsWith('/')
+                ? `${siteConfig.url}${getBlogVisual(post).src}`
+                : getBlogVisual(post).src,
+            })),
+          }}
+        />
+        <div className="visual-breadcrumb">
           <Breadcrumbs items={[{ name: 'Blog', url: '/blog' }]} />
         </div>
-
-        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 20px 32px' }}>
-          <span
-            style={{
-              display: 'inline-block',
-              color: '#FF5A1F',
-              fontSize: 13,
-              fontWeight: 600,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              marginBottom: 16,
-            }}
-          >
-            Resources
-          </span>
-          <h1
-            style={{
-              fontFamily: 'var(--font-space), sans-serif',
-              fontSize: 'clamp(32px, 4vw, 48px)',
-              lineHeight: 1.1,
-              color: '#F2F4F7',
-              margin: '0 0 16px',
-              maxWidth: 720,
-            }}
-          >
-            CCTV and security guides
+        <section className="visual-section blog-intro">
+          <span className="visual-eyebrow">The AQ field notes</span>
+          <h1>
+            Know your system.
+            <br />
+            <span>Make the right choice.</span>
           </h1>
-          <p style={{ color: '#9BA5B4', fontSize: 17, lineHeight: 1.65, maxWidth: 640, margin: 0 }}>
-            Educational articles that explain how systems work, how to plan, and what drives cost —
-            written to support our Hyderabad service pages, not replace them.
+          <p>
+            Practical answers about cameras, coverage, storage and connectivity.
+            Start with the details that matter for your property.
           </p>
+          <div className="blog-topics" aria-label="Topics covered">
+            {categories.map((category) => (
+              <span key={category}>{category}</span>
+            ))}
+          </div>
         </section>
-
-        {categories.length ? (
+        {featured && featureImage && (
           <section
-            aria-label="Article categories"
-            style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px 40px' }}
-          >
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-              {categories.map((cat) => (
-                <span
-                  key={cat}
-                  style={{
-                    border: '1px solid #232833',
-                    color: '#9BA5B4',
-                    fontSize: 13,
-                    padding: '8px 14px',
-                    borderRadius: 999,
-                  }}
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        {featured ? (
-          <section
+            className="visual-section"
             aria-labelledby="featured-heading"
-            style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px 48px' }}
           >
-            <h2
-              id="featured-heading"
-              style={{
-                color: '#6B7484',
-                fontSize: 12,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                margin: '0 0 16px',
-              }}
-            >
-              Featured
+            <h2 id="featured-heading" className="blog-section-label">
+              Featured guide
             </h2>
-            <Link
-              href={`/blog/${featured.slug}`}
-              style={{
-                display: 'block',
-                textDecoration: 'none',
-                borderTop: '1px solid #232833',
-                borderBottom: '1px solid #232833',
-                padding: '28px 0',
-              }}
-            >
-              <p style={{ color: '#3fa9f5', fontSize: 13, margin: '0 0 10px' }}>
-                {(featured.categories ?? []).join(' · ')}
-              </p>
-              <h3
-                style={{
-                  fontFamily: 'var(--font-space), sans-serif',
-                  fontSize: 'clamp(24px, 3vw, 34px)',
-                  color: '#F2F4F7',
-                  margin: '0 0 12px',
-                  lineHeight: 1.2,
-                }}
+            <Link href={`/blog/${featured.slug}`} className="blog-feature">
+              <div
+                className="blog-feature-image"
+                data-provenance="provisional_illustration"
               >
-                {featured.title}
-              </h3>
-              <p style={{ color: '#9BA5B4', fontSize: 16, lineHeight: 1.65, margin: '0 0 12px', maxWidth: 720 }}>
-                {featured.summary}
-              </p>
-              <p style={{ color: '#6B7484', fontSize: 13, margin: 0 }}>
-                {featured.author}
-                {featured.publishedAt ? ` · ${formatDate(featured.publishedAt)}` : ''}
-              </p>
+                <Image
+                  src={featureImage.src}
+                  alt={featureImage.alt}
+                  fill
+                  sizes="(max-width: 767px) 100vw, 720px"
+                  preload
+                />
+                <span className="blog-feature-badge">
+                  <Icon name="file" size={14} /> Featured guide
+                </span>
+              </div>
+              <div className="blog-feature-copy">
+                <span className="visual-eyebrow">
+                  {featured.categories?.[0] || 'Security guide'}
+                </span>
+                <h3>{featured.title}</h3>
+                <p>{featured.summary}</p>
+                <div className="blog-byline">
+                  <span className="blog-author-mark">AQ</span>
+                  <span>
+                    {featured.author || 'AQ Enterprises'}
+                    <small>{formatArticleDate(featured.publishedAt)}</small>
+                  </span>
+                </div>
+                <span className="blog-read-link">
+                  Read the guide <Icon name="arrow-right" size={19} />
+                </span>
+              </div>
             </Link>
           </section>
-        ) : null}
-
+        )}
         <section
+          className="visual-section"
           aria-labelledby="all-articles-heading"
-          style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px 96px' }}
         >
-          <h2
-            id="all-articles-heading"
-            style={{
-              fontFamily: 'var(--font-space), sans-serif',
-              fontSize: 22,
-              color: '#F2F4F7',
-              margin: '0 0 24px',
-            }}
-          >
-            All articles
-          </h2>
-          {rest.length === 0 && !featured ? (
-            <p style={{ color: '#6B7484' }}>No published articles yet.</p>
+          <div className="visual-section-heading">
+            <div>
+              <span className="visual-eyebrow">Learn before you install</span>
+              <h2 id="all-articles-heading">All articles</h2>
+            </div>
+          </div>
+          {!posts.length ? (
+            <div className="blog-empty">
+              <Icon name="file" size={32} />
+              <h3>More guides are on the way.</h3>
+              <p>Talk to our team if you need help planning a system.</p>
+              <Link href="/contact" className="visual-button">
+                Ask a question <Icon name="arrow-right" size={16} />
+              </Link>
+            </div>
           ) : (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
-                gap: 20,
-              }}
-            >
-              {(rest.length ? rest : []).map((post) => (
-                <article
-                  key={post.slug}
-                  style={{
-                    borderTop: '1px solid #232833',
-                    paddingTop: 20,
-                  }}
-                >
-                  <p style={{ color: '#3fa9f5', fontSize: 12, margin: '0 0 8px' }}>
-                    {(post.categories ?? []).join(' · ')}
-                  </p>
-                  <h3 style={{ margin: '0 0 10px', fontSize: 18, lineHeight: 1.35 }}>
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      style={{ color: '#F2F4F7', textDecoration: 'none' }}
-                    >
-                      {post.title}
+            <div className="blog-photo-grid">
+              {rest.map((post) => {
+                const photo = getBlogVisual(post);
+                return (
+                  <article key={post.slug} className="blog-photo-card">
+                    <Link href={`/blog/${post.slug}`}>
+                      <div
+                        className="blog-photo-image"
+                        data-provenance="provisional_illustration"
+                      >
+                        <Image
+                          src={photo.src}
+                          alt={photo.alt}
+                          fill
+                          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 400px"
+                        />
+                      </div>
+                      <div className="blog-photo-body">
+                        <span className="blog-card-category">
+                          {post.categories?.[0] || 'Security guide'}
+                        </span>
+                        <h3>{post.title}</h3>
+                        <p>{post.summary}</p>
+                        <div className="blog-card-footer">
+                          <time dateTime={post.publishedAt}>
+                            {formatArticleDate(post.publishedAt)}
+                          </time>
+                          <span>
+                            Read article{' '}
+                            <Icon name="arrow-up-right" size={16} />
+                          </span>
+                        </div>
+                      </div>
                     </Link>
-                  </h3>
-                  <p style={{ color: '#9BA5B4', fontSize: 14, lineHeight: 1.6, margin: '0 0 12px' }}>
-                    {post.summary}
-                  </p>
-                  <p style={{ color: '#6B7484', fontSize: 12, margin: 0 }}>
-                    {formatDate(post.publishedAt)}
-                  </p>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
+          <p className="visual-image-note">
+            Photography illustrates the topics covered in these guides.
+          </p>
         </section>
       </main>
-
       <Footer />
     </div>
   );

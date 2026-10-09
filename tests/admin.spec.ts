@@ -50,6 +50,53 @@ test.beforeEach(async () => {
     await db.end();
   }
 });
+test('service and blog photography, business email, location map and Internet navigation work across devices', async ({ page }) => {
+  const assetPaths = new Set<string>();
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  for (const width of [320, 390, 768, 1024, 1200, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of ['/', '/about', '/services', '/blog']) {
+      await page.goto(path);
+      await page.evaluate(() => document.fonts.ready);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), `${path} at ${width}`).toBe(true);
+      await expect(page.locator('.floating-basket')).toBeVisible();
+      expect(await page.locator('header a[href="/cart"]').count()).toBe(0);
+      if (path === '/' || path === '/services') {
+        const cards = page.locator('.service-photo-grid .service-photo-card');
+        expect(await cards.count()).toBeGreaterThan(0);
+        expect(await cards.locator('img').count()).toBe(await cards.count());
+      }
+      if (path === '/blog') {
+        expect(await page.locator('.blog-photo-card').count()).toBeGreaterThan(0);
+        expect(await page.locator('.blog-photo-card img').count()).toBe(await page.locator('.blog-photo-card').count());
+        await expect(page.locator('.blog-feature img')).toBeVisible();
+      }
+      for (const src of await page.locator('.service-photo-card img, .blog-photo-card img, .blog-feature img, .services-hero-photo img').evaluateAll(images => images.map(image => image.getAttribute('src') || ''))) {
+        const url = new URL(src, base);
+        assetPaths.add(url.searchParams.get('url') || url.pathname);
+      }
+    }
+  }
+  for (const path of assetPaths) {
+    const response = await page.request.get(path);
+    expect(response.ok(), path).toBe(true);
+    expect(response.headers()['content-type']).toMatch(/^image\//);
+  }
+  await page.goto('/about');
+  await expect(page.locator('.location-contact-row a[href="mailto:aqenterprises204@gmail.com"]')).toBeVisible();
+  await expect(page.locator('.location-actions a').first()).toHaveAttribute('href', 'https://share.google/udMz1Wsj3KMziK1tH');
+  await page.route('https://maps.google.com/**', route => route.abort());
+  await page.getByRole('button', { name: 'Show interactive map', exact: true }).click();
+  const map = page.locator('.location-map iframe');
+  await expect(map).toBeVisible();
+  expect(new URL((await map.getAttribute('src'))!).searchParams.get('q')).toContain('Mallapur');
+  await expect(page.locator('footer a[href="mailto:aqenterprises204@gmail.com"]')).toHaveCount(1);
+  await page.getByRole('link', { name: 'Internet', exact: true }).click();
+  await expect(page).toHaveURL(/\/commercial-internet-hyderabad$/);
+  await expect(page.getByRole('link', { name: 'Internet', exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(errors).toEqual([]);
+});
 test('protects admin data, rejects cross-site writes, validates products and stale saves', async ({
   page,
   request,
@@ -63,6 +110,11 @@ test('protects admin data, rejects cross-site writes, validates products and sta
   await expect(
     page.getByRole('heading', { name: 'Owner login' }),
   ).toBeVisible();
+  expect(await page.getByRole('img', { name: 'AQ Enterprises logo', exact: true }).count()).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Show password', exact: true }).click();
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute('type', 'text');
+  await page.getByRole('button', { name: 'Hide password', exact: true }).click();
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute('type', 'password');
   await expect(page.locator('meta[name=robots]')).toHaveAttribute(
     'content',
     /noindex/,
@@ -132,8 +184,11 @@ test('cart persists, fills checkout and saves canonical items when email is unco
 }) => {
   await page.goto('/products/test-camera-kit');
   await page.getByRole('button', { name: 'Add to cart' }).click();
-  await page.goto('/cart');
+  await expect(page.locator('.floating-basket-count')).toHaveText('1');
+  await page.getByRole('link', { name: 'View cart, 1 item', exact: true }).click();
+  await expect(page).toHaveURL(/\/cart$/);
   await page.getByLabel('Quantity for Test camera kit').fill('2');
+  await expect(page.locator('.floating-basket-count')).toHaveText('2');
   await page.reload();
   await expect(page.getByLabel('Quantity for Test camera kit')).toHaveValue(
     '2',
@@ -751,7 +806,13 @@ test('survey forms, lead controls and reports fit small and large devices', asyn
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+2)).toBe(true);
     await page.goto('/admin');
     for (const tab of ['enquiries','reports','Case studies','reviews','FAQs']) {
+      const navigation = page.getByRole('button', { name: 'Dashboard navigation', exact: true });
+      if (await navigation.isVisible()) {
+        await navigation.click();
+        await expect(navigation).toHaveAttribute('aria-expanded', 'true');
+      }
       await page.getByRole('button', { name: tab, exact: true }).click();
+      if (await navigation.isVisible()) await expect(navigation).toHaveAttribute('aria-expanded', 'false');
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+2), `${tab} at ${width}`).toBe(true);
     }
   }

@@ -1,6 +1,9 @@
 'use client';
 
 import { usePublicBusiness } from '@/components/SiteSettings';
+import Link from 'next/link';
+import Icon from '@/components/Icon';
+import { useCart } from '@/components/shop/useCart';
 
 /**
  * @file FloatingCTA.tsx
@@ -62,6 +65,8 @@ function validateForm(form: QuoteForm): FormErrors {
 
 export default function FloatingCTA() {
   const { PHONE, PHONE_DISPLAY, WHATSAPP_URL } = usePublicBusiness();
+  const { items } = useCart();
+  const cartCount = items.reduce((count, item) => count + item.quantity, 0);
   const submissionId = useRef('');
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -246,8 +251,8 @@ export default function FloatingCTA() {
           alignItems: 'flex-end',
           gap: 12,
           position: 'fixed',
-          right: 22,
-          bottom: 26,
+          right: 'max(22px, env(safe-area-inset-right))',
+          bottom: 'calc(26px + var(--contact-bar-height) + env(safe-area-inset-bottom))',
           zIndex: 298,
         }}
       >
@@ -270,6 +275,11 @@ export default function FloatingCTA() {
         >
           Get Free Quote
         </button>
+
+        <Link href="/cart" className="floating-basket" aria-label={cartCount ? `View cart, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}` : 'View cart'} title="Your cart">
+          <Icon name="basket" size={27} />
+          {cartCount > 0 && <span className="floating-basket-count" aria-hidden="true">{cartCount > 99 ? '99+' : cartCount}</span>}
+        </Link>
 
         <a
           href={WHATSAPP_URL}
@@ -371,27 +381,6 @@ export default function FloatingCTA() {
         >
           Get Quote
         </button>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Chat with us on WhatsApp"
-          style={{
-            flex: 1,
-            textAlign: 'center',
-            padding: '15px 0',
-            color: '#0A0C10',
-            fontSize: 14,
-            fontWeight: 600,
-            background: '#25D366',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          WhatsApp
-        </a>
       </div>
 
       {/* ── Quote Modal ───────────────────────────────────────────────── */}
