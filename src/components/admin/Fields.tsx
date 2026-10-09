@@ -216,7 +216,7 @@ export default function Fields({
               'answer',
             ].includes(key) || String(item).length > 200;
           return (
-            <label key={key}>
+            <label key={key} className={long ? 'cms-long-field' : undefined}>
               {label}
               {long ? (
                 <textarea

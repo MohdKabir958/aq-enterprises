@@ -56,15 +56,14 @@ export const telHref = () => `tel:${PHONE.value}`;
 export const mailtoHref = () => `mailto:${EMAIL.value}`;
 
 /**
- * Current email on the website.
- * CLIENT CONFIRMATION: Replace with official business domain email when available.
+ * Owner-confirmed public business email.
  * Do not guess addresses such as info@aqenterprises.in.
  */
 export const EMAIL: BusinessField<string> = {
-  value: 'mohammedtalha204@gmail.com',
-  status: 'pending',
+  value: 'aqenterprises204@gmail.com',
+  status: 'verified',
   notes:
-    'Personal Gmail currently used in UI. siteConfig info@aqenterprises.in was never wired into components — do not assume it is real.',
+    'Confirmed by the owner on 9 October 2026 as the website contact email.',
 };
 
 export const ADDRESS = {

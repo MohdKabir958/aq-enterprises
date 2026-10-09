@@ -7,6 +7,7 @@ import { generateSchema } from '@/lib/seo';
 import { blogBreadcrumbs } from '@/lib/seo/breadcrumbs';
 import { getRelatedForBlog } from '@/lib/links/related';
 import { parseArticleBody, renderInline } from '@/lib/blog/parse-body';
+import { getBlogVisual, formatArticleDate } from '@/lib/blog/visuals';
 import { CTA_COPY } from '@/lib/business';
 
 import { siteConfig } from '@/lib/config';
@@ -33,17 +34,6 @@ const prose: CSSProperties = {
   lineHeight: 1.75,
   margin: '0 0 16px',
 };
-
-function formatDate(iso?: string) {
-  if (!iso) return null;
-  const d = new Date(`${iso}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
 
 function Blocks({ blocks }: { blocks: ReturnType<typeof parseArticleBody>['lead'] }) {
   return (
@@ -73,9 +63,10 @@ export default async function BlogTemplate({ post }: BlogTemplateProps) {
   const breadcrumbs = blogBreadcrumbs(title, post.slug);
   const related = (await getRelatedForBlog(post));
   const parsed = parseArticleBody(post.body);
-  const image = post.featuredImage || post.coverImage;
-  const published = formatDate(post.publishedAt);
-  const updated = formatDate(post.updatedAt);
+  const visual = getBlogVisual(post);
+  const image = visual.src;
+  const published = formatArticleDate(post.publishedAt);
+  const updated = formatArticleDate(post.updatedAt);
   const showUpdated = Boolean(post.updatedAt && post.updatedAt !== post.publishedAt);
 
   const authorSchema =
@@ -161,7 +152,7 @@ export default async function BlogTemplate({ post }: BlogTemplateProps) {
             <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9' }}>
               <Image
                 src={image}
-                alt={post.featuredImageAlt || title}
+                alt={visual.alt}
                 fill
                 sizes="(max-width: 1100px) 100vw, 1100px"
                 style={{ objectFit: 'cover' }}

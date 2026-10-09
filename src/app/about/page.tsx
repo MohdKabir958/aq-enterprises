@@ -10,6 +10,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AboutVideo from '@/components/AboutVideo';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import BusinessLocation from '@/components/BusinessLocation';
 import { BRANDS, CERTIFICATIONS, TRUST_HIGHLIGHTS } from '@/lib/constants';
 import { CTA_COPY } from '@/lib/business';
 import {
@@ -116,7 +117,7 @@ function AssetSlot({
 }
 
 export default async function AboutPage() {
-  const { PHONE, PHONE_DISPLAY, EMAIL, HOURS, WHATSAPP_URL, ADDRESS, mapsLocationUrl } = await getPublicBusiness();
+  const { PHONE, PHONE_DISPLAY, ADDRESS } = await getPublicBusiness();
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <JsonLd schema={(await generateLocalBusinessSchema())} />
@@ -201,69 +202,7 @@ export default async function AboutPage() {
           ))}
         </section>
 
-        <section
-          aria-labelledby="nap-heading"
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '0 var(--page-gutter) 88px' }}
-        >
-          <h2
-            id="nap-heading"
-            style={{
-              fontFamily: 'var(--font-space), sans-serif',
-              fontSize: 'clamp(24px,2.6vw,32px)',
-              color: '#F2F4F7',
-              margin: '0 0 12px',
-            }}
-          >
-            How to reach us
-          </h2>
-          <p style={{ color: '#9BA5B4', fontSize: 15, lineHeight: 1.7, margin: '0 0 24px', maxWidth: 640 }}>
-            One physical base in Mallapur. Neighborhood pages on this site are service areas we
-            survey from here — not additional branch offices.{' '}
-            <Link href="/locations" style={{ color: '#3fa9f5' }}>
-              Browse Hyderabad service areas
-            </Link>
-            {' · '}
-            <Link href="/projects" style={{ color: '#3fa9f5' }}>
-              View published projects
-            </Link>
-            .
-          </p>
-          <address
-            style={{
-              display: 'grid',
-              gap: 12,
-              fontStyle: 'normal',
-              color: '#C7CDD6',
-              fontSize: 15,
-              lineHeight: 1.6,
-            }}
-          >
-            <a href={`tel:${PHONE}`} style={{ color: '#C7CDD6', textDecoration: 'none' }}>
-              {PHONE_DISPLAY}
-            </a>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#C7CDD6', textDecoration: 'none' }}
-            >
-              WhatsApp
-            </a>
-            <a href={`mailto:${EMAIL}`} style={{ color: '#C7CDD6', textDecoration: 'none' }}>
-              {EMAIL}
-            </a>
-            <span>{ADDRESS.full}</span>
-            <span>{HOURS}</span>
-            <a
-              href={mapsLocationUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#3fa9f5', textDecoration: 'none' }}
-            >
-              Open in Google Maps
-            </a>
-          </address>
-        </section>
+        <BusinessLocation />
 
         <section
           aria-labelledby="mission-heading"

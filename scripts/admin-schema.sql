@@ -33,3 +33,17 @@ CREATE TABLE IF NOT EXISTS aq_activity (
   channel text NOT NULL, count integer NOT NULL DEFAULT 1,
   PRIMARY KEY(day,event,path,channel)
 );
+CREATE TABLE IF NOT EXISTS aq_schema_migrations (
+  name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now()
+);
+-- One-time owner-requested change: preserve subsequent dashboard email edits.
+WITH migration AS (
+  INSERT INTO aq_schema_migrations(name) VALUES ('business-email-2026-10-09')
+  ON CONFLICT DO NOTHING RETURNING name
+)
+UPDATE aq_content
+SET value=jsonb_set(value,'{email}','"aqenterprises204@gmail.com"'::jsonb),
+    revision=revision+1, updated_at=now()
+WHERE EXISTS (SELECT 1 FROM migration)
+  AND collection='contact' AND key='settings' AND NOT deleted
+  AND value->>'email'='mohammedtalha204@gmail.com';

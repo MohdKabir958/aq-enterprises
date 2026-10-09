@@ -71,7 +71,7 @@ test('fresh setup and concurrent reruns preserve saved content and enquiries', a
     'SELECT table_name FROM information_schema.tables WHERE table_schema=$1',
     [schema],
   );
-  assert.equal(tables.rows.length, 6);
+  assert.equal(tables.rows.length, 7);
   await pool.query(
     "INSERT INTO aq_content(collection,key,value) VALUES ('faqs','preserve',$1)",
     [JSON.stringify({ question: 'Test fixture', answer: 'Keep this content' })],
@@ -110,6 +110,22 @@ test('legacy enquiry tables receive workflow fields without losing payloads', as
     lead_status: 'new', notes: '', follow_up_at: null, appointment_at: null,
     revision: 1, email_attempts: 0, last_email_attempt_at: null,
   });
+});
+
+test('business email migration updates the old default once and preserves later owner edits', async (t) => {
+  const { url, pool } = await isolatedSchema(t);
+  await pool.query("CREATE TABLE aq_content (collection text NOT NULL, key text NOT NULL, value jsonb NOT NULL, deleted boolean NOT NULL DEFAULT false, revision integer NOT NULL DEFAULT 1, updated_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(collection,key))");
+  const contact = { email: 'mohammedtalha204@gmail.com', phone: '+919876543210', line1: 'Test fixture address' };
+  await pool.query("INSERT INTO aq_content(collection,key,value,revision) VALUES ('contact','settings',$1,4)", [JSON.stringify(contact)]);
+  const first = await runSetup({ DATABASE_URL: url });
+  assert.equal(first.code, 0, first.output);
+  const migrated = (await pool.query("SELECT value,revision FROM aq_content WHERE collection='contact' AND key='settings'")).rows[0];
+  assert.deepEqual(migrated, { value: { ...contact, email: 'aqenterprises204@gmail.com' }, revision: 5 });
+  await pool.query("UPDATE aq_content SET value=jsonb_set(value,'{email}','\"later-owner-email@example.test\"'::jsonb),revision=revision+1 WHERE collection='contact' AND key='settings'");
+  const again = await runSetup({ DATABASE_URL: url });
+  assert.equal(again.code, 0, again.output);
+  const preserved = (await pool.query("SELECT value,revision FROM aq_content WHERE collection='contact' AND key='settings'")).rows[0];
+  assert.deepEqual(preserved, { value: { ...contact, email: 'later-owner-email@example.test' }, revision: 6 });
 });
 
 test('failed schema setup rolls back new tables and preserves existing tables', async (t) => {

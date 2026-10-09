@@ -55,7 +55,18 @@ export async function getPublicBusiness() {
       region: c.region,
       state: c.region,
       pincode: c.pincode,
-      full: [c.line1, c.line2, c.city, c.region, c.pincode]
+      full: [
+        c.line1.replace(/,\s*$/, ''),
+        c.line2,
+        [c.line1, c.line2]
+          .join(' ')
+          .toLowerCase()
+          .includes(c.city.toLowerCase())
+          ? ''
+          : c.city,
+        c.region,
+        c.pincode,
+      ]
         .filter(Boolean)
         .join(', '),
     },

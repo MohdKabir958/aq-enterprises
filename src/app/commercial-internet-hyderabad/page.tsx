@@ -178,7 +178,7 @@ export default async function CommercialInternetPage() {
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
       <JsonLd schema={serviceSchema} />
       <JsonLd schema={(await generateLocalBusinessSchema())} />
-      <Header active="services" />
+      <Header active="internet" />
       <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       <main>
