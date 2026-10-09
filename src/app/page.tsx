@@ -77,10 +77,11 @@ export default async function HomePage() {
         {/* ── Trust highlights (evidenced facts only) ── */}
         <TrustHighlightsSection />
 
-        <InternetSection />
-
         {/* ── Services Grid Summary ─────────────────── */}
         <ServicesSummarySection />
+
+        {/* ── Internet & networking ─────────────────── */}
+        <InternetSection />
 
         {/* ── Brands (commonly installed) ───────────── */}
         <BrandsSection />
