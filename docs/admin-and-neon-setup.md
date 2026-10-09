@@ -6,13 +6,15 @@ The owner dashboard is `/admin`. Public pages are `/products`, `/products/[slug]
 
 1. In Neon, create a PostgreSQL database and copy its **pooled connection string**. Keep its SSL connection parameters (normally `sslmode=require`). Use a separate Neon branch/database for previews and testing.
 2. Put the connection string in `DATABASE_URL` in `.env.local` for local setup and in Vercel's server environment variables for the desired deployment. Never commit it or use a `NEXT_PUBLIC_` prefix.
-3. Run `npm run db:setup` locally with that connection configured. It creates the tables in `scripts/admin-schema.sql` without deleting existing data. Run it before the first deployment/build that uses the database. SQL can also be executed through Neon's SQL editor.
+3. Keep Vercel's build command as `npm run build`. Its `prebuild` step runs `scripts/admin-schema.sql` whenever `DATABASE_URL` is configured, before Next.js collects page data. It creates missing tables and adds the existing enquiry workflow fields without deleting records. This also repairs a first deployment failing with `relation "aq_content" does not exist`. You can run `npm run db:setup` separately or execute the schema through Neon's SQL editor.
 4. Choose a private owner login email and set `ADMIN_EMAIL`. Run `npm run admin:password`, enter a unique password of at least 12 characters, and copy the resulting **salted hash** into `ADMIN_PASSWORD_HASH`. Set both variables in Vercel. There is no default password and no public registration.
 5. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` and `LEAD_DESTINATION_EMAIL` for email notifications. Changing the public contact email in the dashboard does **not** change the private lead recipient. This prevents a public content edit from unexpectedly rerouting customer information.
 6. Deploy/redeploy to Vercel after setting environment variables. Visit `/admin` and log in. Add your actual products, packages, combo offers, prices and terms; publish entries when ready.
 7. Submit a test enquiry on the deployed site and check both **Admin → Enquiries** and the destination inbox. Verify the Google Maps and WhatsApp links on your actual domain as well.
 
 The application is compatible with PostgreSQL/Neon through `pg`; it does not save business data to Vercel's temporary filesystem. A configured database with missing tables is an error, rather than silently discarding admin changes. Without `DATABASE_URL`, existing content remains readable and the dashboard is disabled.
+
+Schema setup uses `DATABASE_URL_UNPOOLED` if provided. Otherwise it derives Neon's direct endpoint by removing `-pooler` from the supplied hostname; application requests continue using the original pooled `DATABASE_URL`. Setup preserves TLS parameters, takes a transaction advisory lock to serialize concurrent builds, and rolls back on failure. The database role must have schema/table/index permissions. Connection or migration failures stop the build, and logs omit connection strings and server error details. Builds without `DATABASE_URL` skip setup. Use separate Neon branches for previews so preview builds cannot modify the production schema. The schema script currently contains additive, repeatable changes; review future changes before deployment.
 
 ## Owner controls
 
@@ -58,9 +60,11 @@ npm run test:admin
 
 `TEST_DATABASE_URL` must already be in the process environment. If using a system Chromium, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to its executable path. The suite starts a local production server on port 3010, creates the schema, uses test-only credentials and covers authentication, origin protection, validation, stale writes, owner form publishing, cart/checkout, content settings, media, responsive widths and logout/login throttling. Actual Vercel/Neon connectivity and SMTP inbox delivery still need the deployment smoke test in step 7.
 
+With the same disposable `TEST_DATABASE_URL`, `npm run test:db-setup` checks first-time setup, concurrent reruns with saved records, legacy enquiry upgrades, transactional rollback and connection override/error handling. It creates and removes isolated test schemas and refuses database names that do not end in `_test`.
+
 ## Lead-generation features
 
-Run `npm run db:setup` again **before deploying this update**. The migration preserves existing enquiries and adds lead stages, notes, follow-up/appointment dates, email attempt information and anonymous activity counters. No extra service account is needed beyond the existing Neon and SMTP settings.
+Configured builds now apply the repeatable schema automatically; `npm run db:setup` remains available for manual setup. The migration preserves existing enquiries and adds lead stages, notes, follow-up/appointment dates, email attempt information and anonymous activity counters. No extra service account is needed beyond the existing Neon and SMTP settings.
 
 - **Guided enquiry forms:** choose CCTV, networking, access control or other services; supply the relevant camera, network-point or door count, installation type and locality. Counts are customer preferences, not automatic quotations.
 - **Survey requests:** `/site-survey` asks for a site address and a preferred date/time in Hyderabad. Dates must fall within the next 90 days. It is a request awaiting owner confirmation, not a live appointment calendar. The owner confirms the appointment time in the lead editor and contacts the customer directly.
