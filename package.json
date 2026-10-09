@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node --env-file-if-exists=.env.local scripts/setup-admin.mjs --if-configured",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "validate:content": "node --loader ./scripts/ts-loader.mjs scripts/validate-content.ts",
     "db:setup": "node --env-file-if-exists=.env.local scripts/setup-admin.mjs",
+    "test:db-setup": "node --test tests/database-setup.test.mjs",
     "admin:password": "node scripts/hash-admin-password.mjs",
     "test:admin": "playwright test"
   },

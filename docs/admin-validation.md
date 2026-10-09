@@ -39,6 +39,12 @@ Survey forms and the Enquiries, Reports, Case studies, Reviews and FAQs tabs wer
 
 ## Deployment checks still required
 
-Follow `docs/admin-and-neon-setup.md`: configure the actual Neon pooled connection, run `npm run db:setup` to apply the additive migration, set owner credentials and SMTP, then deploy. Test the deployed login, an admin edit, an uploaded image and a checkout enquiry; confirm the notification arrives in the intended inbox. Hosted video URLs and actual Vercel/Neon quotas must be checked on the chosen accounts.
+Follow `docs/admin-and-neon-setup.md`: configure the actual Neon pooled connection, set owner credentials and SMTP, then deploy with `npm run build` to apply the additive schema automatically. `npm run db:setup` remains available for manual setup. Test the deployed login, an admin edit, an uploaded image and a checkout enquiry; confirm the notification arrives in the intended inbox. Hosted video URLs and actual Vercel/Neon quotas must be checked on the chosen accounts.
 
 Production catalogue entries remain empty until the owner adds actual products and prices. Fixtures used by automated tests are isolated to the disposable test database. Repository photos were not replaced.
+
+## Vercel first-database build repair — 9 October 2026
+
+The reported production build reached Neon but failed while collecting `/blog/[slug]` data because `aq_content` did not exist. `npm run build` now runs the additive schema setup first when `DATABASE_URL` is configured. Setup uses a direct Neon endpoint, preserves TLS options, serializes concurrent builds and rolls back failed migrations.
+
+Validation against disposable local PostgreSQL passed all **5 database-setup tests**: fresh schema and concurrent reruns preserve content/enquiries; existing enquiry records receive workflow fields; a failed schema change rolls back; direct connection overrides work; absent optional configuration skips and manual setup fails clearly; error logs omit fixture credentials. A full build with `DATABASE_URL` and `VERCEL=1` successfully initialized the public schema and generated all 110 pages. TypeScript, zero-warning lint and content validation passed. The production server returned HTTP 200 and rendered page content for the homepage, blog index, a blog article, products and site survey. No production Neon migration or live Vercel deployment was executed from this workspace; the next Vercel `npm run build` performs setup using its configured database connection.
