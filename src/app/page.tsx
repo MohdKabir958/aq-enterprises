@@ -27,6 +27,7 @@ import {
 import {
   HeroSection,
   TrustHighlightsSection,
+  InternetSection,
   ServicesSummarySection,
   BrandsSection,
   HowItWorksSection,
@@ -39,14 +40,13 @@ import {
 export async function generateMetadata(): Promise<Metadata> {
   const { PHONE_DISPLAY } = await getPublicBusiness();
   return {
-  title: {
-    absolute: 'AQ Enterprises — CCTV & Security Systems, Hyderabad',
-  },
-  description:
-    `CCTV and security installation for homes and businesses across Hyderabad. Site survey before quote. Call ${PHONE_DISPLAY}. Based in Mallapur.`,
-  alternates: {
-    canonical: '/',
-  },
+    title: {
+      absolute: 'AQ Enterprises — CCTV, Internet & Networking, Hyderabad',
+    },
+    description: `CCTV installation, business internet and LAN networking across Hyderabad. Site survey before quote. Call ${PHONE_DISPLAY}. Based in Mallapur.`,
+    alternates: {
+      canonical: '/',
+    },
   };
 }
 
@@ -57,13 +57,18 @@ export default async function HomePage() {
 
   return (
     <div style={{ background: '#0A0C10', minHeight: '100vh' }}>
-      <JsonLd schema={(await generateOrganizationSchema())} />
-      <JsonLd schema={(await generateLocalBusinessSchema())} />
-      {homepageFaqs.length > 0 && <JsonLd schema={generateFAQSchema(homepageFaqs)} />}
+      <JsonLd schema={await generateOrganizationSchema()} />
+      <JsonLd schema={await generateLocalBusinessSchema()} />
+      {homepageFaqs.length > 0 && (
+        <JsonLd schema={generateFAQSchema(homepageFaqs)} />
+      )}
       <Header active="home" />
 
       {/* Spacer for fixed header */}
-      <div style={{ height: 'calc(76px + env(safe-area-inset-top))' }} aria-hidden="true" />
+      <div
+        style={{ height: 'calc(76px + env(safe-area-inset-top))' }}
+        aria-hidden="true"
+      />
 
       <main>
         {/* ── Hero Section (with isolated 3D Camera) ── */}
@@ -71,6 +76,8 @@ export default async function HomePage() {
 
         {/* ── Trust highlights (evidenced facts only) ── */}
         <TrustHighlightsSection />
+
+        <InternetSection />
 
         {/* ── Services Grid Summary ─────────────────── */}
         <ServicesSummarySection />

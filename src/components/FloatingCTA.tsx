@@ -277,7 +277,7 @@ export default function FloatingCTA() {
         </button>
 
         <Link href="/cart" className="floating-basket" aria-label={cartCount ? `View cart, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}` : 'View cart'} title="Your cart">
-          <Icon name="basket" size={27} />
+          <Icon name="cart" size={25} data-icon="shopping-cart" />
           {cartCount > 0 && <span className="floating-basket-count" aria-hidden="true">{cartCount > 99 ? '99+' : cartCount}</span>}
         </Link>
 

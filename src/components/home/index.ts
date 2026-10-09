@@ -1,5 +1,6 @@
 export { default as HeroSection } from './HeroSection';
 export { default as TrustHighlightsSection } from './TrustHighlightsSection';
+export { default as InternetSection } from './InternetSection';
 export { default as ServicesSummarySection } from './ServicesSummarySection';
 export { default as BrandsSection } from './BrandsSection';
 export { default as HowItWorksSection } from './HowItWorksSection';
