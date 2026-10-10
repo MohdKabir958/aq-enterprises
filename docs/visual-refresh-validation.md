@@ -27,3 +27,17 @@ Seven generated illustrations are compressed local WebP files. They depict equip
 - Desktop and mobile login/dashboard, forms, service cards, services hero, blog feature and location panel were visually reviewed.
 
 These are Chromium viewport and local integration checks, not certification of every browser or physical device. No production database credentials, owner credentials or SMTP account were used in the tests. Actual Vercel deployment, Google Maps rendering on the public network and Gmail inbox delivery remain deployment checks.
+
+## Homepage hero follow-up
+
+The default hero now uses a photorealistic, AI-generated camera-and-router composition instead of the procedural Three.js camera. Its local WebP is about 70 KB; the default homepage no longer imports or renders the 3D canvas. The shorter headline gives CCTV and internet equal prominence, with a primary site-survey link, WhatsApp, published phone details and links to both service sections. The separate Internet section remains after the property-type security section.
+
+Artwork tilts subtly with a desktop mouse, stays still on touch/mobile and respects reduced-motion preferences. Owner-supplied video stays still and retains playback controls. The floating quote button is hidden while the homepage hero is visible and returns after scrolling or navigating away; cart and WhatsApp stay available. Admin text/image/video controls and the global image replacement/hide system are retained. A one-time migration refreshes only the exact previous default text, preserving custom copy, media fields and later owner edits.
+
+- TypeScript, lint, content validation and production build passed.
+- All 7 database setup tests passed, including default-copy migration and owner-edit preservation.
+- All 21 browser/integration tests passed. After the final heading whitespace adjustment, the hero and owner publishing/image-control tests passed again against a fresh production build.
+- The hero regression covers 320, 390, 768, 1024, 1200, 1440 and 1920px, loaded artwork, no horizontal overflow, no default canvas, section order, mouse movement, reduced motion, floating quote state across client navigation and the site-survey destination.
+- Production screenshots were visually reviewed at 1440 × 900, 1440 × 768 and touch-enabled 390 × 844. Desktop survey actions remain within the viewport at both tested heights.
+
+This update was validated locally, not against a completed Vercel deployment. The generated artwork is an illustration, not proof of an actual AQ Enterprises installation.
